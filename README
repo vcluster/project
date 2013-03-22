@@ -1,0 +1,116 @@
+
+[debug on | off | dump]
+
+vcluter > debug dump
+Debug Mode : on
+vcluter > 
+
+
+[cloud configuration registration]
+
+vcluter > cloudman register c.conf
+	[MSG]	: PRIVATE added.
+	[MSG]	: PRIVATE added.
+	[MSG]	: PUBLIC added.
+	[MSG]	: PUBLIC added.
+vcluter > 
+
+
+vcluter > cloudman dump
+----------------------------------------
+	Cloud Manager
+----------------------------------------
+[private cloude element] [0]
+	cloud type:	PRIVATE
+	end point:	http://fcl002.fnal.gov:2633/RPC2
+	short point:	fcl002.fnal.gov:2633RPC2
+	max vms:	20
+	cur vms:	0
+	access key:	rsyoung
+	secret key:	1234
+	key name:	null
+	image name:	null
+	instance type:	null
+	version:	null
+	signature version:	null
+	signature method:	null
+
+[private cloude element] [1]
+	cloud type:	PRIVATE
+	end point:	http://fcl002.fnal.gov:2633/RPC2
+	short point:	fcl002.fnal.gov:2633RPC2
+	max vms:	30
+	cur vms:	0
+	access key:	yourrsyoung
+	secret key:	1234
+	key name:	null
+	image name:	null
+	instance type:	null
+	version:	null
+	signature version:	null
+	signature method:	null
+
+----------------------------------------
+[public cloude element] [0]
+	cloud type:	PUBLIC
+	end point:	http://fcl002.fnal.gov:4567/
+	short point:	fcl002.fnal.gov:4567
+	max vms:	10
+	cur vms:	0
+	access key:	rsyoung
+	secret key:	7110eda4d09e062aa5e4a390b0a572ac0d2c0220
+	key name:	null
+	image name:	ami-00000171
+	instance type:	m1.test
+	version:	2011-05-15
+	signature version:	2
+	signature method:	HmacSHA256
+
+[public cloude element] [1]
+	cloud type:	PUBLIC
+	end point:	https://ec2.amazonaws.com/
+	short point:	ec2.amazonaws.com
+	max vms:	30
+	cur vms:	0
+	access key:	AKIAJMSES5LYXABIJ36A
+	secret key:	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
+	key name:	seoyoungnoh_key
+	image name:	ami-00000171
+	instance type:	m1.large
+	version:	2011-05-15
+	signature version:	2
+	signature method:	HmacSHA256
+
+----------------------------------------
+vcluter > 
+
+vcluter > vmman start
+vcluter > vmman dump
+----------------------------------------
+	VM Manager
+----------------------------------------
+----------------------------------------
+vcluter > 
+
+vcluter > cloudman set public 0
+vcluter > 
+vcluter > dins
+----------------------------------------
+Inst ID		Status
+----------------------------------------
+i-1957		running
+i-2158		running
+----------------------------------------
+
+vcluter > set
+[USAGE] : set <condorip | oneip> <ipaddress>
+vcluter > set oneip fcl002.fnal.gov
+vcluter > show config
+---------------------------------------
+             Configuration             
+---------------------------------------
+Condor: null
+One: fcl002.fnal.gov
+---------------------------------------
+vcluter > 
+

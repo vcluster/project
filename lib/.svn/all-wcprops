@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/8/trunk/vcluster/lib
+END
+xmlrpc-client-3.1.2.jar
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/8/trunk/vcluster/lib/xmlrpc-client-3.1.2.jar
+END
+opennebula-2.2.tar.gz
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/8/trunk/vcluster/lib/opennebula-2.2.tar.gz
+END
+ws-commons-util-1.0.2.jar
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/8/trunk/vcluster/lib/ws-commons-util-1.0.2.jar
+END
+xercesImpl.jar
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/4/trunk/vcluster/lib/xercesImpl.jar
+END
+jaxb-impl.jar
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/4/trunk/vcluster/lib/jaxb-impl.jar
+END
+resolver.jar
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/4/trunk/vcluster/lib/resolver.jar
+END
+serializer.jar
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/4/trunk/vcluster/lib/serializer.jar
+END
+org.opennebula.client.jar
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/8/trunk/vcluster/lib/org.opennebula.client.jar
+END
+axis.jar
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/4/trunk/vcluster/lib/axis.jar
+END
+xmlrpc-common-3.1.2.jar
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/8/trunk/vcluster/lib/xmlrpc-common-3.1.2.jar
+END
+xercesSamples.jar
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/4/trunk/vcluster/lib/xercesSamples.jar
+END
+xml-apis.jar
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/4/trunk/vcluster/lib/xml-apis.jar
+END
