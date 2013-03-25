@@ -55,7 +55,8 @@ public class Test {
 	
 	public static void main(String[] args) throws Exception {
 		//testVMManager();
-		// ocaLaunchVM();
+		 //ocaLaunchVM();
+		System.out.println("test");
 
 		
 	}
