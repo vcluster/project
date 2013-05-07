@@ -7,9 +7,11 @@ import java.util.Vector;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+/* test
 import org.opennebula.client.Client;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.vm.VirtualMachine;
+*/
 
 import vcluster.control.VMMessage.VMMsgType;
 import vcluster.control.cloudman.CloudElement;
