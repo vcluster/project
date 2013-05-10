@@ -45,7 +45,7 @@ public enum Command {
 		cmdGroup = group;
 		this.cmdList = new ArrayList<String>();
 		StringTokenizer st = new StringTokenizer(cmdString, ", ");
-
+		
 		boolean firstToken = true;
 		String token = null;
 		

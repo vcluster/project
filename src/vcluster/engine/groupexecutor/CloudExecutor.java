@@ -181,6 +181,7 @@ public class CloudExecutor {
 			e.printStackTrace();
 		}
 
+		
     	executeQuery(Command.DESCRIBE_INSTANCE, cloud.getEndPoint(), query);
 
 		

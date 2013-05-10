@@ -99,7 +99,7 @@ public class CloudManager  {
 				PrintMsg.print(DMsgType.ERROR, "exceed the size of private cloud list, [no]="+no);
 				return;
 			}
-			currentCloud = privateCloudList.elementAt(0);
+			currentCloud = privateCloudList.elementAt(no);
 			break;
 			
 		case PUBLIC:
@@ -107,7 +107,7 @@ public class CloudManager  {
 				PrintMsg.print(DMsgType.ERROR, "exceed the size of public cloud list, [no]="+no);
 				return;
 			}
-			currentCloud = publicCloudList.elementAt(0);
+			currentCloud = publicCloudList.elementAt(no);
 			break;
 		}
 	}
