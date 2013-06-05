@@ -7,3 +7,5 @@
 .classpath
 .project
 
+/plugins
+/doc
