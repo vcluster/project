@@ -1,0 +1,12 @@
+
+vcluter > plugin
+[USAGE] : plugin <register plugin_name | list>
+vcluter > 
+vcluter > plugin list
+Loaded Plugins: 4
+  HelloWorld
+  HelloWorld2
+  HelloWorld3
+  HTCondor
+vcluter > plugin register HTCondor
+vcluter > condor_status
