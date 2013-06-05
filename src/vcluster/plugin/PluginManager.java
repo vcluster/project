@@ -99,14 +99,20 @@ public class PluginManager {
 		File f = new File(dir.getPath());
 		File[] list = f.listFiles();
 		List<String> jars = new ArrayList<String>();
-		for (File file : list) {
-			
-				if (file.getPath().endsWith(".jar")) {
-					jars.add(file.getName().replace(".jar", ""));
-				
+		
+			try {
+				for (File file : list) {			
+						if (file.getPath().endsWith(".jar")) {
+							jars.add(file.getName().replace(".jar", ""));
+						
+					}
+				}
+				return jars;
+			} catch (NullPointerException e) {
+				// TODO Auto-generated catch block
+				System.out.println("There is no plugins!");
+				return null;
 			}
-		}
-		return jars;
 		
 		
 	}
