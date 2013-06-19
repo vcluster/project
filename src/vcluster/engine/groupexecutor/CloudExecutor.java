@@ -67,6 +67,7 @@ public class CloudExecutor {
 	{
 		try {
 			URL endPoint = new URL(fullURL+"?"+httpQuery);
+			System.out.println(endPoint);
 			doHttpQuery(command, endPoint);
 		} catch (Exception e)
 		{
