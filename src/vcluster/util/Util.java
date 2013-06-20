@@ -26,6 +26,7 @@ public class Util {
 			while ((aLine = br.readLine()) != null) {
 				lineProcess(aLine);
 			}
+			br.close();
 	    } catch (Exception e) {
 	    	PrintMsg.print(DMsgType.ERROR, "while loading, "+Config.configFile+" file!");
 	    	return false;
