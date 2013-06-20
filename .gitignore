@@ -5,4 +5,7 @@
 *.ear
 .classpath
 .project
+.settings
+*.jar
+.svn
 
