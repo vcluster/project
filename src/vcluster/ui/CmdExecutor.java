@@ -1,6 +1,5 @@
 package vcluster.ui;
 
-import java.util.List;
 import java.util.StringTokenizer;
 
 import vcluster.engine.groupexecutor.CloudExecutor;
@@ -8,10 +7,6 @@ import vcluster.engine.groupexecutor.VClusterExecutor;
 import vcluster.global.Config;
 import vcluster.plugin.PluginManager;
 
-/**
- * @author huangdada
- * 
- */
 public class CmdExecutor {
 
 	/**
@@ -81,6 +76,8 @@ public class CmdExecutor {
 			return VClusterExecutor.engmode(cmdLine);
 		case PLUGIN:
 			return VClusterExecutor.plugin(cmdLine);
+		default:
+				
 		}
 		
 		return true;
@@ -104,6 +101,7 @@ public class CmdExecutor {
 		case CHECK_Q: return Config.proxyExecutor.check_q();
 		case CONDOR: return Config.proxyExecutor.condor(cmdLine);
 		case ONEVM: return Config.proxyExecutor.onevm(cmdLine);
+		default:
 		}
 		
 		return true;
@@ -134,7 +132,7 @@ public class CmdExecutor {
 		case RUN_INSTANCE: return CloudExecutor.run_instance(Config.cloudMan.getCurrentCloud());
 		case DESCRIBE_INSTANCE: return CloudExecutor.describe_instance(Config.cloudMan.getCurrentCloud(), cmdLine);
 		case TERMINATE_INSTANCE: return CloudExecutor.terminate_instance(Config.cloudMan.getCurrentCloud(), cmdLine);
-
+		default:
 		}
 		
 		return true;
