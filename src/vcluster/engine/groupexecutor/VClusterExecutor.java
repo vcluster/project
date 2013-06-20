@@ -1,25 +1,24 @@
 package vcluster.engine.groupexecutor;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import vcluster.control.VMManager;
 import vcluster.control.cloudman.CloudElement;
 import vcluster.control.cloudman.CloudManager;
 import vcluster.global.Config;
-import vcluster.global.PoolStatus;
 import vcluster.global.Config.CloudType;
 import vcluster.monitoring.MonitoringMan;
+import vcluster.plugin.PluginManager;
 import vcluster.util.PrintMsg;
-import vcluster.util.Util;
 import vcluster.util.PrintMsg.DMsgType;
+import vcluster.util.Util;
 
 public class VClusterExecutor {
 	public static boolean debug_mode(String cmdLine)
@@ -402,8 +401,9 @@ public class VClusterExecutor {
     	        str = str.trim();
     	        
     	        if (str.contains("Total") && !str.contains("Owner")) {
-    	        	PoolStatus.extractInfo(str);
-    	        	PoolStatus.printQStatus();
+    	        	//PoolStatus.extractInfo(str);
+    	        	//PoolStatus.printQStatus();
+    	        	Config.proxyExecutor.check_pool();
     	        }
     	        
     	        for(int i = 0; i< 1024; i++)
@@ -426,6 +426,81 @@ public class VClusterExecutor {
 		return true;
 	}
 	
+	public static boolean plugin(String cmdLine) {
+		// TODO Auto-generated method stub
+		
+		PluginManager pm = new PluginManager();
+		//get the plugin list
+		List<String> pluginsList = pm.getList();
+		
+		StringTokenizer st = new StringTokenizer(cmdLine);
+
+		/* skip the command */
+		st.nextToken();
+
+		if (!st.hasMoreTokens()) {
+			System.out.println("[USAGE] : plugin <register plugin_name | list>");
+			return false;
+		}
+		
+		/* get a token to set */
+		String para = st.nextToken().trim();
+		if(para.equalsIgnoreCase("list")){
+			if(st.hasMoreTokens()) {
+				PrintMsg.print(DMsgType.ERROR, "unexpected token \""+st.nextToken()+"\" found!");
+				return false;
+			}
+
+			System.out.println("Loaded Plugins: " + pluginsList.size());
+			for (String name : pluginsList) {
+				System.out.println("  " + name);
+			}
+			
+			return true;
+		}else if(para.equalsIgnoreCase("register")){
+			String pluginName = "";
+			if(st.hasMoreTokens()) {
+				   pluginName = st.nextToken().trim();
+
+			}else{
+				PrintMsg.print(DMsgType.ERROR, "expected a plugin name!");
+				System.out.println("[USAGE] : plugin <register plugin_name | list>");
+				return false;
+			}
+				if(pluginsList.contains(pluginName)){				
+
+					if(Config.ProxyExecutor_plugin.equalsIgnoreCase(pluginName)){
+						//System.out.print(Config.ProxyExecutor_plugin);
+						//System.out.println(" : "+pluginName);
+						PrintMsg.print(DMsgType.ERROR, pluginName + " has already been loaded!");
+					}else{
+						Config.ProxyExecutor_plugin = pluginName;
+					   try {
+							pm.UnloadAllPlugins();
+							pm.LoadPlugin(pluginName);
+						} catch (ClassNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							return false;
+						}
+					}
+				}else{
+					System.out.println("[ERROR:] No such a plugin,please check your input!");
+				}
+			}else{
+				PrintMsg.print(DMsgType.ERROR, "no such a parameter like \""+para+"\" !");
+				System.out.println("\n         [USAGE] : plugin <register plugin_name | list>");
+			}
+		
+
+		if(st.hasMoreTokens()) {
+			PrintMsg.print(DMsgType.ERROR, "unexpected token \""+st.nextToken()+"\" found!");
+			return false;
+		}
+
+		return true;
+	}
+
 	private static void closeStream(BufferedReader in, DataOutputStream out, Socket socket)
 	{
 		try {
@@ -436,5 +511,6 @@ public class VClusterExecutor {
 			e.printStackTrace();
 		}
 	}
+
 
 }

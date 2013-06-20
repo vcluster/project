@@ -3,6 +3,7 @@ package vcluster.global;
 
 import vcluster.control.VMManager;
 import vcluster.control.cloudman.CloudManager;
+import vcluster.engine.groupexecutor.ProxyExecutor;
 import vcluster.monitoring.MonitoringMan;
 
 public class Config {
@@ -29,4 +30,12 @@ public class Config {
 	public static int DEFAULT_SLEEP_SEC = 30;
 	public static int SLEEP_SEC_INC = 30;
 	public static int MAX_SLEEP_SEC = 60*30; /* 30 mins */
+	
+	public static ProxyExecutor proxyExecutor;
+	public static String ProxyExecutor_plugin = "";
+	public static String CloudExecutor_plugin = "";
+	//public static String ProxyExecutor_plugin = "";
+	
+	
+	
 }

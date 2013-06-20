@@ -1,12 +1,17 @@
 package vcluster.ui;
 
+import java.util.List;
 import java.util.StringTokenizer;
 
 import vcluster.engine.groupexecutor.CloudExecutor;
-import vcluster.engine.groupexecutor.ProxyExecutor;
 import vcluster.engine.groupexecutor.VClusterExecutor;
 import vcluster.global.Config;
+import vcluster.plugin.PluginManager;
 
+/**
+ * @author huangdada
+ * 
+ */
 public class CmdExecutor {
 
 	/**
@@ -74,6 +79,8 @@ public class CmdExecutor {
 			return VClusterExecutor.set(cmdLine);
 		case ENGMODE:
 			return VClusterExecutor.engmode(cmdLine);
+		case PLUGIN:
+			return VClusterExecutor.plugin(cmdLine);
 		}
 		
 		return true;
@@ -82,13 +89,21 @@ public class CmdExecutor {
 
 	private static boolean executeProxy(Command command, String cmdLine)
 	{
-		// command.toPrint();
+
+		try{
+			Config.proxyExecutor = PluginManager.plugins.get(Config.ProxyExecutor_plugin);
+		}catch(NullPointerException ne){
+			
+			System.out.println("\nno proxyExecutor,please register proxyExecutor plugin!\n");
+			System.out.println("          [USAGE] : plugin <register plugin_name | list>\n");
+			return false;
+		}
 		
 		switch (command) {
-		case CHECK_POOL: return ProxyExecutor.check_pool();
-		case CHECK_Q: return ProxyExecutor.check_q();
-		case CONDOR: return ProxyExecutor.condor(cmdLine);
-		case ONEVM: return ProxyExecutor.onevm(cmdLine);
+		case CHECK_POOL: return Config.proxyExecutor.check_pool();
+		case CHECK_Q: return Config.proxyExecutor.check_q();
+		case CONDOR: return Config.proxyExecutor.condor(cmdLine);
+		case ONEVM: return Config.proxyExecutor.onevm(cmdLine);
 		}
 		
 		return true;
