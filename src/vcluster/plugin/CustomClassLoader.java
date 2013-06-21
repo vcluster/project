@@ -8,6 +8,7 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import vcluster.engine.groupexecutor.CloudExecutor;
 import vcluster.engine.groupexecutor.ProxyExecutor;
 
 /**
@@ -60,7 +61,7 @@ public class CustomClassLoader extends ClassLoader {
 				   Class<?> c = loader.loadClass(name.replace("/", ".").substring(0,name.length() - 6)); 
 					Class<?>[] intfs = c.getInterfaces();
 					for (Class<?> intf : intfs) {
-						if (intf.getName().equals(ProxyExecutor.class.getName())) {
+						if (intf.getName().equals(ProxyExecutor.class.getName())||intf.getName().equals(CloudExecutor.class.getName())) {
 							return c;
 						}
 					}

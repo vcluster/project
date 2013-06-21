@@ -133,7 +133,7 @@ public class VMManager extends Thread {
 			OneResponse rc = VirtualMachine.allocate(oneClient, vmTemplate);
 			
 			if(rc.isError()) {
-				PrintMsg.print(DMsgType.ERROR, "failed to launch vms"+rc.getErrorMessage());
+				PrintMsg.print(DMsgType.ERROR, "failed to launch vms : "+rc.getErrorMessage());
 			}
 			int newVMID = Integer.parseInt(rc.getMessage());
 			vecTempID.add(newVMID);
@@ -185,7 +185,7 @@ public class VMManager extends Thread {
 		PrintMsg.print(DMsgType.MSG, "launching "+numVMs+" vms using REST API.");
 	    
 	    for(int i = 0 ; i < numVMs; i++) {
-	    	CloudExecutor.rest_launch(cloud);
+	    	Config.cloudExecutor.rest_launch(cloud);
 	    }
 	    
 	    return true;

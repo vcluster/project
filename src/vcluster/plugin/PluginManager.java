@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
+import vcluster.engine.groupexecutor.CloudExecutor;
 import vcluster.engine.groupexecutor.ProxyExecutor;
 
 /**
@@ -17,7 +18,8 @@ public class PluginManager {
 	/**
 	 * A collection to store all the loaded plugin classes,indexed by the class name.
 	 * */
-	public static Map<String, ProxyExecutor> plugins;
+	public static Map<String, ProxyExecutor> bcPlugins;
+	public static Map<String, CloudExecutor> cloudPlugins;
 	/**
 	 * An instance of CustomClassLoader,it is responsible for loading classes form jar files.
 	 */
@@ -33,7 +35,8 @@ public class PluginManager {
 	 * @param dir A directory where plugins are located.
 	 */
 	public PluginManager(String dir) {
-		plugins = new HashMap<String, ProxyExecutor>();
+		bcPlugins = new HashMap<String, ProxyExecutor>();
+		cloudPlugins = new HashMap<String,CloudExecutor>();
 		File f = new File(System.getProperty("user.dir"), dir);
 		cl = new CustomClassLoader(f);
 		this.pluginsdir = dir;
@@ -53,23 +56,56 @@ public class PluginManager {
 	 * @throws ClassNotFoundException
 	 */
 	public void LoadPlugin(String name) throws ClassNotFoundException {
-		if (plugins.containsKey(name)) {
-			return;
-		}
-		Class<?> plugin = cl.loadClass(name);
+		
+		
+		if (bcPlugins.containsKey(name)||cloudPlugins.containsKey(name)) {
+				return;
+			}
+			Class<?> plugin = cl.loadClass(name);
+	
+			if(name.startsWith("cloud")){
+				try {							
+					//System.out.println("plug-in type : " + );
+					cloudPlugins.put(name, (CloudExecutor) plugin.newInstance());
+				} catch (InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}				
+				
+			}else if(name.startsWith("batch")){
+						try {							
+							//System.out.println("plug-in type : " + );
+							bcPlugins.put(name, (ProxyExecutor) plugin.newInstance());
+						} catch (InstantiationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 
-					try {
-						plugins.put(name, (ProxyExecutor) plugin.newInstance());
-					} catch (InstantiationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
+			}
 	}
 
+	public void LoadPlugin(String [] name){
+		
+		for(String pluginName:name){
+			try {
+				LoadPlugin(pluginName);
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				System.err.println(pluginName
+						+ " does not contain valid class data");
+			}
+			
+		}				
+		
+		
+	}
+	
 	/**
 	 * Loads all plugins from the plugin directory.
 	 * @see #LoadPlugin(String)
@@ -94,8 +130,7 @@ public class PluginManager {
 	 * @return List<String>
 	 */
 	public List<String> getList(){
-		File dir = new File(System.getProperty("user.dir") + File.separator
-				+ pluginsdir);
+		File dir = new File(System.getProperty("user.dir") + File.separator	+ pluginsdir);
 		File f = new File(dir.getPath());
 		File[] list = f.listFiles();
 		List<String> jars = new ArrayList<String>();
@@ -145,10 +180,14 @@ public class PluginManager {
 	 * @throws ClassNotFoundException
 	 */
 	public void UnloadPlugin(String name) throws ClassNotFoundException {
-		if (!plugins.containsKey(name)) {
+		if (!bcPlugins.containsKey(name)&&!cloudPlugins.containsKey(name)) {
 			throw new ClassNotFoundException("Plugin didn't loaded: " + name);
 		}
-		plugins.remove(name);
+		if(bcPlugins.containsKey(name)){
+			bcPlugins.remove(name);
+		}else if(cloudPlugins.containsKey(name)){
+			cloudPlugins.remove(name);
+		}
 		// and wait for GC runs..
 	}
 
@@ -162,15 +201,51 @@ public class PluginManager {
 		for (String name : GetLoadedPlugins()) {
 			UnloadPlugin(name);
 		}
-		plugins.clear();
+		bcPlugins.clear();
+		cloudPlugins.clear();
 	}
 
+	
+	public void UnloadAllBatchPlugins()throws ClassNotFoundException{
+		for (String name : GetLoadedBatchPlugins()) {
+			UnloadPlugin(name);
+		}
+		bcPlugins.clear();
+			
+	}
+	
+	public void UnloadAllCloudPlugins() throws ClassNotFoundException {
+		for (String name : GetLoadedCloudPlugins()) {
+			UnloadPlugin(name);
+		}
+		//bcPlugins.clear();
+		cloudPlugins.clear();
+	}
 	/**
 	 * Get loaded plugins.
 	 * @return a list of plugin names.
 	 */
 	public List<String> GetLoadedPlugins() {
-		return new ArrayList<String>(plugins.keySet());
+		ArrayList<String> al = new ArrayList<String> ();
+		al.addAll(bcPlugins.keySet());
+		al.addAll(cloudPlugins.keySet());
+		return al;
 	}
+
+
+	public List<String> GetLoadedCloudPlugins() {
+		ArrayList<String> al = new ArrayList<String> ();
+		//al.addAll(bcPlugins.keySet());
+		al.addAll(cloudPlugins.keySet());
+		return al;
+	}
+	
+	public List<String> GetLoadedBatchPlugins() {
+		ArrayList<String> al = new ArrayList<String> ();
+		al.addAll(bcPlugins.keySet());
+		//al.addAll(cloudPlugins.keySet());
+		return al;
+	}
+	
 
 }

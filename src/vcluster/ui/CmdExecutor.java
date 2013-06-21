@@ -44,7 +44,7 @@ public class CmdExecutor {
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		
 		String cmd = st.nextToken().trim();
-		
+		   
 		Command command = getCommand(cmd);
 		
 		// if (command == Command.NOT_DEFINED) return false;
@@ -91,7 +91,7 @@ public class CmdExecutor {
 	{
 
 		try{
-			Config.proxyExecutor = PluginManager.plugins.get(Config.ProxyExecutor_plugin);
+			Config.proxyExecutor = PluginManager.bcPlugins.get(Config.ProxyExecutor_plugin);
 		}catch(NullPointerException ne){
 			
 			System.out.println("\nno proxyExecutor,please register proxyExecutor plugin!\n");
@@ -130,10 +130,20 @@ public class CmdExecutor {
 		 * if not, call REST API for a specified cloud system,
 		 * which is chosen from cloud system pool based on priority.
 		 */
+		try{
+			Config.cloudExecutor = PluginManager.cloudPlugins.get(Config.CloudExecutor_plugin);
+		}catch(NullPointerException ne){
+			
+			System.out.println("\nno proxyExecutor,please register proxyExecutor plugin!\n");
+			System.out.println("          [USAGE] : plugin <register plugin_name | list>\n");
+			return false;
+		}
+		
+		
 		switch (command) {
-		case RUN_INSTANCE: return CloudExecutor.run_instance(Config.cloudMan.getCurrentCloud());
-		case DESCRIBE_INSTANCE: return CloudExecutor.describe_instance(Config.cloudMan.getCurrentCloud(), cmdLine);
-		case TERMINATE_INSTANCE: return CloudExecutor.terminate_instance(Config.cloudMan.getCurrentCloud(), cmdLine);
+		case RUN_INSTANCE: return Config.cloudExecutor.run_instance(Config.cloudMan.getCurrentCloud());
+		case DESCRIBE_INSTANCE: return Config.cloudExecutor.describe_instance(Config.cloudMan.getCurrentCloud(), cmdLine);
+		case TERMINATE_INSTANCE: return Config.cloudExecutor.terminate_instance(Config.cloudMan.getCurrentCloud(), cmdLine);
 
 		}
 		
