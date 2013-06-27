@@ -1,0 +1,141 @@
+\documentclass[11pt]{article}
+
+
+\usepackage{fancyhdr}
+
+%\usepackage{epsfig}
+\usepackage{amssymb}
+\usepackage{amstext}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage{tabls}
+\usepackage[mathcal]{euscript}
+\usepackage{moreverb}
+\usepackage{setspace}
+
+\usepackage{courier}
+\usepackage{url}
+%\usepackage{algorithmicx}
+%\usepackage[ruled]{algorithm}
+%\usepackage[noset]{algpseudocode}
+%\usepackage[noset]{algpascal}
+%\usepackage[noset]{algc}
+\usepackage{fancyvrb}
+
+
+
+\def \tit{\textit}
+\def \tsf{\textsf}
+\def \ttt{\texttt}
+\def \tbf{\textbf}
+\def \vb{\verb}
+
+
+\usepackage{draftwatermark}
+
+\SetWatermarkText{DRAFT v.0.1}
+\SetWatermarkLightness{0.95}
+\SetWatermarkScale{3}
+
+\begin{document}
+
+
+
+%\title{A Very Simple \LaTeXe{} Template}
+\title{\ttt{vcluster} Command Structure}
+\author{
+        Seo-Young Noh\thanks{The authors will be added on their contirbutions.} \\
+        $ $\\
+        National Institute of Supercomputing \& Networking\\
+        Korea Institute of Science and Technology Information\\
+        Youseong, Daejeon, 305-806, Korea\\
+        {rsyoung}@kisti.re.kr
+%            \and
+%        Yossi Gil\\
+%        Department of Computer Science\\
+%        Technion---Israel Institute of Technology\\
+%        Technion City, Haifa 32000, \underline{Israel}
+}
+\date{\today}
+
+%\date{}
+
+
+\maketitle
+
+\begin{abstract}
+This report provides the command scheme for \ttt{vcluster}.
+\end{abstract}
+
+
+%---------------------------------------------------------------------------
+\section{Overall View of Commands}
+
+A \vb+vcluster+ command consists of \tbf{Command Category} and \tbf{Real Command}. Command category indicates where a real command is belonging to. For example, we have to use \vb+plugman+ as a command category when handling plugin related works. Following shows command categories implemented (or to be implemented) in \vb+vcluster+.
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+      cloudman          command
+      plugman           command
+      vmman             command
+      [vclman]          command
+      ...               ...
+  
+\end{Verbatim}
+
+There is a special command category called \vb+vclman+ which can be omitted. Types of commands belonging to this category are including configurations, start and stop of \vb+vcluster+.
+
+
+\section{\ttt{plugman} commands}
+
+All commands after \vb+plugman+ are plugin related ones. Such commands are including load, unload, list of plugins. There are two types of plugins which are batch plugin and cloud plugin, respectivley. We will discuss plugin related commands in the following subsections.
+
+Like a general Linux command, \vb+-h+ or \vb+--help+ option shows the usages of \vb+plugman+ and commands.
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+  plugman 
+    -h, --help     list up all options and usages
+  
+\end{Verbatim}
+
+
+\subsection{\ttt{load}}
+This command loads a plugin or a bunch of plugins. Since one batch system plugin is only allowed at the same time, the structure of \vb+load+ command depends on the type of plugin.  
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+plugman 
+    load
+      -c PLUGIN... | --type=cloud PLUGIN... 
+      -b BATCH_PLUGIN | --type=batch PLUGIN
+      
+\end{Verbatim}
+
+
+The options \vb+-c+ and \vb+--type=cloud+ are identical. These options are saying that we are about to load cloud type plugin(s). Like the cloud type options, we can use \vb+-b+ and \vb+--type=batch+ options for a batch type plugin. Pleas note that unlike a cloud type plugin, only one batch plugin should be provided.
+
+Examples for this command are as below:
+
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+vcluster> plugman -c plugin-1
+vcluster> plugman --type=cloud plugin-1
+vcluster> plugman -c plugin-1 plugin-2 plugin-3
+vcluster> plugman --type=cloud plugin-1 plugin-2 plugin-3
+vcluster> plugman -b plugin-1
+vcluster> plugman --type=batch plugin-1
+vcluster> plugman -b plugin-1 plugin-2 plugin-3
+vcluster> plugman --type=batch plugin-1 plugin-2 plugin-3
+
+\end{Verbatim}
+
+
+\end{document}
