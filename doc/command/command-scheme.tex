@@ -46,7 +46,7 @@
 %\title{A Very Simple \LaTeXe{} Template}
 \title{\ttt{vcluster} Command Structure}
 \author{
-        Seo-Young Noh\thanks{The authors will be added on their contirbutions.} \\
+        Seo-Young Noh\thanks{Additional authors will be listed later depending on their contributions.} \\
         $ $\\
         National Institute of Supercomputing \& Networking\\
         Korea Institute of Science and Technology Information\\
@@ -71,6 +71,16 @@ This report provides the command scheme for \ttt{vcluster}.
 
 
 %---------------------------------------------------------------------------
+\section{TODO List}
+
+\begin{itemize}
+ \item Need to articulate this article
+ \item Need to add outputs of commands
+\end{itemize}
+
+
+
+
 \section{Overall View of Commands}
 
 A \vb+vcluster+ command consists of \tbf{Command Category} and \tbf{Real Command}. Command category indicates where a real command is belonging to. For example, we have to use \vb+plugman+ as a command category when handling plugin related works. Following shows command categories implemented (or to be implemented) in \vb+vcluster+.
@@ -89,7 +99,7 @@ A \vb+vcluster+ command consists of \tbf{Command Category} and \tbf{Real Command
 There is a special command category called \vb+vclman+ which can be omitted. Types of commands belonging to this category are including configurations, start and stop of \vb+vcluster+.
 
 
-\section{\ttt{plugman} commands}
+\section{Commands of \ttt{plugman} Category}
 
 All commands after \vb+plugman+ are plugin related ones. Such commands are including load, unload, list of plugins. There are two types of plugins which are batch plugin and cloud plugin, respectivley. We will discuss plugin related commands in the following subsections.
 
@@ -126,16 +136,95 @@ Examples for this command are as below:
 \begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
 =true, tabsize=4, frame=lines]
 
-vcluster> plugman -c plugin-1
-vcluster> plugman --type=cloud plugin-1
-vcluster> plugman -c plugin-1 plugin-2 plugin-3
-vcluster> plugman --type=cloud plugin-1 plugin-2 plugin-3
-vcluster> plugman -b plugin-1
-vcluster> plugman --type=batch plugin-1
-vcluster> plugman -b plugin-1 plugin-2 plugin-3
-vcluster> plugman --type=batch plugin-1 plugin-2 plugin-3
+vcluster> plugman load -c plugin-1
+vcluster> plugman load --type=cloud plugin-1
+
+vcluster> plugman load -c plugin-1 plugin-2 plugin-3
+vcluster> plugman load --type=cloud plugin-1 plugin-2 plugin-3
+
+vcluster> plugman load -b plugin-1
+vcluster> plugman load --type=batch plugin-1
+
+vcluster> plugman load -b plugin-1 plugin-2 plugin-3
+vcluster> plugman load --type=batch plugin-1 plugin-2 plugin-3
 
 \end{Verbatim}
 
 
+
+\subsection{\ttt{unload}}
+This command unloads a plugin or a bunch of plugins. This command unlike \vb+load+ command does not indicate the type of plugin(s) to be unloaded.
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+plugman 
+    unload PLUGIN...
+      
+\end{Verbatim}
+
+Below shows an example of this command.
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+vcluster> plugman unload plugin-1
+vcluster> plugman unload plugin-1 plugin-2
+
+\end{Verbatim}
+
+
+
+
+\subsection{\ttt{list}}
+This command lists up all designated plugins. Since \vb+vcluster+ does not have \vb+register+ command, it retrieves all plugins under a specifided plugin directory.
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+plugman 
+    list
+      -c | --type=cloud 
+      -b | --type=batch
+      
+\end{Verbatim}
+
+Below shows an example of this command.
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+vcluster> plugman list -c
+vcluster> plugman list --type=cloud
+
+vcluster> plugman list -b
+vcluster> plugman list --type=batch
+
+\end{Verbatim}
+
+
+\subsection{\ttt{info}}
+This command prints the information about a plugin. It will be used to retrieve detail information about the plugin. \textcolor{red}{TODO: plugin interface needs to provide this feature. We may need to introduce a structure containing required fields for this command.}
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+plugman 
+    info PLUGIN
+      
+\end{Verbatim}
+
+Below shows an example of this command.
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+vcluster> plugman info plugin-1
+      
+\end{Verbatim}
+
+
+
 \end{document}
+
+
