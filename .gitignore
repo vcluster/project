@@ -10,15 +10,5 @@
 .svn/
 bin/
 
-#LaTex Files 
-*.backup
-doc/command/*.pdf
-doc/command/*.aux
-doc/command/*.out
-doc/command/*.kilepr
-doc/command/*.ilg
-doc/command/*.log
-doc/command/*.out
-doc/command/*.ind
 
 
