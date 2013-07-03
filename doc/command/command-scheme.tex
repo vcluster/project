@@ -46,12 +46,12 @@
 %\title{A Very Simple \LaTeXe{} Template}
 \title{\ttt{vcluster} Command Structure}
 \author{
-        Seo-Young Noh\thanks{Additional authors will be listed later depending on their contributions.} \\
+        Seo-Young Noh, Dada Huang\thanks{Additional authors will be listed depending on their contributions.} \\
         $ $\\
         National Institute of Supercomputing \& Networking\\
         Korea Institute of Science and Technology Information\\
         Youseong, Daejeon, 305-806, Korea\\
-        {rsyoung}@kisti.re.kr
+        {rsyoung, huang\_dada}@kisti.re.kr
 %            \and
 %        Yossi Gil\\
 %        Department of Computer Science\\
@@ -177,7 +177,7 @@ vcluster> plugman unload plugin-1 plugin-2
 
 
 \subsection{\ttt{list}}
-This command lists up all designated plugins. Since \vb+vcluster+ does not have \vb+register+ command, it retrieves all plugins under a specifided plugin directory.
+This command lists up all designated plugins. Since \vb+vcluster+ does not have \vb+register+ command, it retrieves all plugins under a specifided plugin directory. When listing up plugins currently being used, option \vb+-l+ or \vb+--loaded+ can be used at the end of command.
 
 \begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
 =true, tabsize=4, frame=lines]
@@ -186,10 +186,11 @@ plugman
     list
       -c | --type=cloud 
       -b | --type=batch
+      -l | --loaded
       
 \end{Verbatim}
 
-Below shows an example of this command.
+You may combine \vb+-c+ and \vb+-l+ options to show up all loaded cloud plugins. The following shows examples of this command.
 
 \begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
 =true, tabsize=4, frame=lines]
@@ -200,7 +201,20 @@ vcluster> plugman list --type=cloud
 vcluster> plugman list -b
 vcluster> plugman list --type=batch
 
+vcluster> plugman list -l
+vcluster> plugman list --loaded
+
+vcluster> plugman list -l -c
+vcluster> plugman list -l --type=cloud
+vcluster> plugman list --loaded -c
+
+vcluster> plugman list -l -b
+vcluster> plugman list -l --type=batch
+vcluster> plugman list --loaded -b
+
 \end{Verbatim}
+
+\textcolor{red}{TODO: when listing up all plugins under a directory, the output should exlicitly mention that the outputs are coming from a directory, not from memory.}
 
 
 \subsection{\ttt{info}}
