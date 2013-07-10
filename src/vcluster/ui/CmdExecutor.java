@@ -42,7 +42,7 @@ public class CmdExecutor {
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		
 		String cmd = st.nextToken().trim();
-		   
+		
 		Command command = getCommand(cmd);
 		
 		// if (command == Command.NOT_DEFINED) return false;
@@ -128,7 +128,6 @@ public class CmdExecutor {
 		 * if not, call REST API for a specified cloud system,
 		 * which is chosen from cloud system pool based on priority.
 		 */
-		
 		switch (command) {
 		case RUN_INSTANCE: return PluginManager.current_cloudExecutor.run_instance(Config.cloudMan.getCurrentCloud());
 		case DESCRIBE_INSTANCE: return PluginManager.current_cloudExecutor.describe_instance(Config.cloudMan.getCurrentCloud(), cmdLine);

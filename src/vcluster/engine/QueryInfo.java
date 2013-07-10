@@ -4,22 +4,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import vcluster.ui.Menu;
+import vcluster.ui.Command;
+
+//import vcluster.ui.Menu;
 
 public class QueryInfo {
 
 	public QueryInfo()
 	{
-		cmdType = Menu.TYPE_NOT_DEFINED;
+		cmdType =  Command.NOT_DEFINED;
 	    attrMap = new HashMap<String, String>();
 	}
 
-	public void putCmdType(int aCmdType)
+	public void putCmdType(Command aCmdType)
 	{
 		cmdType = aCmdType;
 	}
 	
-	public int getCmdType()
+	public Command getCmdType()
 	{
 		return cmdType;
 	}
@@ -54,5 +56,5 @@ public class QueryInfo {
 	
 	
     private Map <String, String> attrMap;
-    private int cmdType = Menu.TYPE_NOT_DEFINED;
+    private Command cmdType =  Command.NOT_DEFINED;
 }

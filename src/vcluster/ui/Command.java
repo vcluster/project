@@ -24,7 +24,10 @@ public enum Command {
 	TYPE_CLOUD(CMD_GROUP.PARAMETER,"-c,-cloud,--type=cloud"),
 	LOADED(CMD_GROUP.PARAMETER,"-l,-loaded,--loaded"),
 	
-	/* cloud API command */
+	/* cloud plugin commands which are translated to corresponding underlying
+	 * cloud commands. Cloud plugin(s) can communicate with a proxy running
+	 * on a cloud system or through EC2 API.
+	 */
 	RUN_INSTANCE (CMD_GROUP.CLOUD, "RunInstances, runinstance, ri, runinst, runins, run"),
 	START_INSTANCE (CMD_GROUP.CLOUD, "StartInstances, startinstance, si, startinst, startins, start"),
 	STOP_INSTANCE (CMD_GROUP.CLOUD, "StopInstances, stopinstance, stop"),
@@ -32,11 +35,17 @@ public enum Command {
 	TERMINATE_INSTANCE (CMD_GROUP.CLOUD, "TerminateInstances, terminateinstance, terminate, ti, kill, killins"),
 	DESCRIBE_IMAGE (CMD_GROUP.CLOUD, "DescribeImages, describeimage, dim, dimg, descimg"),
 	
-	/* proxy server command */ 
+	/* batch plugin commands which are translated to a corresponding underlying 
+	 * batch commands 
+	 */ 
 	CHECK_POOL (CMD_GROUP.PROXY_SERVER, "chkp, chkpool, checkpool, checkp"),
 	CHECK_Q (CMD_GROUP.PROXY_SERVER, "chkq, chkqueue, checkqueue, checkq"),
-	CONDOR (CMD_GROUP.PROXY_SERVER, "condor_status, condor_q"),
-	ONEVM (CMD_GROUP.PROXY_SERVER, "onevm, oneimage, onevnet"),
+	
+	/* the following commands should be removed and integrated to vcluster commands
+	 * 
+	 */
+	//CONDOR (CMD_GROUP.PROXY_SERVER, "condor_status, condor_q"),
+	//ONEVM (CMD_GROUP.PROXY_SERVER, "onevm, oneimage, onevnet"),
 	
 	/* not defined */
 	NOT_DEFINED (CMD_GROUP.NOT_DEFINED, "not_defined");
