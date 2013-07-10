@@ -100,8 +100,8 @@ public class CmdExecutor {
 		switch (command) {
 		case CHECK_POOL: return PluginManager.current_proxyExecutor.check_pool();
 		case CHECK_Q: return PluginManager.current_proxyExecutor.check_q();
-		case CONDOR: return PluginManager.current_proxyExecutor.condor(cmdLine);
-		case ONEVM: return PluginManager.current_proxyExecutor.onevm(cmdLine);
+		//case CONDOR: return PluginManager.current_proxyExecutor.condor(cmdLine);
+		//case ONEVM: return PluginManager.current_proxyExecutor.onevm(cmdLine);
 		}
 		
 		return true;
