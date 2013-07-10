@@ -28,12 +28,26 @@ public enum Command {
 	 * cloud commands. Cloud plugin(s) can communicate with a proxy running
 	 * on a cloud system or through EC2 API.
 	 */
+	/*
+	 * The following commands now should be combined to vmman. Commands in vmman are including
+	 *  create
+	 *  destroy
+	 *  suspend
+	 *  list
+	 * 
+	 * For example, create command will create a virtual machine. This command 
+	 * initially contacts a cloud plugin first, if the plugin implements EC2 interface, 
+	 * it will generate http string to create a virtual machine; otherwise, it directly
+	 * sends a cloud command like "onevm create <template>"
+	 * 
+	 * 
 	RUN_INSTANCE (CMD_GROUP.CLOUD, "RunInstances, runinstance, ri, runinst, runins, run"),
 	START_INSTANCE (CMD_GROUP.CLOUD, "StartInstances, startinstance, si, startinst, startins, start"),
 	STOP_INSTANCE (CMD_GROUP.CLOUD, "StopInstances, stopinstance, stop"),
 	DESCRIBE_INSTANCE (CMD_GROUP.CLOUD, "DescribeInstances, describeinstance, din, dins, descinst, descins"),
 	TERMINATE_INSTANCE (CMD_GROUP.CLOUD, "TerminateInstances, terminateinstance, terminate, ti, kill, killins"),
 	DESCRIBE_IMAGE (CMD_GROUP.CLOUD, "DescribeImages, describeimage, dim, dimg, descimg"),
+	*/
 	
 	/* batch plugin commands which are translated to a corresponding underlying 
 	 * batch commands 
