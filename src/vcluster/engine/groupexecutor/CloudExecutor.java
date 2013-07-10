@@ -11,5 +11,6 @@ public interface CloudExecutor {
 	public boolean stop_instance(CloudElement cloud, String cmdLine);
 	public boolean describe_image(CloudElement cloud, String cmdLine);
 	public boolean rest_launch(CloudElement cloud);
+	public String getInfo();
 	
 }

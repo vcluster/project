@@ -17,6 +17,7 @@ import vcluster.engine.groupexecutor.CloudExecutor;
 import vcluster.global.Config;
 import vcluster.global.Config.CloudType;
 import vcluster.global.Config.VMState;
+import vcluster.plugin.PluginManager;
 import vcluster.ui.Command;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
@@ -185,7 +186,7 @@ public class VMManager extends Thread {
 		PrintMsg.print(DMsgType.MSG, "launching "+numVMs+" vms using REST API.");
 	    
 	    for(int i = 0 ; i < numVMs; i++) {
-	    	Config.cloudExecutor.rest_launch(cloud);
+	    	PluginManager.current_cloudExecutor.rest_launch(cloud);
 	    }
 	    
 	    return true;

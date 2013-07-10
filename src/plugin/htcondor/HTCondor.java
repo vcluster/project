@@ -309,6 +309,14 @@ public class HTCondor implements ProxyExecutor{
 		// TODO Auto-generated method stub
 		return QStatus.getRatio();
 	}
+
+	@Override
+	public String getInfo() {
+		// TODO Auto-generated method stub
+		StringBuffer info = new StringBuffer();
+		info.append("Under Creating...");
+		return info.toString();
+	}
 	
 
 }

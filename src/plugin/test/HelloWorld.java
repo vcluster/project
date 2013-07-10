@@ -72,4 +72,10 @@ public class HelloWorld implements ProxyExecutor {
 		return 0;
 	}
 
+	@Override
+	public String getInfo() {
+		// TODO Auto-generated method stub
+		return "This is a test plugin";
+	}
+
 }

@@ -4,6 +4,7 @@ import java.util.concurrent.BlockingQueue;
 
 import vcluster.global.Config;
 import vcluster.monitoring.MonMessage.MonMsgType;
+import vcluster.plugin.PluginManager;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
 
@@ -66,10 +67,10 @@ public class QStatusChecker extends Thread {
 	private synchronized void getQStatus() 
 	{
 		try {
-			Config.proxyExecutor.condor("condor_q");
+			PluginManager.current_proxyExecutor.condor("condor_q");
 			
-			int runningJobs = Config.proxyExecutor.getRunningJob();
-			int idleJobs = Config.proxyExecutor.getIdleJob();
+			int runningJobs = PluginManager.current_proxyExecutor.getRunningJob();
+			int idleJobs = PluginManager.current_proxyExecutor.getIdleJob();
 			
 			if (runningJobs <= 0) runningJobs = 1;
 			ratio = (double) (idleJobs/(runningJobs));

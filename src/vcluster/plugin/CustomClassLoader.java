@@ -1,6 +1,7 @@
 package vcluster.plugin;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -24,16 +25,14 @@ public class CustomClassLoader extends ClassLoader {
 	/**
 	 * Specifys the directory where the plugin files are located. 
 	 */
-	private File directory;
 	
 	/**
 	 * Invoke the superclass's constructor and initialize the plugins directory.
 	 * @param dir The plugins directory
 	 * */
 	// @Override
-	public CustomClassLoader(File dir){
+	public CustomClassLoader(){
 		super(CustomClassLoader.class.getClassLoader());
-		this.directory = dir;
 	}
 	
 	/**
@@ -43,11 +42,11 @@ public class CustomClassLoader extends ClassLoader {
 	 * @exception ClassNotFoundException
 	 * 
 	 */
-	public Class<?> loadClass(String jarName) throws ClassNotFoundException{
+	public Class<?> loadClass(String jarName){
 		
 		try {  
 			  
-			  File f = new File(directory,jarName+".jar");
+			  File f = new File(jarName);
 			  JarFile jarFile = new JarFile(f);  
 			  URL url = f.toURI().toURL();
 			  //@test

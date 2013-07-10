@@ -15,6 +15,6 @@ public interface ProxyExecutor {
 	public int getRunningJob();
 	public int getHeldJob();
 	public double getRatio();
-
+	public String getInfo();
 
 }

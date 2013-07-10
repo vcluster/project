@@ -16,7 +16,9 @@ public enum Command {
 	LOAD (CMD_GROUP.VCLUSTER, "load"),
 	SET (CMD_GROUP.VCLUSTER, "set"),
 	ENGMODE (CMD_GROUP.VCLUSTER, "engmode"),
-	PLUGIN (CMD_GROUP.VCLUSTER, "plugin"),
+	
+	/*plugin command*/
+	PLUGMAN (CMD_GROUP.VCLUSTER, "plugin,pluginman,plugman,pm"),
 	
 	
 	/* cloud API command */

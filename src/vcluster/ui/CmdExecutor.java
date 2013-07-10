@@ -1,9 +1,7 @@
 package vcluster.ui;
 
-import java.util.List;
 import java.util.StringTokenizer;
 
-import vcluster.engine.groupexecutor.CloudExecutor;
 import vcluster.engine.groupexecutor.VClusterExecutor;
 import vcluster.global.Config;
 import vcluster.plugin.PluginManager;
@@ -79,8 +77,8 @@ public class CmdExecutor {
 			return VClusterExecutor.set(cmdLine);
 		case ENGMODE:
 			return VClusterExecutor.engmode(cmdLine);
-		case PLUGIN:
-			return VClusterExecutor.plugin(cmdLine);
+		case PLUGMAN:
+			return VClusterExecutor.plugman(cmdLine);
 		}
 		
 		return true;
@@ -89,21 +87,21 @@ public class CmdExecutor {
 
 	private static boolean executeProxy(Command command, String cmdLine)
 	{
-
+/*
 		try{
-			Config.proxyExecutor = PluginManager.bcPlugins.get(Config.ProxyExecutor_plugin);
+			Config.proxyExecutor = PluginManager.bcPlugins.get(Config.batch_plugin);
 		}catch(NullPointerException ne){
 			
 			System.out.println("\nno proxyExecutor,please register proxyExecutor plugin!\n");
 			System.out.println("          [USAGE] : plugin <register plugin_name | list>\n");
 			return false;
 		}
-		
+		*/
 		switch (command) {
-		case CHECK_POOL: return Config.proxyExecutor.check_pool();
-		case CHECK_Q: return Config.proxyExecutor.check_q();
-		case CONDOR: return Config.proxyExecutor.condor(cmdLine);
-		case ONEVM: return Config.proxyExecutor.onevm(cmdLine);
+		case CHECK_POOL: return PluginManager.current_proxyExecutor.check_pool();
+		case CHECK_Q: return PluginManager.current_proxyExecutor.check_q();
+		case CONDOR: return PluginManager.current_proxyExecutor.condor(cmdLine);
+		case ONEVM: return PluginManager.current_proxyExecutor.onevm(cmdLine);
 		}
 		
 		return true;
@@ -130,20 +128,11 @@ public class CmdExecutor {
 		 * if not, call REST API for a specified cloud system,
 		 * which is chosen from cloud system pool based on priority.
 		 */
-		try{
-			Config.cloudExecutor = PluginManager.cloudPlugins.get(Config.CloudExecutor_plugin);
-		}catch(NullPointerException ne){
-			
-			System.out.println("\nno proxyExecutor,please register proxyExecutor plugin!\n");
-			System.out.println("          [USAGE] : plugin <register plugin_name | list>\n");
-			return false;
-		}
-		
 		
 		switch (command) {
-		case RUN_INSTANCE: return Config.cloudExecutor.run_instance(Config.cloudMan.getCurrentCloud());
-		case DESCRIBE_INSTANCE: return Config.cloudExecutor.describe_instance(Config.cloudMan.getCurrentCloud(), cmdLine);
-		case TERMINATE_INSTANCE: return Config.cloudExecutor.terminate_instance(Config.cloudMan.getCurrentCloud(), cmdLine);
+		case RUN_INSTANCE: return PluginManager.current_cloudExecutor.run_instance(Config.cloudMan.getCurrentCloud());
+		case DESCRIBE_INSTANCE: return PluginManager.current_cloudExecutor.describe_instance(Config.cloudMan.getCurrentCloud(), cmdLine);
+		case TERMINATE_INSTANCE: return PluginManager.current_cloudExecutor.terminate_instance(Config.cloudMan.getCurrentCloud(), cmdLine);
 
 		}
 		

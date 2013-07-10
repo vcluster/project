@@ -2,10 +2,12 @@ package vcluster.engine.groupexecutor;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -58,8 +60,7 @@ public class VClusterExecutor {
 	}
 	
 	public static boolean vmman(String cmdLine)
-	{
-		
+	{		
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		String token = null;
 		
@@ -161,6 +162,7 @@ public class VClusterExecutor {
 		if (token.equalsIgnoreCase("set")) {
 			
 			if (st.hasMoreTokens()) {
+				
 				token = st.nextToken().trim();
 				
 				if(token.equalsIgnoreCase("private")) {
@@ -403,7 +405,7 @@ public class VClusterExecutor {
     	        if (str.contains("Total") && !str.contains("Owner")) {
     	        	//PoolStatus.extractInfo(str);
     	        	//PoolStatus.printQStatus();
-    	        	Config.proxyExecutor.check_pool();
+    	        	PluginManager.current_proxyExecutor.check_pool();
     	        }
     	        
     	        for(int i = 0; i< 1024; i++)
@@ -426,12 +428,12 @@ public class VClusterExecutor {
 		return true;
 	}
 	
-	public static boolean plugin(String cmdLine) {
+	public static boolean plugman(String cmdLine) {
 		// TODO Auto-generated method stub
 		
 		PluginManager pm = new PluginManager();
-		//get the plugin list
-		List<String> pluginsList = pm.getList();
+		List<String> cloudPluginsList = pm.getCloudPluginList();
+		List<String> batchPluginsList = pm.getBatchPluginList();		
 		
 		StringTokenizer st = new StringTokenizer(cmdLine);
 
@@ -439,55 +441,164 @@ public class VClusterExecutor {
 		st.nextToken();
 
 		if (!st.hasMoreTokens()) {
-			System.out.println("[USAGE] : plugin <register plugin_name | list>");
+			System.out.println(pm.getUsage());
+	
 			return false;
 		}
 		
 		/* get a token to set */
 		String para = st.nextToken().trim();
-		if(para.equalsIgnoreCase("list")){
+		
+		if(para.equalsIgnoreCase("-h")){
+			System.out.println(pm.getUsage());
+			return false;
+			
+		}		
+		else if(para.equalsIgnoreCase("list")){
+			System.out.println("Following if ");
+			if(!st.hasMoreTokens()) {
+				System.out.println("Batch plugins : ");
+				for(String batchplugin : pm.getBatchPluginList()){
+					
+					System.out.println("      " + batchplugin);
+				}
+				System.out.println("----------------------------------------");
+				System.out.println("Cloud plugins : ");
+				for(String cloudplugin : cloudPluginsList){
+					
+					System.out.println("      " + cloudplugin);
+				}
+				
+				
+				return true;
+			}
+			
+			String para2 = st.nextToken().trim();
+			if(para2.equalsIgnoreCase("-b")){
+				System.out.println("Batch plugins : ");
+				for(String batchplugin : pm.getBatchPluginList()){
+					
+					System.out.println("      " + batchplugin);
+				}
+			}else if(para2.equalsIgnoreCase("-c")){
+				System.out.println("Cloud plugins : ");
+				for(String cloudplugin : cloudPluginsList){
+					
+					System.out.println("      " + cloudplugin);
+				}
+			}else if(para2.equalsIgnoreCase("-l")){
+				System.out.println("Loaded Batch plugin : ");
+				for(String loadedcloud : pm.GetLoadedBatchPlugins()){
+					System.out.println("         " + loadedcloud);
+				}
+				System.out.println("Loaded Cloud plugins : ");
+				for(String loadedcloud : pm.GetLoadedCloudPlugins()){
+					System.out.println("         " + loadedcloud);
+				}
+				
+			}else {
+				PrintMsg.print(DMsgType.ERROR, "no such a parameter like \""+para2+"\" !");
+				return false;
+			}
+			
 			if(st.hasMoreTokens()) {
 				PrintMsg.print(DMsgType.ERROR, "unexpected token \""+st.nextToken()+"\" found!");
 				return false;
 			}
-
-			System.out.println("Loaded Plugins: " + pluginsList.size());
-			for (String name : pluginsList) {
-				System.out.println("  " + name);
-			}
 			
 			return true;
-		}else if(para.equalsIgnoreCase("register")){
-			String pluginName = "";
+		}		
+		
+		else if(para.equalsIgnoreCase("load")){
+			String pluginPath = "";
+			if(!st.hasMoreTokens()){
+				PrintMsg.print(DMsgType.ERROR, "expected a plugin type!");
+				System.out.println("[USAGE] : plugman <load -pluginType pluginName>");
+				return false;
+			}
+			String pluginType = st.nextToken().trim();
+			if(pluginType.equalsIgnoreCase("-b")){
+				File dir = new File(System.getProperty("user.dir") + File.separator
+						+ PluginManager.BATCH_PLUGIN_DIR);
+				pluginPath = dir.getPath();
+			}else if(pluginType.equalsIgnoreCase("-c")){
+				File dir = new File(System.getProperty("user.dir") + File.separator
+						+ PluginManager.CLOUD_PLUGIN_DIR);
+				pluginPath = dir.getPath();
+			}
+
+			List<String> pluginNames = new ArrayList<String>();
 			if(st.hasMoreTokens()) {
-				   pluginName = st.nextToken().trim();
+				    pluginNames.add(st.nextToken().trim());
 
 			}else{
 				PrintMsg.print(DMsgType.ERROR, "expected a plugin name!");
 				System.out.println("[USAGE] : plugin <register plugin_name | list>");
 				return false;
 			}
-				if(pluginsList.contains(pluginName)){				
+		    if(pluginType.equalsIgnoreCase("-c")){		    	
+		    
+				while(st.hasMoreTokens()){
+				    pluginNames.add(st.nextToken().trim());
+				}
+			
+		    }else if(pluginType.equalsIgnoreCase("-b")&st.hasMoreTokens()){
+		    	System.out.println("Only one batch plugin can be loaded at the same time, the rest will be ignored!");
+		    }
+				for(String pluginName:pluginNames){
+					//System.out.println(pluginName);
+					if(batchPluginsList.contains(pluginName)){
 
-					if(Config.ProxyExecutor_plugin.equalsIgnoreCase(pluginName)){
-						//System.out.print(Config.ProxyExecutor_plugin);
-						//System.out.println(" : "+pluginName);
-						PrintMsg.print(DMsgType.ERROR, pluginName + " has already been loaded!");
-					}else{
-						Config.ProxyExecutor_plugin = pluginName;
-					   try {
-							pm.UnloadAllPlugins();
-							pm.LoadPlugin(pluginName);
+						try {
+							//System.out.println(pluginPath + File.separator + pluginName);
+							pm.LoadPlugin(pluginPath + File.separator + pluginName+".jar",pluginType);
+							System.out.println("Plugin \""+pluginName+"\" has been loaded successfully!");
 						} catch (ClassNotFoundException e) {
 							// TODO Auto-generated catch block
-							e.printStackTrace();
+							System.out.println("[ERROR:] No such a plugin,please check your input!");
 							return false;
 						}
+						
+					}else{
+						System.out.println("[ERROR:] No such a plugin,please check your input!");
 					}
-				}else{
-					System.out.println("[ERROR:] No such a plugin,please check your input!");
 				}
+				return true;
+			}
+		else if(para.equalsIgnoreCase("unload")){
+			if(!st.hasMoreTokens()){
+				PrintMsg.print(DMsgType.ERROR, "expected a plugin name!");
+				System.out.println("[USAGE] : plugman <unload pluginName>");
+				return false;
+			}
+			while(st.hasMoreTokens()){
+				try {
+					pm.UnloadPlugin(st.nextToken());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					System.out.println(e.getMessage());
+					return false;
+				}
+			}			
+			
+		}
+		else if(para.equalsIgnoreCase("info")){			
+			if(!st.hasMoreTokens()){
+				PrintMsg.print(DMsgType.ERROR, "expected a plugin name!");
+				System.out.println("[USAGE] : plugman <unload pluginName>");
+				return false;
+			}
+			String pluginName = st.nextToken();
+			if(pm.isLoaded(pluginName)){
+				System.out.println(PluginManager.loadedBatchPlugins.get(pluginName).getInfo());		
+				
 			}else{
+				System.out.println("This plugin doesn't exist!");
+			}
+			
+			
+		}
+		else{
 				PrintMsg.print(DMsgType.ERROR, "no such a parameter like \""+para+"\" !");
 				System.out.println("\n         [USAGE] : plugin <register plugin_name | list>");
 			}
@@ -504,13 +615,12 @@ public class VClusterExecutor {
 	private static void closeStream(BufferedReader in, DataOutputStream out, Socket socket)
 	{
 		try {
-	        if (in != null) in.close();
-	        if (out != null) out.close();
-	        if (socket != null) socket.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		        if (in != null) in.close();
+		        if (out != null) out.close();
+		        if (socket != null) socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	}
-
 
 }
