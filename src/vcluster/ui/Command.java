@@ -16,10 +16,13 @@ public enum Command {
 	LOAD (CMD_GROUP.VCLUSTER, "load"),
 	SET (CMD_GROUP.VCLUSTER, "set"),
 	ENGMODE (CMD_GROUP.VCLUSTER, "engmode"),
-	
-	/*plugin command*/
 	PLUGMAN (CMD_GROUP.VCLUSTER, "plugin,pluginman,plugman,pm"),
-	
+
+	/*parameters*/
+	HELP(CMD_GROUP.PARAMETER,"-h,-help,--help"),
+	TYPE_BATCH(CMD_GROUP.PARAMETER,"-b,-batch,--type=batch"),
+	TYPE_CLOUD(CMD_GROUP.PARAMETER,"-c,-cloud,--type=cloud"),
+	LOADED(CMD_GROUP.PARAMETER,"-l,-loaded,--loaded"),
 	
 	/* cloud API command */
 	RUN_INSTANCE (CMD_GROUP.CLOUD, "RunInstances, runinstance, ri, runinst, runins, run"),
@@ -88,6 +91,7 @@ public enum Command {
 		VCLUSTER,
 		CLOUD,
 		PROXY_SERVER,
+		PARAMETER,
 		NOT_DEFINED
 	}
 	

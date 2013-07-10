@@ -21,6 +21,7 @@ import vcluster.plugin.PluginManager;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
 import vcluster.util.Util;
+import vcluster.ui.Command;
 
 public class VClusterExecutor {
 	public static boolean debug_mode(String cmdLine)
@@ -430,7 +431,7 @@ public class VClusterExecutor {
 	
 	public static boolean plugman(String cmdLine) {
 		// TODO Auto-generated method stub
-		
+
 		PluginManager pm = new PluginManager();
 		List<String> cloudPluginsList = pm.getCloudPluginList();
 		List<String> batchPluginsList = pm.getBatchPluginList();		
@@ -449,13 +450,13 @@ public class VClusterExecutor {
 		/* get a token to set */
 		String para = st.nextToken().trim();
 		
-		if(para.equalsIgnoreCase("-h")){
+		if(Command.HELP.contains(para)){
 			System.out.println(pm.getUsage());
 			return false;
 			
 		}		
 		else if(para.equalsIgnoreCase("list")){
-			System.out.println("Following if ");
+			System.out.println("List the plugins in plugin directory :");
 			if(!st.hasMoreTokens()) {
 				System.out.println("Batch plugins : ");
 				for(String batchplugin : pm.getBatchPluginList()){
@@ -474,27 +475,46 @@ public class VClusterExecutor {
 			}
 			
 			String para2 = st.nextToken().trim();
-			if(para2.equalsIgnoreCase("-b")){
+			if(Command.TYPE_BATCH.contains(para2)){
 				System.out.println("Batch plugins : ");
 				for(String batchplugin : pm.getBatchPluginList()){
 					
 					System.out.println("      " + batchplugin);
 				}
-			}else if(para2.equalsIgnoreCase("-c")){
+			}else if(Command.TYPE_CLOUD.contains(para2)){
 				System.out.println("Cloud plugins : ");
 				for(String cloudplugin : cloudPluginsList){
 					
 					System.out.println("      " + cloudplugin);
 				}
-			}else if(para2.equalsIgnoreCase("-l")){
-				System.out.println("Loaded Batch plugin : ");
-				for(String loadedcloud : pm.GetLoadedBatchPlugins()){
-					System.out.println("         " + loadedcloud);
+			}else if(Command.LOADED.contains(para2)){
+				if(!st.hasMoreTokens()){
+					System.out.println("Loaded Batch plugin : ");
+					for(String loadedcloud : pm.GetLoadedBatchPlugins()){
+						System.out.println("         " + loadedcloud);
+					}
+					System.out.println("Loaded Cloud plugins : ");
+					for(String loadedcloud : pm.GetLoadedCloudPlugins()){
+						System.out.println("         " + loadedcloud);
+					}
+				}else{
+					String type = st.nextToken();
+					if(Command.TYPE_BATCH.contains(type)){
+						System.out.println("Loaded Batch plugin : ");
+						for(String loadedcloud : pm.GetLoadedBatchPlugins()){
+							System.out.println("         " + loadedcloud);
+						}
+					}
+					else if(Command.TYPE_CLOUD.contains(type)){
+						System.out.println("Loaded Cloud plugins : ");
+						for(String loadedcloud : pm.GetLoadedCloudPlugins()){
+							System.out.println("         " + loadedcloud);
+						}
+					}
+					
 				}
-				System.out.println("Loaded Cloud plugins : ");
-				for(String loadedcloud : pm.GetLoadedCloudPlugins()){
-					System.out.println("         " + loadedcloud);
-				}
+				
+				
 				
 			}else {
 				PrintMsg.print(DMsgType.ERROR, "no such a parameter like \""+para2+"\" !");
@@ -517,11 +537,11 @@ public class VClusterExecutor {
 				return false;
 			}
 			String pluginType = st.nextToken().trim();
-			if(pluginType.equalsIgnoreCase("-b")){
+			if(Command.TYPE_BATCH.contains(pluginType)){
 				File dir = new File(System.getProperty("user.dir") + File.separator
 						+ PluginManager.BATCH_PLUGIN_DIR);
 				pluginPath = dir.getPath();
-			}else if(pluginType.equalsIgnoreCase("-c")){
+			}else if(Command.TYPE_CLOUD.contains(pluginType)){
 				File dir = new File(System.getProperty("user.dir") + File.separator
 						+ PluginManager.CLOUD_PLUGIN_DIR);
 				pluginPath = dir.getPath();
@@ -536,23 +556,23 @@ public class VClusterExecutor {
 				System.out.println("[USAGE] : plugin <register plugin_name | list>");
 				return false;
 			}
-		    if(pluginType.equalsIgnoreCase("-c")){		    	
+		    if(Command.TYPE_CLOUD.contains(pluginType)){		    	
 		    
 				while(st.hasMoreTokens()){
 				    pluginNames.add(st.nextToken().trim());
 				}
 			
-		    }else if(pluginType.equalsIgnoreCase("-b")&st.hasMoreTokens()){
+		    }else if(Command.TYPE_BATCH.contains(pluginType)&st.hasMoreTokens()){
 		    	System.out.println("Only one batch plugin can be loaded at the same time, the rest will be ignored!");
 		    }
 				for(String pluginName:pluginNames){
 					//System.out.println(pluginName);
-					if(batchPluginsList.contains(pluginName)){
+					if(batchPluginsList.contains(pluginName)|cloudPluginsList.contains(pluginName)){
 
 						try {
 							//System.out.println(pluginPath + File.separator + pluginName);
 							pm.LoadPlugin(pluginPath + File.separator + pluginName+".jar",pluginType);
-							System.out.println("Plugin \""+pluginName+"\" has been loaded successfully!");
+
 						} catch (ClassNotFoundException e) {
 							// TODO Auto-generated catch block
 							System.out.println("[ERROR:] No such a plugin,please check your input!");

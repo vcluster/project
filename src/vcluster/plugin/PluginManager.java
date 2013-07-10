@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import vcluster.engine.groupexecutor.CloudExecutor;
 import vcluster.engine.groupexecutor.ProxyExecutor;
+import vcluster.ui.Command;
 
 /**
  *  This class is responsible for managing plugins,including loading plugins into the JVM,unloading plugins,maintaining a plugin list.
@@ -17,13 +18,15 @@ public class PluginManager {
 
 	public static ProxyExecutor current_proxyExecutor;
 	public static CloudExecutor current_cloudExecutor;
-	public static final String CLOUD_PLUGIN_DIR = "plugins/cloud";
-	public static final String BATCH_PLUGIN_DIR = "plugins/batch";	
+	public static final String CLOUD_PLUGIN_DIR = "plugins"+File.separator+"cloud";
+	public static final String BATCH_PLUGIN_DIR = "plugins"+File.separator+"batch";	
+	
+	
 	public static Map<String, ProxyExecutor> loadedBatchPlugins = new HashMap<String, ProxyExecutor>();
 	public static Map<String, CloudExecutor> loadedCloudPlugins = new HashMap<String, CloudExecutor>();
 	private CustomClassLoader cl;//An instance of CustomClassLoader,it is responsible for loading classes form jar files.
 
-
+	
 	public PluginManager() {
 		// TODO Auto-generated constructor stub
 		cl = new CustomClassLoader();
@@ -45,10 +48,12 @@ public class PluginManager {
 			}
 			Class<?> plugin = cl.loadClass(path);
 	
-			if(type.equalsIgnoreCase("-c")){
+			if(Command.TYPE_CLOUD.contains(type)){
 				try {							
 					//System.out.println("plug-in type : " + );
-					loadedCloudPlugins.put(name, (CloudExecutor) plugin.newInstance());
+					CloudExecutor ce = (CloudExecutor) plugin.newInstance();
+					loadedCloudPlugins.put(name, ce);
+					current_cloudExecutor = ce;
 				} catch (InstantiationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -57,7 +62,7 @@ public class PluginManager {
 					e.printStackTrace();
 				}				
 				
-			}else if(type.equalsIgnoreCase("-b")){
+			}else if(Command.TYPE_BATCH.contains(type)){
 						try {							
 							//System.out.println("plug-in type : " + );
 							loadedBatchPlugins.clear();
@@ -73,6 +78,7 @@ public class PluginManager {
 						}
 
 			}
+			System.out.println("Plugin \""+name+"\" has been loaded successfully!");
 	}
 
 		
