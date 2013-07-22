@@ -6,19 +6,38 @@ import java.util.StringTokenizer;
 
 public enum Command {
 
-	/* vcluster command */
-	QUIT (CMD_GROUP.VCLUSTER, "quit, exit, done, stop"),
-	DEBUG_MODE (CMD_GROUP.VCLUSTER, "debug"),
-	VMMAN (CMD_GROUP.VCLUSTER, "vmman, vman"),
-	MONITOR (CMD_GROUP.VCLUSTER, "monitor, mon"),
-	CLOUDMAN (CMD_GROUP.VCLUSTER, "cloudman, clman, cman"),
-	SHOW (CMD_GROUP.VCLUSTER, "show, sh"),
-	LOAD (CMD_GROUP.VCLUSTER, "load"),
-	SET (CMD_GROUP.VCLUSTER, "set"),
-	ENGMODE (CMD_GROUP.VCLUSTER, "engmode"),
-	PLUGMAN (CMD_GROUP.VCLUSTER, "plugin,pluginman,plugman,pm"),
-
-	/*parameters*/
+	/* Commands of vclman Category */
+	QUIT (CMD_GROUP.VCLMAN, "quit, exit, done, stop"),
+	DEBUG_MODE (CMD_GROUP.VCLMAN, "debug"),
+	//VMMAN (CMD_GROUP.VCLMAN, "vmman, vman"),
+	MONITOR (CMD_GROUP.VCLMAN, "monitor, mon"),
+	CLOUDMAN (CMD_GROUP.VCLMAN, "cloudman, clman, cman"),
+	//SHOW (CMD_GROUP.VCLMAN, "show, sh"),
+	LOADCONF (CMD_GROUP.VCLMAN, "loadf"),
+	//SET (CMD_GROUP.VCLMAN, "set"),
+	ENGMODE (CMD_GROUP.VCLMAN, "engmode"),	
+	CHECK_P (CMD_GROUP.VCLMAN, "chkp, chkpool, checkpool, checkp"),
+	CHECK_Q (CMD_GROUP.VCLMAN, "chkq, chkqueue, checkqueue, checkq"),
+	
+	
+	/*Commands of vmman Category*/
+	VMMAN (CMD_GROUP.VMMAN, "vmman,vm"),
+	CREATE (CMD_GROUP.VMMAN, "create"),
+	START (CMD_GROUP.VMMAN, "start"),
+	SUSPEND (CMD_GROUP.VMMAN, "suspend"),
+	LISTVM (CMD_GROUP.VMMAN, "listvm"),
+	DESTROY (CMD_GROUP.VMMAN, "destroy,kill"),
+	
+	
+	/*Commands of plugman Category*/
+	PLUGMAN (CMD_GROUP.PLUGMAN, "plugin,pluginman,plugman,pm"),
+	LOAD (CMD_GROUP.PLUGMAN, "load"),
+	UNLOAD (CMD_GROUP.PLUGMAN, "unload"),
+	LIST (CMD_GROUP.PLUGMAN, "list"),
+	INFO (CMD_GROUP.PLUGMAN, "info"),
+	
+	
+	/*parameters*/	
 	HELP(CMD_GROUP.PARAMETER,"-h,-help,--help"),
 	TYPE_BATCH(CMD_GROUP.PARAMETER,"-b,-batch,--type=batch"),
 	TYPE_CLOUD(CMD_GROUP.PARAMETER,"-c,-cloud,--type=cloud"),
@@ -48,12 +67,7 @@ public enum Command {
 	TERMINATE_INSTANCE (CMD_GROUP.CLOUD, "TerminateInstances, terminateinstance, terminate, ti, kill, killins"),
 	DESCRIBE_IMAGE (CMD_GROUP.CLOUD, "DescribeImages, describeimage, dim, dimg, descimg"),
 	*/
-	
-	/* batch plugin commands which are translated to a corresponding underlying 
-	 * batch commands 
-	 */ 
-	CHECK_POOL (CMD_GROUP.PROXY_SERVER, "chkp, chkpool, checkpool, checkp"),
-	CHECK_Q (CMD_GROUP.PROXY_SERVER, "chkq, chkqueue, checkqueue, checkq"),
+
 	
 	/* the following commands should be removed and integrated to vcluster commands
 	 * 
@@ -111,11 +125,12 @@ public enum Command {
 	}
 
 	public enum CMD_GROUP {
-		VCLUSTER,
-		CLOUD,
-		PROXY_SERVER,
-		PARAMETER,
-		NOT_DEFINED
+		VCLMAN,
+		VMMAN,
+		CLOUDMAN,
+		PLUGMAN,		
+		NOT_DEFINED, 
+		PARAMETER
 	}
 	
 }

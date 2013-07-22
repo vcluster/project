@@ -2,9 +2,10 @@ package vcluster.ui;
 
 import java.util.StringTokenizer;
 
+import vcluster.engine.groupexecutor.PlugmanExecutor;
 import vcluster.engine.groupexecutor.VClusterExecutor;
 import vcluster.global.Config;
-import vcluster.plugin.PluginManager;
+import vcluster.plugman.PluginManager;
 
 /**
  * @author huangdada
@@ -48,16 +49,40 @@ public class CmdExecutor {
 		// if (command == Command.NOT_DEFINED) return false;
 		
 		switch (command.getCmdGroup()) {
-		case VCLUSTER: return executeVcluster(command, cmdLine);
-		case CLOUD: return executeCloud(command, cmdLine);
-		case PROXY_SERVER: return executeProxy(command, cmdLine);
+		case VCLMAN: return executeVCLMAN(command, cmdLine);
+		case VMMAN: return executeVMMAN(cmdLine);
+		case PLUGMAN: return executePLUGMAN(cmdLine);		
 		case NOT_DEFINED: return false;
 		}
 		
 		return false;
 	}
 	
-	private static boolean executeVcluster(Command command, String cmdLine)
+	private static boolean executePLUGMAN(String cmdLine) {
+		cmdLine = cmdLine.replace("plugman ", "");
+		StringTokenizer st = new StringTokenizer(cmdLine);
+		String cmd = st.nextToken().trim();
+		//System.out.println(cmdLine);
+		Command command = getCommand(cmd);
+		
+		switch (command) {
+		case LOAD:
+			return PlugmanExecutor.load(cmdLine);
+		case UNLOAD:
+			return PlugmanExecutor.unload(cmdLine);
+		case INFO:
+			return PlugmanExecutor.info(cmdLine);
+		case LIST:
+			//System.out.print("                      1 : ");
+			return PlugmanExecutor.list(cmdLine);
+		default:
+			//System.out.print("                      2 : ");
+			return PlugmanExecutor.undefined(cmdLine);					
+		}
+
+	}
+
+	private static boolean executeVCLMAN(Command command, String cmdLine)
 	{
 		
 		switch (command) {
@@ -69,47 +94,29 @@ public class CmdExecutor {
 			return VClusterExecutor.monitor(cmdLine);
 		case CLOUDMAN:
 			return VClusterExecutor.cloudman(cmdLine);
-		case SHOW:
-			return VClusterExecutor.show(cmdLine);
-		case LOAD:
+		//case SHOW:
+		//	return VClusterExecutor.show(cmdLine);
+		case LOADCONF:
 			return VClusterExecutor.load(cmdLine);
-		case SET:
-			return VClusterExecutor.set(cmdLine);
+		//case SET:
+		//	return VClusterExecutor.set(cmdLine);
 		case ENGMODE:
 			return VClusterExecutor.engmode(cmdLine);
-		case PLUGMAN:
-			return VClusterExecutor.plugman(cmdLine);
-		}
-		
-		return true;
-	}
-	
-
-	private static boolean executeProxy(Command command, String cmdLine)
-	{
-/*
-		try{
-			Config.proxyExecutor = PluginManager.bcPlugins.get(Config.batch_plugin);
-		}catch(NullPointerException ne){
+		case CHECK_P: 
+    		return PluginManager.current_proxyExecutor.check_pool();
+	    case CHECK_Q: 
+	    	return PluginManager.current_proxyExecutor.check_q();		
 			
-			System.out.println("\nno proxyExecutor,please register proxyExecutor plugin!\n");
-			System.out.println("          [USAGE] : plugin <register plugin_name | list>\n");
-			return false;
 		}
-		*/
-		switch (command) {
-		case CHECK_POOL: return PluginManager.current_proxyExecutor.check_pool();
-		case CHECK_Q: return PluginManager.current_proxyExecutor.check_q();
-		//case CONDOR: return PluginManager.current_proxyExecutor.condor(cmdLine);
-		//case ONEVM: return PluginManager.current_proxyExecutor.onevm(cmdLine);
-		}
+
 		
 		return true;
 	}
 	
+
 	
 
-	private static boolean executeCloud(Command command, String cmdLine)
+	private static boolean executeVMMAN(String cmdLine)
 	{
 
 		/*
@@ -128,10 +135,24 @@ public class CmdExecutor {
 		 * if not, call REST API for a specified cloud system,
 		 * which is chosen from cloud system pool based on priority.
 		 */
+		
+		
+		cmdLine = cmdLine.replace("vmman ", "");
+		StringTokenizer st = new StringTokenizer(cmdLine);
+		String cmd = st.nextToken().trim();
+		//System.out.println(cmdLine);
+		Command command = getCommand(cmd);
+		
+		
 		switch (command) {
-		case RUN_INSTANCE: return PluginManager.current_cloudExecutor.run_instance(Config.cloudMan.getCurrentCloud());
-		case DESCRIBE_INSTANCE: return PluginManager.current_cloudExecutor.describe_instance(Config.cloudMan.getCurrentCloud(), cmdLine);
-		case TERMINATE_INSTANCE: return PluginManager.current_cloudExecutor.terminate_instance(Config.cloudMan.getCurrentCloud(), cmdLine);
+		//case CREATE: return CloudExecutor.createVM(Config.cloudMan.getCurrentCloud(), cmdLine);
+		//case LISTVM: System.out.println("MARK");return CloudExecutor.listVMs(Config.cloudMan.getCurrentCloud(), cmdLine);
+		//case DESTROY: return CloudExecutor.destroyVM(Config.cloudMan.getCurrentCloud(), cmdLine);
+		//case SUSPEND: return CloudExecutor.suspendVM(Config.cloudMan.getCurrentCloud(), cmdLine);
+		//case START: return CloudExecutor.startVM(Config.cloudMan.getCurrentCloud(), cmdLine);
+		default: 
+			break;
+		
 
 		}
 		
