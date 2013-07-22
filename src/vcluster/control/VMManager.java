@@ -13,12 +13,9 @@ import org.opennebula.client.vm.VirtualMachine;
 
 import vcluster.control.VMMessage.VMMsgType;
 import vcluster.control.cloudman.CloudElement;
-import vcluster.engine.groupexecutor.CloudExecutor;
 import vcluster.global.Config;
 import vcluster.global.Config.CloudType;
 import vcluster.global.Config.VMState;
-import vcluster.plugin.PluginManager;
-import vcluster.ui.Command;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
 
@@ -109,13 +106,13 @@ public class VMManager extends Thread {
 		CloudType ctype = cloud.getCloudType();
 		
 		switch(ctype) {
-		case PRIVATE: return OCALaunch(cloud, vms);
+		//case PRIVATE: return OCALaunch(cloud, vms);
 		case PUBLIC: return RESTLaunch(cloud, vms);
 		}
 		return true;
 	}
 
-
+/*
 	private boolean OCALaunch(CloudElement cloud, int numVMs) 
 	{
 		
@@ -144,15 +141,15 @@ public class VMManager extends Thread {
 			VMElement vmElement = new VMElement(newVMID, VMState.NOT_DEFINED);
 			vmList.put(newVMID, vmElement);
 		}
-
+*/
 
 		/* this algorithm has to be modified for better
 		 * performance.
 		 * 
 		 * it also has to handle only some vms running...
 		 */
-		int sleepsec = 20; /* 20 seconds as default */
-
+		/*int sleepsec = 20; /* 20 seconds as default */
+/*
 		while (!isAllVMRunning(oneClient)) {
 			try {
 				PrintMsg.print(DMsgType.MSG, "Going to sleep....");
@@ -170,6 +167,8 @@ public class VMManager extends Thread {
 		/* have to increase currently running vms 
 		 * because all cloud systems have to be managed by cloud manager
 		 */
+	
+	/*
 		Config.cloudMan.incCurrentVMs(cloud, numVMs);
 		
 		synchronized (Config.monMan) {
@@ -179,14 +178,14 @@ public class VMManager extends Thread {
 		return true;
 	}
 
-
+*/
 	
 	private boolean RESTLaunch(CloudElement cloud, int numVMs)
 	{
 		PrintMsg.print(DMsgType.MSG, "launching "+numVMs+" vms using REST API.");
 	    
 	    for(int i = 0 ; i < numVMs; i++) {
-	    	PluginManager.current_cloudExecutor.rest_launch(cloud);
+	    	//PluginManager.current_cloudExecutor.rest_launch(cloud);
 	    }
 	    
 	    return true;
