@@ -2,6 +2,7 @@ package vcluster.control.cloudman;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -172,12 +173,13 @@ public class CloudManager  {
 			
 			String aLine = "";
 			CloudElement e = null;
+			List<String> conf = null ;
 			while ((aLine = br.readLine()) != null) {
 				if (aLine.equalsIgnoreCase("[cloudelement]")) {
 					if (e != null) cman.addCloudElement(e);
-					e = new CloudElement();
+					e = new CloudElement(conf);
 				} else {
-					lineProcess(aLine, e);
+					conf.add(aLine);
 				}
 			}
 
@@ -190,44 +192,6 @@ public class CloudManager  {
 		return true;
 	}
 	
-	
-	private static void lineProcess(String aLine, CloudElement e)
-	{
-		StringTokenizer st = new StringTokenizer(aLine, "=");
-		
-		if (!st.hasMoreTokens()) return;
-		
-		/* get a keyword */
-		String aKey = st.nextToken().trim();
-	
-		/* get a value */
-		if (!st.hasMoreTokens()) return;
-
-		String aValue = st.nextToken().trim();
-		
-		if (aKey.equalsIgnoreCase("type"))
-			e.setCloudType(aValue);
-		else if (aKey.equalsIgnoreCase("endpoint"))
-			e.setEndPoint(aValue);
-		else if (aKey.equalsIgnoreCase("accesskey"))
-			e.setAccessKey(aValue);
-		else if (aKey.equalsIgnoreCase("secretkey"))
-			e.setSecretKey(aValue);
-		else if (aKey.equalsIgnoreCase("instancetype"))
-			e.setInstanceType(aValue);
-		else if (aKey.equalsIgnoreCase("keyname"))
-			e.setKeyName(aValue);
-		else if (aKey.equalsIgnoreCase("image"))
-			e.setImageName(aValue);
-		else if (aKey.equalsIgnoreCase("max"))
-			e.setMaxVMs(Integer.parseInt(aValue));
-		else if (aKey.equalsIgnoreCase("version"))
-			e.setVersion(aValue);
-		else if (aKey.equalsIgnoreCase("signatureversion"))
-			e.setSignatureVersion(aValue);
-		else if (aKey.equalsIgnoreCase("signaturemethod"))
-			e.setSignatureMethod(aValue);
-	}
 	
 	private Vector <CloudElement> privateCloudList;
 	private Vector <CloudElement> publicCloudList;
