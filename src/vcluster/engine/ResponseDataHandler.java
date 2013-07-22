@@ -39,12 +39,13 @@ public class ResponseDataHandler {
 		Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
 
 		switch(command) {
-		case DESCRIBE_INSTANCE:
+		case LISTVM:
 			describeInstanceResponse(doc);
 			break;
-		case DESCRIBE_IMAGE:
+		/*case DESCRIBE_IMAGE:
 			describeImageResponse(doc);
-			break;
+			
+			break;*/
 		}
 
 		saveResponse(doc);
