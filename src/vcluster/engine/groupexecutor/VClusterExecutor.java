@@ -2,26 +2,20 @@ package vcluster.engine.groupexecutor;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.StringTokenizer;
 
 import vcluster.control.VMManager;
-import vcluster.control.cloudman.CloudElement;
-import vcluster.control.cloudman.CloudManager;
 import vcluster.global.Config;
 import vcluster.global.Config.CloudType;
 import vcluster.monitoring.MonitoringMan;
-import vcluster.plugin.PluginManager;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
 import vcluster.util.Util;
-import vcluster.ui.Command;
+import vcluster.control.cloudman.*;
 
 public class VClusterExecutor {
 	public static boolean debug_mode(String cmdLine)
@@ -406,7 +400,7 @@ public class VClusterExecutor {
     	        if (str.contains("Total") && !str.contains("Owner")) {
     	        	//PoolStatus.extractInfo(str);
     	        	//PoolStatus.printQStatus();
-    	        	PluginManager.current_proxyExecutor.check_pool();
+    	        	BatchExecutor.check_pool();
     	        }
     	        
     	        for(int i = 0; i< 1024; i++)
@@ -429,209 +423,6 @@ public class VClusterExecutor {
 		return true;
 	}
 	
-	public static boolean plugman(String cmdLine) {
-		// TODO Auto-generated method stub
-
-		PluginManager pm = new PluginManager();
-		List<String> cloudPluginsList = pm.getCloudPluginList();
-		List<String> batchPluginsList = pm.getBatchPluginList();		
-		
-		StringTokenizer st = new StringTokenizer(cmdLine);
-
-		/* skip the command */
-		st.nextToken();
-
-		if (!st.hasMoreTokens()) {
-			System.out.println(pm.getUsage());
-	
-			return false;
-		}
-		
-		/* get a token to set */
-		String para = st.nextToken().trim();
-		
-		if(Command.HELP.contains(para)){
-			System.out.println(pm.getUsage());
-			return false;
-			
-		}		
-		else if(para.equalsIgnoreCase("list")){
-			System.out.println("List the plugins in plugin directory :");
-			if(!st.hasMoreTokens()) {
-				System.out.println("Batch plugins : ");
-				for(String batchplugin : pm.getBatchPluginList()){
-					
-					System.out.println("      " + batchplugin);
-				}
-				System.out.println("----------------------------------------");
-				System.out.println("Cloud plugins : ");
-				for(String cloudplugin : cloudPluginsList){
-					
-					System.out.println("      " + cloudplugin);
-				}
-				
-				
-				return true;
-			}
-			
-			String para2 = st.nextToken().trim();
-			if(Command.TYPE_BATCH.contains(para2)){
-				System.out.println("Batch plugins : ");
-				for(String batchplugin : pm.getBatchPluginList()){
-					
-					System.out.println("      " + batchplugin);
-				}
-			}else if(Command.TYPE_CLOUD.contains(para2)){
-				System.out.println("Cloud plugins : ");
-				for(String cloudplugin : cloudPluginsList){
-					
-					System.out.println("      " + cloudplugin);
-				}
-			}else if(Command.LOADED.contains(para2)){
-				if(!st.hasMoreTokens()){
-					System.out.println("Loaded Batch plugin : ");
-					for(String loadedcloud : pm.GetLoadedBatchPlugins()){
-						System.out.println("         " + loadedcloud);
-					}
-					System.out.println("Loaded Cloud plugins : ");
-					for(String loadedcloud : pm.GetLoadedCloudPlugins()){
-						System.out.println("         " + loadedcloud);
-					}
-				}else{
-					String type = st.nextToken();
-					if(Command.TYPE_BATCH.contains(type)){
-						System.out.println("Loaded Batch plugin : ");
-						for(String loadedcloud : pm.GetLoadedBatchPlugins()){
-							System.out.println("         " + loadedcloud);
-						}
-					}
-					else if(Command.TYPE_CLOUD.contains(type)){
-						System.out.println("Loaded Cloud plugins : ");
-						for(String loadedcloud : pm.GetLoadedCloudPlugins()){
-							System.out.println("         " + loadedcloud);
-						}
-					}
-					
-				}
-				
-				
-				
-			}else {
-				PrintMsg.print(DMsgType.ERROR, "no such a parameter like \""+para2+"\" !");
-				return false;
-			}
-			
-			if(st.hasMoreTokens()) {
-				PrintMsg.print(DMsgType.ERROR, "unexpected token \""+st.nextToken()+"\" found!");
-				return false;
-			}
-			
-			return true;
-		}		
-		
-		else if(para.equalsIgnoreCase("load")){
-			String pluginPath = "";
-			if(!st.hasMoreTokens()){
-				PrintMsg.print(DMsgType.ERROR, "expected a plugin type!");
-				System.out.println("[USAGE] : plugman <load -pluginType pluginName>");
-				return false;
-			}
-			String pluginType = st.nextToken().trim();
-			if(Command.TYPE_BATCH.contains(pluginType)){
-				File dir = new File(System.getProperty("user.dir") + File.separator
-						+ PluginManager.BATCH_PLUGIN_DIR);
-				pluginPath = dir.getPath();
-			}else if(Command.TYPE_CLOUD.contains(pluginType)){
-				File dir = new File(System.getProperty("user.dir") + File.separator
-						+ PluginManager.CLOUD_PLUGIN_DIR);
-				pluginPath = dir.getPath();
-			}
-
-			List<String> pluginNames = new ArrayList<String>();
-			if(st.hasMoreTokens()) {
-				    pluginNames.add(st.nextToken().trim());
-
-			}else{
-				PrintMsg.print(DMsgType.ERROR, "expected a plugin name!");
-				System.out.println("[USAGE] : plugin <register plugin_name | list>");
-				return false;
-			}
-		    if(Command.TYPE_CLOUD.contains(pluginType)){		    	
-		    
-				while(st.hasMoreTokens()){
-				    pluginNames.add(st.nextToken().trim());
-				}
-			
-		    }else if(Command.TYPE_BATCH.contains(pluginType)&st.hasMoreTokens()){
-		    	System.out.println("Only one batch plugin can be loaded at the same time, the rest will be ignored!");
-		    }
-				for(String pluginName:pluginNames){
-					//System.out.println(pluginName);
-					if(batchPluginsList.contains(pluginName)|cloudPluginsList.contains(pluginName)){
-
-						try {
-							//System.out.println(pluginPath + File.separator + pluginName);
-							pm.LoadPlugin(pluginPath + File.separator + pluginName+".jar",pluginType);
-
-						} catch (ClassNotFoundException e) {
-							// TODO Auto-generated catch block
-							System.out.println("[ERROR:] No such a plugin,please check your input!");
-							return false;
-						}
-						
-					}else{
-						System.out.println("[ERROR:] No such a plugin,please check your input!");
-					}
-				}
-				return true;
-			}
-		else if(para.equalsIgnoreCase("unload")){
-			if(!st.hasMoreTokens()){
-				PrintMsg.print(DMsgType.ERROR, "expected a plugin name!");
-				System.out.println("[USAGE] : plugman <unload pluginName>");
-				return false;
-			}
-			while(st.hasMoreTokens()){
-				try {
-					pm.UnloadPlugin(st.nextToken());
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					System.out.println(e.getMessage());
-					return false;
-				}
-			}			
-			
-		}
-		else if(para.equalsIgnoreCase("info")){			
-			if(!st.hasMoreTokens()){
-				PrintMsg.print(DMsgType.ERROR, "expected a plugin name!");
-				System.out.println("[USAGE] : plugman <unload pluginName>");
-				return false;
-			}
-			String pluginName = st.nextToken();
-			if(pm.isLoaded(pluginName)){
-				System.out.println(PluginManager.loadedBatchPlugins.get(pluginName).getInfo());		
-				
-			}else{
-				System.out.println("This plugin doesn't exist!");
-			}
-			
-			
-		}
-		else{
-				PrintMsg.print(DMsgType.ERROR, "no such a parameter like \""+para+"\" !");
-				System.out.println("\n         [USAGE] : plugin <register plugin_name | list>");
-			}
-		
-
-		if(st.hasMoreTokens()) {
-			PrintMsg.print(DMsgType.ERROR, "unexpected token \""+st.nextToken()+"\" found!");
-			return false;
-		}
-
-		return true;
-	}
-
 	private static void closeStream(BufferedReader in, DataOutputStream out, Socket socket)
 	{
 		try {

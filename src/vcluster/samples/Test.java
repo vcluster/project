@@ -1,4 +1,4 @@
-package vcluster.test;
+package vcluster.samples;
 
 import vcluster.control.VMManager;
 import vcluster.global.Config.VMState;

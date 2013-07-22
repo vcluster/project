@@ -1,12 +1,11 @@
-package vcluster.plugin;
+package vcluster.plugman;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import vcluster.engine.groupexecutor.CloudExecutor;
-import vcluster.engine.groupexecutor.ProxyExecutor;
+
 import vcluster.ui.Command;
 
 /**
@@ -16,14 +15,14 @@ import vcluster.ui.Command;
  */
 public class PluginManager {
 
-	public static ProxyExecutor current_proxyExecutor;
-	public static CloudExecutor current_cloudExecutor;
+	public static BatchInterface current_proxyExecutor;
+	public static CloudInterface current_cloudExecutor;
 	public static final String CLOUD_PLUGIN_DIR = "plugins"+File.separator+"cloud";
 	public static final String BATCH_PLUGIN_DIR = "plugins"+File.separator+"batch";	
 	
 	
-	public static Map<String, ProxyExecutor> loadedBatchPlugins = new HashMap<String, ProxyExecutor>();
-	public static Map<String, CloudExecutor> loadedCloudPlugins = new HashMap<String, CloudExecutor>();
+	public static Map<String, BatchInterface> loadedBatchPlugins = new HashMap<String, BatchInterface>();
+	public static Map<String, CloudInterface> loadedCloudPlugins = new HashMap<String, CloudInterface>();
 	private CustomClassLoader cl;//An instance of CustomClassLoader,it is responsible for loading classes form jar files.
 
 	
@@ -41,7 +40,7 @@ public class PluginManager {
 		 
 		File f = new File(path);
 		String name = f.getName().replace(".jar", "");		
-		
+		System.out.println(path);
 		if (this.isLoaded(name)) {
 				System.out.println(name + " : has already been loaded!");
 				return;
@@ -51,7 +50,7 @@ public class PluginManager {
 			if(Command.TYPE_CLOUD.contains(type)){
 				try {							
 					//System.out.println("plug-in type : " + );
-					CloudExecutor ce = (CloudExecutor) plugin.newInstance();
+					CloudInterface ce = (CloudInterface) plugin.newInstance();
 					loadedCloudPlugins.put(name, ce);
 					current_cloudExecutor = ce;
 				} catch (InstantiationException e) {
@@ -66,7 +65,7 @@ public class PluginManager {
 						try {							
 							//System.out.println("plug-in type : " + );
 							loadedBatchPlugins.clear();
-							ProxyExecutor pe = (ProxyExecutor) plugin.newInstance();
+							BatchInterface pe = (BatchInterface) plugin.newInstance();
 							loadedBatchPlugins.put(name, pe);
 							current_proxyExecutor = pe;
 						} catch (InstantiationException e) {
@@ -196,22 +195,7 @@ public class PluginManager {
 		
 	}
 	
-	public String getUsage(){
-		StringBuffer usage = new StringBuffer();
-		usage.append("[USAGE] :plugman"+System.getProperty("line.separator"));
-		usage.append("                    -h : list all options and usages"+System.getProperty("line.separator"));
-		usage.append("                  list : list all the plugins"+System.getProperty("line.separator"));
-		usage.append("                        -c : list all cloud plugins "+System.getProperty("line.separator"));		
-		usage.append("                        -b : list all batch plugins "+System.getProperty("line.separator"));		
-		usage.append("                        -l : list all loaded plugins "+System.getProperty("line.separator"));
-		usage.append("                  load : "+System.getProperty("line.separator"));	
-		usage.append("                        -c pluginname-1,pluginname-2......,pluginname-n : load n cloud plugins "+System.getProperty("line.separator"));
-		usage.append("                        -b pluginname : load a batch plugin "+System.getProperty("line.separator"));	
-		usage.append("                unload : unload plugins"+System.getProperty("line.separator"));	
-		usage.append("                  info : prints the information about a plugin "+System.getProperty("line.separator"));	
-		return usage.toString();
-		
-	}
+
 	
 
 }

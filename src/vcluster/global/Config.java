@@ -1,8 +1,6 @@
 package vcluster.global;
 
 
-import java.util.ArrayList;
-
 import vcluster.control.VMManager;
 import vcluster.control.cloudman.CloudManager;
 import vcluster.monitoring.MonitoringMan;
@@ -12,8 +10,8 @@ public class Config {
 	public static String configFile = "vcluster.conf";
 	public static final String xmlFile = "response.xml";
 	
-	public static String CONDOR_IPADDR = null;
-	public static String ONE_IPADDR = null;
+	public static String CONDOR_IPADDR = "150.183.233.60";
+	public static String ONE_IPADDR = "150.183.233.60";
 	public static final int PORTNUM = 9734;
 	
 	/* interval for checking q in minutes */

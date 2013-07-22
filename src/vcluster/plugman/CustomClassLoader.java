@@ -1,7 +1,6 @@
 package vcluster.plugman;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -9,15 +8,11 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import vcluster.engine.groupexecutor.CloudExecutor;
-import vcluster.engine.groupexecutor.ProxyExecutor;
-
 /**
  * This class extends java.lang.ClassLoader,which is responsible for loading java classes into the JVM dynamically.In this class,we override the method "loadClass" 
  * to make it can load class files into the JVM from the plugins forder.
  * @version 1.0,2013-05-31
  * @since JDK1.7
-
  */
 
 
@@ -60,7 +55,7 @@ public class CustomClassLoader extends ClassLoader {
 				   Class<?> c = loader.loadClass(name.replace("/", ".").substring(0,name.length() - 6)); 
 					Class<?>[] intfs = c.getInterfaces();
 					for (Class<?> intf : intfs) {
-						if (intf.getName().equals(ProxyExecutor.class.getName())||intf.getName().equals(CloudExecutor.class.getName())) {
+						if (intf.getName().equals(BatchInterface.class.getName())||intf.getName().equals(CloudInterface.class.getName())) {
 							return c;
 						}
 					}
