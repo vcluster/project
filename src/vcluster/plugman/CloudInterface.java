@@ -8,7 +8,7 @@ public interface CloudInterface {
 	//connect to a cloud system,conf is a file includes the connection informations
 	public boolean RegisterCloud(List<String> configurations);
 	//create a VM 
-	public boolean createVM();
+	public boolean createVM(int maxCount);
 	//list all the VMS
 	public boolean listVMs();
 	//destroy a VM
