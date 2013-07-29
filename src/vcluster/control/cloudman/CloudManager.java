@@ -2,6 +2,8 @@ package vcluster.control.cloudman;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -16,8 +18,9 @@ public class CloudManager  {
 	
 	
 	public CloudManager() {
-		privateCloudList = new Vector <CloudElement>();
-		publicCloudList = new Vector <CloudElement>();
+		privateCloudList = new Vector <Cloud>();
+		publicCloudList = new Vector <Cloud>();
+		
 	}
 	
 	
@@ -29,14 +32,14 @@ public class CloudManager  {
 
 		if(type.equalsIgnoreCase("private")) {
 			for(int i = 0; i < privateCloudList.size(); i++) {
-				CloudElement e = privateCloudList.elementAt(i);
+				Cloud e = privateCloudList.elementAt(i);
 				System.out.printf("[private cloude element] [%d]\n", i);
 				e.dump();
 				System.out.println();
 			}
 		} else if (type.equalsIgnoreCase("public")) {
 			for(int i = 0; i < publicCloudList.size(); i++) {
-				CloudElement e = publicCloudList.elementAt(i);
+				Cloud e = publicCloudList.elementAt(i);
 				System.out.printf("[public cloude element] [%d]\n", i);
 				e.dump();
 				System.out.println();
@@ -52,7 +55,7 @@ public class CloudManager  {
 		System.out.println("----------------------------------------");
 
 		for(int i = 0; i < privateCloudList.size(); i++) {
-			CloudElement e = privateCloudList.elementAt(i);
+			Cloud e = privateCloudList.elementAt(i);
 			System.out.printf("[private cloude element] [%d]\n", i);
 			e.dump();
 			System.out.println();
@@ -61,7 +64,7 @@ public class CloudManager  {
 		System.out.println("----------------------------------------");
 
 		for(int i = 0; i < publicCloudList.size(); i++) {
-			CloudElement e = publicCloudList.elementAt(i);
+			Cloud e = publicCloudList.elementAt(i);
 			System.out.printf("[public cloude element] [%d]\n", i);
 			e.dump();
 			System.out.println();
@@ -77,7 +80,7 @@ public class CloudManager  {
 	 *    -  a single cloud system or multiple cloud system?
 	 *  
 	 */
-	public CloudElement findCloudSystem(int vms) {
+	public Cloud findCloudSystem(int vms) {
 		
 		/* this function has to be intelligent to find an available cloud system. 
 		 * at this moment, it just returns predefined one
@@ -113,12 +116,12 @@ public class CloudManager  {
 		}
 	}
 
-	public CloudElement getCurrentCloud() 
+	public Cloud getCurrentCloud() 
 	{
 		return currentCloud;
 	}
 	
-	public boolean addCloudElement(CloudElement e)
+	public boolean addCloudElement(Cloud e)
 	{
 		CloudType ctype = e.getCloudType();
 		if (ctype == CloudType.PRIVATE) {
@@ -138,7 +141,7 @@ public class CloudManager  {
 		return false;
 	}
 	
-	public void incCurrentVMs(CloudElement e, int vms) 
+	public void incCurrentVMs(Cloud e, int vms) 
 	{
 		e.incCurrentVMs(vms);
 	}
@@ -172,32 +175,49 @@ public class CloudManager  {
 			BufferedReader br = new BufferedReader(new FileReader(confFile));
 			
 			String aLine = "";
-			CloudElement e = null;
-			List<String> conf = null ;
+			List<String> conf = new ArrayList<String>() ;
 			while ((aLine = br.readLine()) != null) {
 				if (aLine.equalsIgnoreCase("[cloudelement]")) {
-					if (e != null) cman.addCloudElement(e);
-					e = new CloudElement(conf);
-				} else {
+					if(!conf.isEmpty()){
+						cman.addCloudElement(new Cloud(conf));
+						conf = new ArrayList<String>();
+					}
+
+				}else{
+					
 					conf.add(aLine);
 				}
+				
 			}
-
-			if (e != null) cman.addCloudElement(e);
 			
+			cman.addCloudElement(new Cloud(conf));
+			br.close();
 	    } catch (Exception e) {
+	    	e.printStackTrace();
 	    	PrintMsg.print(DMsgType.ERROR, e.getMessage());
+	    	System.out.println("mark 1");
 	    	return false;
 	    } 
 		return true;
 	}
 	
+	public HashMap<String, Cloud> getCloudList(){
+		HashMap<String,Cloud> cl = new HashMap<String,Cloud>();
+		for(Cloud cloud : privateCloudList){
+			cl.put(cloud.getCloudName(), cloud);
+		}
+		for(Cloud cloud : publicCloudList){
+			cl.put(cloud.getCloudName(), cloud);
+		}
+		return cl;
+		
+	}
 	
-	private Vector <CloudElement> privateCloudList;
-	private Vector <CloudElement> publicCloudList;
+	private Vector <Cloud> privateCloudList;
+	private Vector <Cloud> publicCloudList;
 	
 	/* this is only used when executing commands from command line */
-	private CloudElement currentCloud = null;
+	private static Cloud currentCloud = null;
 
     
 }
