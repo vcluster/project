@@ -9,9 +9,9 @@ public enum Command {
 	/* Commands of vclman Category */
 	QUIT (CMD_GROUP.VCLMAN, "quit, exit, done, stop"),
 	DEBUG_MODE (CMD_GROUP.VCLMAN, "debug"),
-	//VMMAN (CMD_GROUP.VCLMAN, "vmman, vman"),
 	MONITOR (CMD_GROUP.VCLMAN, "monitor, mon"),
 	CLOUDMAN (CMD_GROUP.VCLMAN, "cloudman, clman, cman"),
+	PLUGMAN (CMD_GROUP.PLUGMAN, "plugin,pluginman,plugman,pm"),
 	//SHOW (CMD_GROUP.VCLMAN, "show, sh"),
 	LOADCONF (CMD_GROUP.VCLMAN, "loadf"),
 	//SET (CMD_GROUP.VCLMAN, "set"),
@@ -21,7 +21,7 @@ public enum Command {
 	
 	
 	/*Commands of vmman Category*/
-	VMMAN (CMD_GROUP.VMMAN, "vmman,vm"),
+	VMMAN (CMD_GROUP.VMMAN, "vmman, vman"),
 	CREATE (CMD_GROUP.VMMAN, "create"),
 	START (CMD_GROUP.VMMAN, "start"),
 	SUSPEND (CMD_GROUP.VMMAN, "suspend"),
@@ -30,7 +30,7 @@ public enum Command {
 	
 	
 	/*Commands of plugman Category*/
-	PLUGMAN (CMD_GROUP.PLUGMAN, "plugin,pluginman,plugman,pm"),
+
 	LOAD (CMD_GROUP.PLUGMAN, "load"),
 	UNLOAD (CMD_GROUP.PLUGMAN, "unload"),
 	LIST (CMD_GROUP.PLUGMAN, "list"),

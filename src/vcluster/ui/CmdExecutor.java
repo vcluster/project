@@ -2,6 +2,7 @@ package vcluster.ui;
 
 import java.util.StringTokenizer;
 
+import vcluster.control.cloudman.CloudManager;
 import vcluster.engine.groupexecutor.PlugmanExecutor;
 import vcluster.engine.groupexecutor.VClusterExecutor;
 import vcluster.global.Config;
@@ -143,13 +144,13 @@ public class CmdExecutor {
 		//System.out.println(cmdLine);
 		Command command = getCommand(cmd);
 		
-		
+		//System.out.println(cmdLine);
 		switch (command) {
-		//case CREATE: return CloudExecutor.createVM(Config.cloudMan.getCurrentCloud(), cmdLine);
-		//case LISTVM: System.out.println("MARK");return CloudExecutor.listVMs(Config.cloudMan.getCurrentCloud(), cmdLine);
-		//case DESTROY: return CloudExecutor.destroyVM(Config.cloudMan.getCurrentCloud(), cmdLine);
-		//case SUSPEND: return CloudExecutor.suspendVM(Config.cloudMan.getCurrentCloud(), cmdLine);
-		//case START: return CloudExecutor.startVM(Config.cloudMan.getCurrentCloud(), cmdLine);
+		case CREATE: return Config.vmMan.createVM(cmdLine);
+		case LISTVM: return Config.vmMan.listVM(cmdLine);
+		case DESTROY: return Config.vmMan.destroyVM(cmdLine);
+		case SUSPEND: return Config.vmMan.suspendVM(cmdLine);
+		case START: return Config.vmMan.startVM(cmdLine);
 		default: 
 			break;
 		
