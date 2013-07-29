@@ -121,7 +121,7 @@ public class VClusterExecutor {
 			System.out.println("        : cloudman register <cloudelement conf file>");
 			System.out.println("        : cloudman set <private | public> <cloud num>");
 			return false;
-		}
+	}
 		
 		token = st.nextToken().trim();
 		
@@ -184,7 +184,7 @@ public class VClusterExecutor {
 		}
 
 		if (token.equalsIgnoreCase("current")) {
-			CloudElement cloud = Config.cloudMan.getCurrentCloud();
+			Cloud cloud = Config.cloudMan.getCurrentCloud();
 			cloud.dump();
 			return true;
 		}
