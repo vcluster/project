@@ -1,8 +1,10 @@
 package vcluster.control;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -12,10 +14,11 @@ import org.opennebula.client.OneResponse;
 import org.opennebula.client.vm.VirtualMachine;
 
 import vcluster.control.VMMessage.VMMsgType;
-import vcluster.control.cloudman.CloudElement;
+import vcluster.control.cloudman.Cloud;
 import vcluster.global.Config;
 import vcluster.global.Config.CloudType;
 import vcluster.global.Config.VMState;
+import vcluster.ui.Command;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
 
@@ -93,9 +96,9 @@ public class VMManager extends Thread {
 	}
 
 	
-	public boolean launchVM(int vms, CloudElement c) 
+	public boolean launchVM(int vms, Cloud c) 
 	{
-		CloudElement cloud;
+		Cloud cloud;
 		if (c == null) {
 			cloud = Config.cloudMan.findCloudSystem(vms);
 		}
@@ -180,7 +183,7 @@ public class VMManager extends Thread {
 
 */
 	
-	private boolean RESTLaunch(CloudElement cloud, int numVMs)
+	private boolean RESTLaunch(Cloud cloud, int numVMs)
 	{
 		PrintMsg.print(DMsgType.MSG, "launching "+numVMs+" vms using REST API.");
 	    
@@ -248,6 +251,69 @@ public class VMManager extends Thread {
 	}
 	
 	
+	public boolean createVM(String cmdLine) {
+		// TODO Auto-generated method stub
+		String [] str = cmdLine.split(" ");
+		ArrayList<String> cmdList = new ArrayList<String>();
+		Cloud cloud = Config.cloudMan.getCurrentCloud();
+		int vms = 1;
+		for(String s : str){
+			cmdList.add(s);
+			//System.out.println(s);
+		}
+		if(cmdList.get(1).equalsIgnoreCase("--help")){
+			System.out.println("[USAGE : ]");
+			System.out.println("vmman");
+			System.out.println("    create");
+			System.out.println("        [ --help] | ");
+			System.out.println("        [ -n NUM_VMS | --num=NUM_VMS ] | ");
+			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
+			
+			return false;
+		}
+		if(!cmdList.get(1).equals("-c")){
+			cmdList.add(1,"c");
+			cmdList.add(2,cloud.getCloudName());
+		}
+		if(!cmdList.get(3).equalsIgnoreCase("-n")){
+			cmdList.add(3, "-n");
+			cmdList.add(4, "1");
+		}
+		for(String st : cmdList){
+			System.out.print(st + " ");
+		}
+		System.out.println("");
+			return cloud.createVM(vms);
+
+	}
+
+	public boolean listVM(String cmdLine) {
+		// TODO Auto-generated method stub
+		for(Cloud cloud : Config.cloudMan.getCloudList().values()){
+			System.out.println("--------------------------------");
+			System.out.println("Cloud : " + cloud.getCloudName());
+			cloud.listVMs();
+		}
+		return true;
+	}
+
+	public boolean destroyVM(String cmdLine) {
+		// TODO Auto-generated method stub
+			
+		return false;
+	}
+
+	public boolean suspendVM(String cmdLine) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean startVM(String cmdLine) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
 	private class VMElement {
 		public VMElement(int id, VMState state) {
 			instanceID = id;
