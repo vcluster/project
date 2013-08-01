@@ -253,15 +253,15 @@ public class VMManager extends Thread {
 	
 	public boolean createVM(String cmdLine) {
 		// TODO Auto-generated method stub
-		String [] str = cmdLine.split(" ");
-		ArrayList<String> cmdList = new ArrayList<String>();
 		Cloud cloud = Config.cloudMan.getCurrentCloud();
 		int vms = 1;
+		String [] str = cmdLine.split(" ");
+		ArrayList<String> cmdList = new ArrayList<String>();
 		for(String s : str){
 			cmdList.add(s);
 			//System.out.println(s);
 		}
-		if(cmdList.get(1).equalsIgnoreCase("--help")){
+		if(cmdList.size()>1&&cmdList.get(1).equalsIgnoreCase("--help")){
 			System.out.println("[USAGE : ]");
 			System.out.println("vmman");
 			System.out.println("    create");
@@ -270,6 +270,12 @@ public class VMManager extends Thread {
 			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
 			
 			return false;
+		}
+		if(cmdList.size()==1){
+			cmdList.add("-c");
+			cmdList.add(cloud.getCloudName());
+			cmdList.add("-n");
+			cmdList.add("1");
 		}
 		if(!cmdList.get(1).equals("-c")){
 			cmdList.add(1,"c");
@@ -283,6 +289,8 @@ public class VMManager extends Thread {
 			System.out.print(st + " ");
 		}
 		System.out.println("");
+		cloud = Config.cloudMan.getCloudList().get(cmdList.get(2));
+		vms = Integer.parseInt(cmdList.get(4));
 			return cloud.createVM(vms);
 
 	}
@@ -290,7 +298,7 @@ public class VMManager extends Thread {
 	public boolean listVM(String cmdLine) {
 		// TODO Auto-generated method stub
 		for(Cloud cloud : Config.cloudMan.getCloudList().values()){
-			System.out.println("--------------------------------");
+			System.out.println("----------------------------------------------------------------------------------");
 			System.out.println("Cloud : " + cloud.getCloudName());
 			cloud.listVMs();
 		}
@@ -299,18 +307,197 @@ public class VMManager extends Thread {
 
 	public boolean destroyVM(String cmdLine) {
 		// TODO Auto-generated method stub
+		StringTokenizer st = new StringTokenizer(cmdLine);		
+		String cloudName = "";
+		String vmID = "";
+		st.nextToken();
+		if(!st.hasMoreTokens()){
+			System.out.println("[USAGE : ]");
+			System.out.println("vmman");
+			System.out.println("    destroy");
+			System.out.println("        [ --help] | ");
+			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
+			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
+			return false;
+		}
+		else if(!st.nextToken().equalsIgnoreCase("-c")){
+			System.out.println("[ERROR : ] peremeter is incorrect!");
+			System.out.println("[USAGE : ]");
+			System.out.println("vmman");
+			System.out.println("    destroy");
+			System.out.println("        [ --help] | ");
+			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
+			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
+			return false;
+		}
+		
+		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a cloud name");			return false;}
+		else{
 			
-		return false;
+			cloudName = st.nextToken();
+			if(!Config.cloudMan.getCloudList().containsKey(cloudName)){
+				System.out.println("[ERROR : ] cloud doesn't exist!");
+				return false;
+			}
+		}
+		
+		if(!st.hasMoreTokens()){
+			System.out.println("[USAGE : ]");
+			System.out.println("vmman");
+			System.out.println("    destroy");
+			System.out.println("        [ --help] | ");
+			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
+			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
+			return false;
+		}
+		else if(!st.nextToken().equalsIgnoreCase("-i")){
+			System.out.println("[ERROR : ] peremeter is incorrect!");
+			System.out.println("[USAGE : ]");
+			System.out.println("vmman");
+			System.out.println("    destroy");
+			System.out.println("        [ --help] | ");
+			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
+			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
+			return false;
+		}
+		
+		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a VM ID");			return false;}
+		else{
+			vmID = st.nextToken();
+		}
+		Cloud cloud = Config.cloudMan.getCloudList().get(cloudName);
+		cloud.destroyVM(vmID);
+		return true;
 	}
 
 	public boolean suspendVM(String cmdLine) {
 		// TODO Auto-generated method stub
-		return false;
+		StringTokenizer st = new StringTokenizer(cmdLine);		
+		String cloudName = "";
+		String vmID = "";
+		st.nextToken();
+		if(!st.hasMoreTokens()){
+			System.out.println("[USAGE : ]");
+			System.out.println("vmman");
+			System.out.println("    suspend");
+			System.out.println("        [ --help] | ");
+			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
+			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
+			return false;
+		}
+		else if(!st.nextToken().equalsIgnoreCase("-c")){
+			System.out.println("[ERROR : ] peremeter is incorrect!");
+			System.out.println("[USAGE : ]");
+			System.out.println("vmman");
+			System.out.println("    suspend");
+			System.out.println("        [ --help] | ");
+			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
+			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
+			return false;
+		}
+		
+		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a cloud name");			return false;}
+		else{
+			
+			cloudName = st.nextToken();
+			if(!Config.cloudMan.getCloudList().containsKey(cloudName)){
+				System.out.println("[ERROR : ] cloud doesn't exist!");
+				return false;
+			}
+		}
+		
+		if(!st.hasMoreTokens()){
+			System.out.println("[USAGE : ]");
+			System.out.println("vmman");
+			System.out.println("    suspend");
+			System.out.println("        [ --help] | ");
+			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
+			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
+			return false;
+		}
+		else if(!st.nextToken().equalsIgnoreCase("-i")){
+			System.out.println("[ERROR : ] peremeter is incorrect!");
+			System.out.println("[USAGE : ]");
+			System.out.println("vmman");
+			System.out.println("    suspend");
+			System.out.println("        [ --help] | ");
+			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
+			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
+			return false;
+		}
+		
+		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a VM ID");			return false;}
+		else{
+			vmID = st.nextToken();
+		}
+		Cloud cloud = Config.cloudMan.getCloudList().get(cloudName);
+		cloud.suspendVM(vmID);
+		return true;
 	}
 
 	public boolean startVM(String cmdLine) {
 		// TODO Auto-generated method stub
-		return false;
+		StringTokenizer st = new StringTokenizer(cmdLine);		
+		String cloudName = "";
+		String vmID = "";
+		st.nextToken();
+		if(!st.hasMoreTokens()){
+			System.out.println("[USAGE : ]");
+			System.out.println("vmman");
+			System.out.println("    start");
+			System.out.println("        [ --help] | ");
+			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
+			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
+			return false;
+		}
+		else if(!st.nextToken().equalsIgnoreCase("-c")){
+			System.out.println("[ERROR : ] peremeter is incorrect!");
+			System.out.println("[USAGE : ]");
+			System.out.println("vmman");
+			System.out.println("    start");
+			System.out.println("        [ --help] | ");
+			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
+			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
+			return false;
+		}
+		
+		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a cloud name");			return false;}
+		else{
+			
+			cloudName = st.nextToken();
+			if(!Config.cloudMan.getCloudList().containsKey(cloudName)){
+				System.out.println("[ERROR : ] cloud doesn't exist!");
+				return false;
+			}
+		}
+		
+		if(!st.hasMoreTokens()){
+			System.out.println("[USAGE : ]");
+			System.out.println("vmman");
+			System.out.println("    start");
+			System.out.println("        [ --help] | ");
+			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
+			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
+			return false;
+		}
+		else if(!st.nextToken().equalsIgnoreCase("-i")){
+			System.out.println("[ERROR : ] peremeter is incorrect!");
+			System.out.println("[USAGE : ]");
+			System.out.println("vmman");
+			System.out.println("    start");
+			System.out.println("        [ --help] | ");
+			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
+			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
+			return false;
+		}
+		
+		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a VM ID");			return false;}
+		else{
+			vmID = st.nextToken();
+		}
+		Cloud cloud = Config.cloudMan.getCloudList().get(cloudName);
+		cloud.startVM(vmID);
+		return true;
 	}
 
 
