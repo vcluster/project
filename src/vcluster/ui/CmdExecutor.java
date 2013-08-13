@@ -151,7 +151,7 @@ public class CmdExecutor {
 		case DESTROY: return Config.vmMan.destroyVM(cmdLine);
 		case SUSPEND: return Config.vmMan.suspendVM(cmdLine);
 		case START: return Config.vmMan.startVM(cmdLine);
-		default: 
+		default:System.out.println("command is not defined"); 
 			break;
 		
 
