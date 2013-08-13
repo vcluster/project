@@ -16,8 +16,8 @@ public enum Command {
 	LOADCONF (CMD_GROUP.VCLMAN, "loadf"),
 	//SET (CMD_GROUP.VCLMAN, "set"),
 	ENGMODE (CMD_GROUP.VCLMAN, "engmode"),	
-	CHECK_P (CMD_GROUP.VCLMAN, "chkp, chkpool, checkpool, checkp"),
-	CHECK_Q (CMD_GROUP.VCLMAN, "chkq, chkqueue, checkqueue, checkq"),
+	CHECK_P (CMD_GROUP.VCLMAN, "chkp, chkpool, checkpool, check_p"),
+	CHECK_Q (CMD_GROUP.VCLMAN, "chkq, chkqueue, checkqueue, check_q"),
 	
 	
 	/*Commands of vmman Category*/
