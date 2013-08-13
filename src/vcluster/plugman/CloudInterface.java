@@ -1,6 +1,9 @@
 package vcluster.plugman;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import vcluster.control.VMelement;
 
 
 public interface CloudInterface {
@@ -18,6 +21,7 @@ public interface CloudInterface {
 	// suspend a VM
 	public boolean suspendVM(String id);
 	// return the information about a cloud plugin,like a user Manual
+	public ArrayList<VMelement> getVMs();
 	public String getInfo();
 	
 	
