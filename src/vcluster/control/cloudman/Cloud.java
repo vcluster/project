@@ -1,14 +1,19 @@
 package vcluster.control.cloudman;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 import vcluster.engine.groupexecutor.PlugmanExecutor;
+import vcluster.global.Config;
 import vcluster.global.Config.CloudType;
 import vcluster.plugman.CloudInterface;
 import vcluster.plugman.PluginManager;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
+import vcluster.control.*;
 
 public class Cloud{
 	
@@ -35,14 +40,27 @@ public class Cloud{
 			}else if((aKey.equalsIgnoreCase("Interface"))){
 				setCloudpluginName(aValue);
 			}else if((aKey.equalsIgnoreCase("Name"))){
+
 				setCloudName(aValue);
 			}
 		}
 		if(!PluginManager.loadedCloudPlugins.containsKey(this.cloudpluginName))PlugmanExecutor.load("load -c "+cloudpluginName);		
 		cp = PluginManager.loadedCloudPlugins.get(this.cloudpluginName);
-
+		this.listVMs();
+		if(getVmList()==null)return;
+		for(VMelement vm : getVmList().values()){
+			Config.vmMan.getVmList().put(new Integer(Config.vmMan.getcurrId()), vm);
+		}
+		String fName = String.format("%-12s", getCloudName());
+		String fInterface =String.format("%-20s", getCloudpluginName());
+		String fType = String.format("%-12s", getCloudType());
+		String fVMs = String.format("%-16s", vmList.size());
+		System.out.println(fName+fInterface+fType+fVMs);
 		
 	}
+		
+		
+	
 	
 	public int getCurrentVMs() {
 		return currentVMs;
@@ -75,33 +93,87 @@ public class Cloud{
 	public boolean createVM(int maxCount) {
 		// TODO Auto-generated method stub
 		cp.RegisterCloud(conf);
-		return cp.createVM(maxCount);
+		ArrayList<VMelement> vmlist = cp.createVM(maxCount);
+		if(vmlist==null || vmlist.isEmpty()){
+			System.out.println("Operation failed!");
+			return false;
+		}
+		for(VMelement vm : vmlist){
+			vm.setCloudName(cloudName);
+			this.vmList.put(vm.getId(), vm);
+			Config.vmMan.getVmList().put(Config.vmMan.getcurrId(), vm);
+			System.out.println(cloudName+"   "+vm.getId()+"   "+vm.getState());
+		}
+		if(maxCount==1){
+			System.out.println(maxCount + " virture machine has been created successfully");
+		}else{
+			System.out.println(maxCount +" virture machines have been created successfully");
+		}
+		return true;
 	}
 
 	public boolean listVMs() {
 		// TODO Auto-generated method stub
 		cp.RegisterCloud(conf);
-		return	cp.listVMs();
-
+	//	HashMap<String,VMelement> vms = new HashMap<String,VMelement>();
+		ArrayList<VMelement> vmlist = cp.listVMs();
+		vmList = new TreeMap<String,VMelement>();
+		//int i = 1;
+		if(vmlist==null||vmlist.size()==0)return false;
+		for(VMelement vm : vmlist){
+			vm.setCloudName(getCloudName());
+			vmList.put(vm.getId(), vm);
+			//System.out.println(i++ + "             " + vm.getId() + "  " + vm.getState());
+		}
+		
+		return true;
 	}
 	
 	
 	public boolean destroyVM(String id) {
 		// TODO Auto-generated method stub
 		cp.RegisterCloud(conf);
-		return cp.destroyVM(id);
+		ArrayList<VMelement> vmlist = cp.destroyVM(id);
+		if(vmlist==null || vmlist.isEmpty()){
+			System.out.println("Operation failed!");
+			return false;
+		}
+		for(VMelement vm : vmlist){
+			vmList.remove(vm.getId());
+			System.out.println(cloudName+"   "+vm.getId()+"   "+vm.getState());
+		}
+		 return true;
 	}
 
 	public boolean startVM(String id) {
 		// TODO Auto-generated method stub
 		cp.RegisterCloud(conf);
-		return cp.startVM(id);
+		ArrayList<VMelement> vmlist = cp.startVM(id);
+		
+		if(vmlist==null || vmlist.isEmpty()){
+			System.out.println("Operation failed!");
+			return false;
+		}
+		for(VMelement vm : vmlist){
+			vmList.get(vm.getId()).setState(vm.getState());
+			System.out.println(cloudName+"   "+vm.getId()+"   "+vm.getState());
+		}
+		return true;
 	}
 
 	public boolean suspendVM(String id) {
 		// TODO Auto-generated method stub
 		cp.RegisterCloud(conf);
-		return cp.suspendVM(id);
+		ArrayList<VMelement> vmlist = cp.suspendVM(id);
+		if(vmlist==null || vmlist.isEmpty()){
+			System.out.println("Operation failed!");
+			return false;
+		}
+		for(VMelement vm : vmlist){
+			vmList.get(vm.getId()).setState(vm.getState());
+			System.out.println(cloudName+"   "+vm.getId()+"   "+vm.getState());
+		}
+		 return true;
 	}
 	public CloudType getCloudType() {
 		
@@ -154,11 +226,22 @@ public class Cloud{
 
 
 
+	public TreeMap<String,VMelement> getVmList() {
+		return vmList;
+	}
+
+	public void setVmList(TreeMap<String, VMelement> vmList) {
+		this.vmList = vmList;
+	}
+
+
+
 	private String cloudName;
 	private String cloudpluginName;
 	private List<String> conf;
 	private int currentVMs;
 	private CloudType cloudType;
 	private CloudInterface cp;
+	private TreeMap<String, VMelement> vmList;
 	
 }

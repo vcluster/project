@@ -2,9 +2,14 @@ package vcluster.control;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.SortedMap;
+import java.util.Stack;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 import java.util.Vector;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -26,7 +31,7 @@ public class VMManager extends Thread {
 
 	public VMManager()
 	{
-		vmList = new Hashtable<Integer, VMElement>();
+		vmList = new TreeMap<Integer, VMelement>();
 		
 		msgQueue =  new ArrayBlockingQueue <VMMessage>(100);
 		vecTempID = new Vector<Integer>();
@@ -42,7 +47,6 @@ public class VMManager extends Thread {
 			try {
 				aMsg = msgQueue.take();
 				PrintMsg.print(DMsgType.MSG, "message type = "+aMsg.toString());
-
 				processMessage(aMsg);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -56,7 +60,7 @@ public class VMManager extends Thread {
 		int numVMs = aMsg.getPrivateData();
 		
 		switch(aType) {
-		case LAUNCH: return launchVM(numVMs, null);
+		case LAUNCH: return createVM(numVMs+"");
 		}
 		return false;
 	}
@@ -72,8 +76,8 @@ public class VMManager extends Thread {
 		Iterator <Integer> it = v.iterator();
 		while(it.hasNext()) {
 			Integer key = it.next();
-	    	VMElement vm = (VMElement)vmList.get(key);
-			System.out.println("\tID: "+vm.getInstanceId()+"\t"+vm.stringVMState());
+	    	VMelement vm = (VMelement)vmList.get(key);
+			System.out.println("\tID: "+vm.getId()+"\t"+vm.getState());
 		}
 		System.out.println("----------------------------------------");
 	}
@@ -87,101 +91,12 @@ public class VMManager extends Thread {
 		done = true;
 	}
 	
-	public boolean addVMElement(int id, VMState state) 
+	public boolean addVMElement(int id,VMelement vm) 
 	{
-		VMElement vm = new VMElement(id, state);
-		Object ret = vmList.put(new Integer(id), (VMElement)vm);
+		Object ret = vmList.put(new Integer(id), vm);
 		if (ret != null) return false;
 		return true;
 	}
-
-	
-	public boolean launchVM(int vms, Cloud c) 
-	{
-		Cloud cloud;
-		if (c == null) {
-			cloud = Config.cloudMan.findCloudSystem(vms);
-		}
-		else {
-			cloud = c;
-		}
-		
-		CloudType ctype = cloud.getCloudType();
-		
-		switch(ctype) {
-		//case PRIVATE: return OCALaunch(cloud, vms);
-		case PUBLIC: return RESTLaunch(cloud, vms);
-		}
-		return true;
-	}
-
-/*
-	private boolean OCALaunch(CloudElement cloud, int numVMs) 
-	{
-		
-		Client oneClient = null;
-		
-		String account = ""+cloud.getAccessKey()+":"+cloud.getSecretKey();
-		try {
-			oneClient = new Client(account, cloud.getEndPoint()); 
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		
-		for(int i = 0; i < numVMs; i++) {
-			OneResponse rc = VirtualMachine.allocate(oneClient, vmTemplate);
-			
-			if(rc.isError()) {
-				PrintMsg.print(DMsgType.ERROR, "failed to launch vms : "+rc.getErrorMessage());
-			}
-			int newVMID = Integer.parseInt(rc.getMessage());
-			vecTempID.add(newVMID);
-
-			PrintMsg.print(DMsgType.MSG, "O.K. ID = " + newVMID);
-			
-			VMElement vmElement = new VMElement(newVMID, VMState.NOT_DEFINED);
-			vmList.put(newVMID, vmElement);
-		}
-*/
-
-		/* this algorithm has to be modified for better
-		 * performance.
-		 * 
-		 * it also has to handle only some vms running...
-		 */
-		/*int sleepsec = 20; /* 20 seconds as default */
-/*
-		while (!isAllVMRunning(oneClient)) {
-			try {
-				PrintMsg.print(DMsgType.MSG, "Going to sleep....");
-				Thread.sleep(sleepsec*1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				return false;
-			}
-		}
-		
-		vecTempID.removeAllElements();
-		PrintMsg.print(DMsgType.MSG, "All running.....");
-		PrintMsg.print(DMsgType.MSG, "Notified to Monitor Manager");
-		
-		/* have to increase currently running vms 
-		 * because all cloud systems have to be managed by cloud manager
-		 */
-	
-	/*
-		Config.cloudMan.incCurrentVMs(cloud, numVMs);
-		
-		synchronized (Config.monMan) {
-			Config.monMan.notify();
-		}
-		
-		return true;
-	}
-
-*/
 	
 	private boolean RESTLaunch(Cloud cloud, int numVMs)
 	{
@@ -211,7 +126,7 @@ public class VMManager extends Thread {
 			PrintMsg.print(DMsgType.MSG, "vm "+vm.getName()+", id " + vm.getId()
 					+", status = "+status);
 
-			VMElement element = findVMElement(vmID);
+			VMelement element = findVMElement(vmID);
 			VMState newVMState = getVMState(status);
 			if (newVMState != element.getState()) {
 				
@@ -230,8 +145,8 @@ public class VMManager extends Thread {
 		return allRunning;
 	}
 	
-	private void updateVMState(VMElement e, VMState state) {
-		e.setVMState(state);
+	private void updateVMState(VMelement e, VMState state) {
+		e.setState(state);
 	}
 	
 	public VMState getVMState(String vmState) {
@@ -246,7 +161,7 @@ public class VMManager extends Thread {
 	}
 
 	
-	private VMElement findVMElement(int id) {
+	private VMelement findVMElement(int id) {
 		return vmList.get(id);
 	}
 	
@@ -278,30 +193,108 @@ public class VMManager extends Thread {
 			cmdList.add("1");
 		}
 		if(!cmdList.get(1).equals("-c")){
-			cmdList.add(1,"c");
+			cmdList.add(1,"-c");
 			cmdList.add(2,cloud.getCloudName());
 		}
 		if(!cmdList.get(3).equalsIgnoreCase("-n")){
 			cmdList.add(3, "-n");
 			cmdList.add(4, "1");
 		}
-		for(String st : cmdList){
-			System.out.print(st + " ");
-		}
 		System.out.println("");
 		cloud = Config.cloudMan.getCloudList().get(cmdList.get(2));
+		if(cloud==null){
+			System.out.println("[ERROR : ] Cloud doesn't exist! please check the cloud name...");
+			System.out.println("");
+			return false;
+		}
 		vms = Integer.parseInt(cmdList.get(4));
 			return cloud.createVM(vms);
 
 	}
 
 	public boolean listVM(String cmdLine) {
-		// TODO Auto-generated method stub
-		for(Cloud cloud : Config.cloudMan.getCloudList().values()){
-			System.out.println("----------------------------------------------------------------------------------");
-			System.out.println("Cloud : " + cloud.getCloudName());
-			cloud.listVMs();
-		}
+		// TODO Auto-generated method stu
+		String filter ="";
+		String cloudFilter="";
+		StringTokenizer st = new StringTokenizer(cmdLine);		
+		st.nextToken();
+//		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a VM ID");			return false;}
+		if( st.hasMoreTokens()){
+			String tmp = st.nextToken();		
+			if(tmp.equalsIgnoreCase("-refresh")){
+				TreeMap<Integer,VMelement> temp = new TreeMap<Integer,VMelement>();
+				for(Cloud cloud : Config.cloudMan.getCloudList().values()){
+					cloud.listVMs();
+					if(getVmList()==null)continue;
+					for(VMelement vm : cloud.getVmList().values()){	
+						boolean flag = true;
+						for(Integer id:vmList.keySet()){
+							if(vm.getId().equals(vmList.get(id).getId())){
+								temp.put(id, vm);
+								flag = false;
+								break;
+							}
+						}	
+						if(flag)temp.put(new Integer(Config.vmMan.getcurrId()), vm);
+					}
+				}
+				for(Integer id:temp.keySet()){
+					
+					vmList.put(id, temp.get(id));
+				}
+			}else if(tmp.equalsIgnoreCase("-a")||tmp.equalsIgnoreCase("--type=available")){
+				filter="RUNNING";
+			}else if(tmp.equalsIgnoreCase("-r")||tmp.equalsIgnoreCase("--type=running")){
+				filter="RUNNING";
+			}else if(tmp.equalsIgnoreCase("-s")||tmp.equalsIgnoreCase("--type=suspended")){
+				filter="SUSPEND";
+			}else if(tmp.equalsIgnoreCase("-n")){
+				if(st.hasMoreTokens()){
+					cloudFilter = st.nextToken();
+				}else{
+					System.out.println("[ERROR : ] Expected a cloud name!");
+					return false;
+				}
+			}
+		}	
+		
+		String tName = String.format("%-16s", "CLOUD");
+		String tID =String.format("%-12s", "ID");
+		String tStat = String.format("%-16s", "STATUS");
+		System.out.println("----------------------------------------");
+		System.out.println(tID+tStat+tName);
+		System.out.println("----------------------------------------");
+			int runNum = 0;
+			int totalNum = 0;
+			for(Integer id : vmList.keySet()){
+				if(!cloudFilter.equals("")&&vmList.get(id).getCloudName().equals(cloudFilter)){
+					String fName = String.format("%-16s", vmList.get(id).getCloudName());
+					String fID =String.format("%-12s", id);
+					String fStat = String.format("%-16s", vmList.get(id).getState());
+					if(vmList.get(id).getState().equals(Config.VMState.RUNNING))runNum++;
+					System.out.println(fID+fStat+fName);
+					totalNum++;
+				}
+				if(!filter.equals("")&&vmList.get(id).getState().toString().equals(filter)){
+					String fName = String.format("%-16s", vmList.get(id).getCloudName());
+					String fID =String.format("%-12s", id);
+					String fStat = String.format("%-16s", vmList.get(id).getState());
+					if(vmList.get(id).getState().equals(Config.VMState.RUNNING))runNum++;
+					System.out.println(fID+fStat+fName);
+					totalNum++;
+				}
+				if(filter.equals("")&cloudFilter.equals("")){
+					String fName = String.format("%-16s", vmList.get(id).getCloudName());
+					String fID =String.format("%-12s", id);
+					String fStat = String.format("%-16s", vmList.get(id).getState());
+					if(vmList.get(id).getState().equals(Config.VMState.RUNNING))runNum++;
+					System.out.println(fID+fStat+fName);
+					totalNum++;
+				}
+			}
+			System.out.println("----------------------------------------");
+			System.out.println("      Running VMs :  "+runNum+"/"+totalNum);
+			System.out.println("----------------------------------------");
 		return true;
 	}
 
@@ -314,59 +307,39 @@ public class VMManager extends Thread {
 		if(!st.hasMoreTokens()){
 			System.out.println("[USAGE : ]");
 			System.out.println("vmman");
-			System.out.println("    destroy");
-			System.out.println("        [ --help] | ");
-			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
-			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
+			System.out.println("    destroy VM_ID");
+			System.out.println("        [ --help] |-h ");
 			return false;
 		}
-		else if(!st.nextToken().equalsIgnoreCase("-c")){
-			System.out.println("[ERROR : ] peremeter is incorrect!");
+		Integer vID;
+		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a VM ID");			return false;}
+		String tmp = st.nextToken();
+		
+		if(tmp.equalsIgnoreCase("-h")||tmp.equalsIgnoreCase("--help")){
 			System.out.println("[USAGE : ]");
 			System.out.println("vmman");
-			System.out.println("    destroy");
-			System.out.println("        [ --help] | ");
-			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
-			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
+			System.out.println("    destroy VM_ID");
+			System.out.println("        [ --help] |-h ");
 			return false;
-		}
-		
-		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a cloud name");			return false;}
-		else{
-			
-			cloudName = st.nextToken();
-			if(!Config.cloudMan.getCloudList().containsKey(cloudName)){
-				System.out.println("[ERROR : ] cloud doesn't exist!");
+		}else{
+			vmID = tmp;
+			try{
+				vID =new Integer(vmID);
+			}catch (NumberFormatException e){
+				System.out.println("[ERROR : ] VM ID has to be a number!");
 				return false;
 			}
+			if(!vmList.keySet().contains(vID)){
+				System.out.println("[ERROR : ] VM ID doesn't exist!");
+				return false;
+			}
+
 		}
-		
-		if(!st.hasMoreTokens()){
-			System.out.println("[USAGE : ]");
-			System.out.println("vmman");
-			System.out.println("    destroy");
-			System.out.println("        [ --help] | ");
-			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
-			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
-			return false;
-		}
-		else if(!st.nextToken().equalsIgnoreCase("-i")){
-			System.out.println("[ERROR : ] peremeter is incorrect!");
-			System.out.println("[USAGE : ]");
-			System.out.println("vmman");
-			System.out.println("    destroy");
-			System.out.println("        [ --help] | ");
-			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
-			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
-			return false;
-		}
-		
-		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a VM ID");			return false;}
-		else{
-			vmID = st.nextToken();
-		}
+		cloudName = vmList.get(vID).getCloudName();
+		String inId = vmList.get(vID).getId();
 		Cloud cloud = Config.cloudMan.getCloudList().get(cloudName);
-		cloud.destroyVM(vmID);
+		cloud.destroyVM(inId);
+		vmList.remove(vID);
 		return true;
 	}
 
@@ -379,59 +352,39 @@ public class VMManager extends Thread {
 		if(!st.hasMoreTokens()){
 			System.out.println("[USAGE : ]");
 			System.out.println("vmman");
-			System.out.println("    suspend");
-			System.out.println("        [ --help] | ");
-			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
-			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
+			System.out.println("    suspend VM_ID");
+			System.out.println("        [ --help] |-h ");
 			return false;
 		}
-		else if(!st.nextToken().equalsIgnoreCase("-c")){
-			System.out.println("[ERROR : ] peremeter is incorrect!");
+		Integer vID;
+		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a VM ID");			return false;}
+		String tmp = st.nextToken();
+		
+		if(tmp.equalsIgnoreCase("-h")||tmp.equalsIgnoreCase("--help")){
 			System.out.println("[USAGE : ]");
 			System.out.println("vmman");
-			System.out.println("    suspend");
-			System.out.println("        [ --help] | ");
-			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
-			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
+			System.out.println("    suspend VM_ID");
+			System.out.println("        [ --help] |-h ");
 			return false;
-		}
-		
-		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a cloud name");			return false;}
-		else{
-			
-			cloudName = st.nextToken();
-			if(!Config.cloudMan.getCloudList().containsKey(cloudName)){
-				System.out.println("[ERROR : ] cloud doesn't exist!");
+		}else{
+			vmID = tmp;
+			try{
+				vID =new Integer(vmID);
+			}catch (NumberFormatException e){
+				System.out.println("[ERROR : ] VM ID has to be a number!");
 				return false;
 			}
+			if(!vmList.keySet().contains(vID)){
+				System.out.println("[ERROR : ] VM ID doesn't exist!");
+				return false;
+			}
+
 		}
-		
-		if(!st.hasMoreTokens()){
-			System.out.println("[USAGE : ]");
-			System.out.println("vmman");
-			System.out.println("    suspend");
-			System.out.println("        [ --help] | ");
-			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
-			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
-			return false;
-		}
-		else if(!st.nextToken().equalsIgnoreCase("-i")){
-			System.out.println("[ERROR : ] peremeter is incorrect!");
-			System.out.println("[USAGE : ]");
-			System.out.println("vmman");
-			System.out.println("    suspend");
-			System.out.println("        [ --help] | ");
-			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
-			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
-			return false;
-		}
-		
-		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a VM ID");			return false;}
-		else{
-			vmID = st.nextToken();
-		}
+		cloudName = vmList.get(vID).getCloudName();
+		String inId = vmList.get(vID).getId();
 		Cloud cloud = Config.cloudMan.getCloudList().get(cloudName);
-		cloud.suspendVM(vmID);
+		cloud.suspendVM(inId);
+		
 		return true;
 	}
 
@@ -444,146 +397,70 @@ public class VMManager extends Thread {
 		if(!st.hasMoreTokens()){
 			System.out.println("[USAGE : ]");
 			System.out.println("vmman");
-			System.out.println("    start");
-			System.out.println("        [ --help] | ");
-			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
-			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
+			System.out.println("    start VM_ID");
+			System.out.println("        [ --help] |-h ");
 			return false;
 		}
-		else if(!st.nextToken().equalsIgnoreCase("-c")){
-			System.out.println("[ERROR : ] peremeter is incorrect!");
+		Integer vID;
+		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a VM ID");			return false;}
+		String tmp = st.nextToken();
+		
+		if(tmp.equalsIgnoreCase("-h")||tmp.equalsIgnoreCase("--help")){
 			System.out.println("[USAGE : ]");
 			System.out.println("vmman");
-			System.out.println("    start");
-			System.out.println("        [ --help] | ");
-			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
-			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
+			System.out.println("    start VM_ID");
+			System.out.println("        [ --help] |-h ");
 			return false;
-		}
-		
-		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a cloud name");			return false;}
-		else{
-			
-			cloudName = st.nextToken();
-			if(!Config.cloudMan.getCloudList().containsKey(cloudName)){
-				System.out.println("[ERROR : ] cloud doesn't exist!");
+		}else{
+			vmID = tmp;
+			try{
+				vID =new Integer(vmID);
+			}catch (NumberFormatException e){
+				System.out.println("[ERROR : ] VM ID has to be a number!");
 				return false;
 			}
+			if(!vmList.keySet().contains(vID)){
+				System.out.println("[ERROR : ] VM ID doesn't exist!");
+				return false;
+			}
+
 		}
-		
-		if(!st.hasMoreTokens()){
-			System.out.println("[USAGE : ]");
-			System.out.println("vmman");
-			System.out.println("    start");
-			System.out.println("        [ --help] | ");
-			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
-			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
-			return false;
-		}
-		else if(!st.nextToken().equalsIgnoreCase("-i")){
-			System.out.println("[ERROR : ] peremeter is incorrect!");
-			System.out.println("[USAGE : ]");
-			System.out.println("vmman");
-			System.out.println("    start");
-			System.out.println("        [ --help] | ");
-			System.out.println("        [ -c CLOUDNAME | --name=CLOUDNAME]");	
-			System.out.println("        [ -i VM_ID | --id=VM_ID ] | ");
-			return false;
-		}
-		
-		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a VM ID");			return false;}
-		else{
-			vmID = st.nextToken();
-		}
+		cloudName = vmList.get(vID).getCloudName();
+		String inId = vmList.get(vID).getId();
 		Cloud cloud = Config.cloudMan.getCloudList().get(cloudName);
-		cloud.startVM(vmID);
+		cloud.startVM(inId);
+		
 		return true;
 	}
 
-
-	private class VMElement {
-		public VMElement(int id, VMState state) {
-			instanceID = id;
-			vmstate = state;
-		}
-		
-		public int getInstanceId() {
-			return instanceID;
-		}
-		
-		
-		public VMState getState() {
-			return vmstate;
-		}
-		
-		public void setVMState(VMState state) {
-			vmstate = state;
-		}
-		
-		public String stringVMState() {
-			
-			switch(vmstate) {
-			case PENDING: return "PENDING";
-			case RUNNING: return "RUNNING";
-			case STOP: return "STOP";
-			case SUSPEND: return "SUSPEND";
-			case PROLOG: return "PROLOG";
-			case NOT_DEFINED: return "NOT_DEFINED";
-			}
-			return "NOT_DEFINED";
-		}
-		
-		
-		private int instanceID = -1;
-		private VMState vmstate = VMState.PENDING;
-	}
 	
+	
+	public int getcurrId() {
+		return id++;
+	}
 
+	public void setcurrId(int id) {
+		this.id = id;
+	}
+
+
+
+	public TreeMap<Integer,VMelement> getVmList() {
+		return vmList;
+	}
+
+	public void setVmList(TreeMap<Integer, VMelement> vmList) {
+		this.vmList = vmList;
+	}
+
+
+
+	private int id;
 	private boolean done = false;
 	private BlockingQueue <VMMessage> msgQueue;
-
 	private Vector<Integer> vecTempID = null;
-    protected Hashtable <Integer, VMElement> vmList = null;
-   
-
-    /* it has to be moved to a configuration file later */
-    
-	private static String vmTemplate =
-        "NAME   = vcl-wn \n"
-        + "VCPU    = 1 \n"
-        + "MEMORY = 256 \n"
-        + "PUBLIC = YES \n"
-        + "DISK   = [\n"
-        + "\tsource   = /var/lib/one/image-repo/b9140219c2cacb22fa01396122d1446ce14ca5e3,\n"
-        + "\tsave	   = yes, \n"
-        + "\ttarget   = vda, \n"
-        + "\treadonly = no ]\n"
-        + "DISK   = [ \n"
-        + "\ttype     = swap,\n"
-        + "\tsize     = 2048,\n"
-        + "\ttarget   = vdb ]\n"
-        + "NIC    = [ NETWORK = \"FermiCloud\", \n"
-        + "\tMODEL = virtio ]\n"
-        + "FEATURES=[ acpi=\"yes\" ]\n"
-        + "GRAPHICS = [\n"
-        + "\ttype    = \"vnc\", \n"
-        + "\tlisten  = \"127.0.0.1\", \n"
-        + "\tport    = \"-1\", \n"
-        + "\tautoport = \"yes\", \n"
-        + "\tkeymap = \"en-us\"]\n"
-        + "CONTEXT = [ \n"
-        + "\tip_public   = \"$NIC[IP, NETWORK=\\\"FermiCloud\\\"]\", \n"
-        + "\tnetmask     = \"255.255.254.0\", \n"
-        + "\tgateway     = \"131.225.154.1\", \n"
-        + "\tns          = \"131.225.8.120\", \n"
-        + "\tfiles      = \"/cloud/images/OpenNebula/templates/init.sh /home/rsyoung/OpenNebula/k5login\",\n"
-        + "\ttarget      = \"hdc\", \n"
-        + "\troot_pubkey = \"id_dsa.pub\", \n"
-        + "\tusername    = \"opennebula\", \n"
-        + "\tuser_pubkey = \"id_dsa.pub\" \n"
-        + "]\n"
-        + "REQUIREMENTS = \"HYPERVISOR=\\\"kvm\\\"\"\n"
-        + "RANK =\"- RUNNING_VMS\"";
-}
+    protected TreeMap <Integer, VMelement> vmList = null;
+  
+   }
 
 

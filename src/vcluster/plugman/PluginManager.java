@@ -40,7 +40,7 @@ public class PluginManager {
 		 
 		File f = new File(path);
 		String name = f.getName().replace(".jar", "");		
-		System.out.println(path);
+		//System.out.println(path);
 		if (this.isLoaded(name)) {
 				System.out.println(name + " : has already been loaded!");
 				return;
@@ -77,7 +77,7 @@ public class PluginManager {
 						}
 
 			}
-			System.out.println("Plugin \""+name+"\" has been loaded successfully!");
+			//System.out.println("Plugin \""+name+"\" has been loaded successfully!");
 	}
 
 		

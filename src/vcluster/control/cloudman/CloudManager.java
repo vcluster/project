@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import vcluster.global.Config;
 import vcluster.global.Config.CloudType;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
@@ -169,28 +170,57 @@ public class CloudManager  {
 	}
 	*/
 
-	public static boolean loadCloudElments(String confFile, CloudManager cman) 
+	public boolean loadCloudElments(String confFile, CloudManager cman) 
 	{
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(confFile));
 			
 			String aLine = "";
 			List<String> conf = new ArrayList<String>() ;
+			String cName = String.format("%-12s", "Name");
+			String cInterface =String.format("%-20s", "Interface");
+			String cType = String.format("%-12s", "Type");
+			String cVMs = String.format("%-16s", "VMs");
+			System.out.println("-----------------------------------------------");
+			System.out.println(cName+cInterface+cType+cVMs);
+			System.out.println("-----------------------------------------------");
 			while ((aLine = br.readLine()) != null) {
 				if (aLine.equalsIgnoreCase("[cloudelement]")) {
 					if(!conf.isEmpty()){
-						cman.addCloudElement(new Cloud(conf));
+						String name = conf.get(0).split("=")[1].trim();
+
+						boolean flag = true;
+						for(Cloud c : getCloudList().values()){
+							if(name.equals(c.getCloudName())){
+								System.out.println("There is already a cloud named "+name+" exists!");
+								flag = false;
+							}
+						}
+						if(flag){
+							Cloud cloud = new Cloud(conf);
+							cman.addCloudElement(cloud);
+						}
 						conf = new ArrayList<String>();
 					}
-
-				}else{
-					
+				}else{					
 					conf.add(aLine);
 				}
 				
 			}
-			
-			cman.addCloudElement(new Cloud(conf));
+			String name = conf.get(0).split("=")[1].trim();
+
+			boolean flag = true;
+			for(Cloud c : getCloudList().values()){
+				if(name.equals(c.getCloudName())){
+					System.out.println("There is already a cloud named "+name+" exists!");
+					flag = false;
+				}
+			}
+			if(flag){
+				Cloud cloud = new Cloud(conf);
+				cman.addCloudElement(cloud);
+			}
+			System.out.println("-----------------------------------------------");			
 			br.close();
 	    } catch (Exception e) {
 	    	e.printStackTrace();

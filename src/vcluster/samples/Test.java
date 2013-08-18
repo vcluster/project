@@ -17,7 +17,7 @@ public class Test {
 		VMManager vmman = new VMManager();
 
 		for(int i = 0; i < 10; i++) {
-			vmman.addVMElement(i, VMState.PENDING);
+			//vmman.addVMElement(i, VMState.PENDING);
 		}
 		
 		vmman.dump();

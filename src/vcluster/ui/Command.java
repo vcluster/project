@@ -25,7 +25,7 @@ public enum Command {
 	CREATE (CMD_GROUP.VMMAN, "create"),
 	START (CMD_GROUP.VMMAN, "start"),
 	SUSPEND (CMD_GROUP.VMMAN, "suspend"),
-	LISTVM (CMD_GROUP.VMMAN, "listvm"),
+	LISTVM (CMD_GROUP.VMMAN, "list"),
 	DESTROY (CMD_GROUP.VMMAN, "destroy,kill"),
 	
 	
@@ -33,7 +33,7 @@ public enum Command {
 
 	LOAD (CMD_GROUP.PLUGMAN, "load"),
 	UNLOAD (CMD_GROUP.PLUGMAN, "unload"),
-	LIST (CMD_GROUP.PLUGMAN, "list"),
+	LIST (CMD_GROUP.PLUGMAN, "list,ls"),
 	INFO (CMD_GROUP.PLUGMAN, "info"),
 	
 	

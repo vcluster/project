@@ -54,7 +54,7 @@ public class UIMain {
 	    	return true;
 
 	    /* extract the command from the command string */
-	    Command command = CmdExecutor.getCommand(userCmd);
+	    Command command = CmdExecutor.getCommand(null,userCmd);
 
 	    /* if quit, then forcedly quit */
 	    if (command == Command.QUIT) {

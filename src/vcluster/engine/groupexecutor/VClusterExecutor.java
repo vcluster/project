@@ -151,7 +151,7 @@ public class VClusterExecutor {
 			}
 
 			token = st.nextToken().trim();
-			return CloudManager.loadCloudElments(token, Config.cloudMan);
+			return Config.cloudMan.loadCloudElments(token, Config.cloudMan);
 		}
 		
 		if (token.equalsIgnoreCase("set")) {

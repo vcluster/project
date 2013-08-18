@@ -45,7 +45,7 @@ public class CmdExecutor {
 		
 		String cmd = st.nextToken().trim();
 		
-		Command command = getCommand(cmd);
+		Command command = getCommand(null,cmd);
 		
 		// if (command == Command.NOT_DEFINED) return false;
 		
@@ -64,7 +64,7 @@ public class CmdExecutor {
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		String cmd = st.nextToken().trim();
 		//System.out.println(cmdLine);
-		Command command = getCommand(cmd);
+		Command command = getCommand(Command.CMD_GROUP.PLUGMAN.toString(),cmd);
 		
 		switch (command) {
 		case LOAD:
@@ -104,8 +104,16 @@ public class CmdExecutor {
 		case ENGMODE:
 			return VClusterExecutor.engmode(cmdLine);
 		case CHECK_P: 
+			if(PluginManager.loadedBatchPlugins.isEmpty()){
+				System.out.println("[ERROR : ] No plugin system,please load it first!");
+				return false;
+			}
     		return PluginManager.current_proxyExecutor.check_pool();
 	    case CHECK_Q: 
+			if(PluginManager.loadedBatchPlugins.isEmpty()){
+				System.out.println("[ERROR : ] No plugin system,please load it first!");
+				return false;
+			}
 	    	return PluginManager.current_proxyExecutor.check_q();		
 			
 		}
@@ -142,7 +150,7 @@ public class CmdExecutor {
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		String cmd = st.nextToken().trim();
 		//System.out.println(cmdLine);
-		Command command = getCommand(cmd);
+		Command command = getCommand(Command.CMD_GROUP.VMMAN.toString(),cmd);
 		
 		//System.out.println(cmdLine);
 		switch (command) {
@@ -160,14 +168,18 @@ public class CmdExecutor {
 		return true;
 	}
 	
-	public static Command getCommand(String aCmdLine) 
+	public static Command getCommand(String cmdGroup, String aCmdLine) 
 	{
 		StringTokenizer st = new StringTokenizer(aCmdLine);
 		String aCmd = st.nextToken().trim();
-		
-        for (Command cmd : Command.values())
-        	if (cmd.contains(aCmd)) return cmd;
-        
+    	if (cmdGroup==null){
+            for (Command cmd : Command.values()){
+            	if (cmd.contains(aCmd)) return cmd;
+            }
+    	}
+        for (Command cmd : Command.values()){
+        	if (cmd.getCmdGroup().toString().equalsIgnoreCase(cmdGroup)&cmd.contains(aCmd)) return cmd;
+        }
         return Command.NOT_DEFINED;
  	}
 }
