@@ -13,6 +13,8 @@ public class VMelement {
 	private String ucpu;
 	private String group;
 	private String cloudName;
+	private String privateIP;
+	private String pubicIP;
 	
 	public VMelement() {
 		this.id = "";
@@ -25,7 +27,31 @@ public class VMelement {
 		this.ucpu = "";
 		this.group = "";
 		this.cloudName = "";
+		this.privateIP="";
+		this.pubicIP="";
 	}
+	
+	
+	public String getPrivateIP() {
+		return privateIP;
+	}
+
+
+	public void setPrivateIP(String privateIP) {
+		this.privateIP = privateIP;
+	}
+
+
+	public String getPubicIP() {
+		return pubicIP;
+	}
+
+
+	public void setPubicIP(String pubicIP) {
+		this.pubicIP = pubicIP;
+	}
+
+
 	public String getId() {
 		return id;
 	}

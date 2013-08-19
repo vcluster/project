@@ -15,6 +15,6 @@ public interface BatchInterface {
 	public int getIdleJob();
 	public int getRunningJob();
 	public int getHeldJob();
-	public String getInfo();
+
 
 }

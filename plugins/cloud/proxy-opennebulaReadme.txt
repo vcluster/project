@@ -1,0 +1,1 @@
+This plugin uses proxy program to communicate with a cloud system who runs proxy and opennebula structure.

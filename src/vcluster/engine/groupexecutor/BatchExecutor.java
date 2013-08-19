@@ -27,8 +27,5 @@ public class BatchExecutor {
 	public static int getHeldJob(){
 		return PluginManager.current_proxyExecutor.getHeldJob();
 	}
-	public static String getInfo(){
-		return PluginManager.current_proxyExecutor.getInfo();
-	}
 
 }

@@ -1,6 +1,9 @@
 package vcluster.plugman;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -107,7 +110,7 @@ public class PluginManager {
 	 * @see #LoadAllPlugins() 
 	 * @return a list of paths.
 	 */
-	public List<String> getCloudPluginList(){
+	public static List<String> getCloudPluginList(){
 		File dir = new File(System.getProperty("user.dir") + File.separator
 				+ CLOUD_PLUGIN_DIR);
 		File f = new File(dir.getPath());
@@ -125,7 +128,7 @@ public class PluginManager {
 				
 	}
 	
-	public List<String> getBatchPluginList(){
+	public static List<String> getBatchPluginList(){
 		File dir = new File(System.getProperty("user.dir") + File.separator
 				+ BATCH_PLUGIN_DIR);
 		File f = new File(dir.getPath());
@@ -169,7 +172,28 @@ public class PluginManager {
 	}
 
 	
-
+	public static String getInfo(String pluginName) {
+		// TODO Auto-generated method stub
+		StringBuffer info =new StringBuffer("");
+		String path = "";
+		if(getCloudPluginList().contains(pluginName))path=CLOUD_PLUGIN_DIR;
+		if(getBatchPluginList().contains(pluginName))path=BATCH_PLUGIN_DIR;
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(new File(path+File.separator+pluginName+"Readme.txt")));
+			String aLine = "";
+			while ((aLine = br.readLine()) != null) {				
+				System.out.println(aLine);
+			}
+			br.close();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Readme file doesn't exist ,please check it on the plugin directory!");
+			//e.printStackTrace();
+		}
+		
+		return info.toString();
+	}
 
 	public List<String> GetLoadedCloudPlugins() {
 		ArrayList<String> al = new ArrayList<String> ();
@@ -185,7 +209,7 @@ public class PluginManager {
 		return al;
 	}
 	
-	public boolean isLoaded(String name){
+	public static boolean isLoaded(String name){
 		
 		if (loadedBatchPlugins.containsKey(name)||loadedCloudPlugins.containsKey(name)) {
 			return true;

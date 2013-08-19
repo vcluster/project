@@ -106,18 +106,17 @@ public class CmdExecutor {
 		case CHECK_P: 
 			if(PluginManager.loadedBatchPlugins.isEmpty()){
 				System.out.println("[ERROR : ] No plugin system,please load it first!");
-				return false;
+				PlugmanExecutor.load("load -b proxy-HTCondor");	
 			}
     		return PluginManager.current_proxyExecutor.check_pool();
 	    case CHECK_Q: 
 			if(PluginManager.loadedBatchPlugins.isEmpty()){
 				System.out.println("[ERROR : ] No plugin system,please load it first!");
-				return false;
+				PlugmanExecutor.load("load -b proxy-HTCondor");	
 			}
 	    	return PluginManager.current_proxyExecutor.check_q();		
 			
 		}
-
 		
 		return true;
 	}
@@ -154,6 +153,7 @@ public class CmdExecutor {
 		
 		//System.out.println(cmdLine);
 		switch (command) {
+		case SHOW: return Config.vmMan.showVM(cmdLine);
 		case CREATE: return Config.vmMan.createVM(cmdLine);
 		case LISTVM: return Config.vmMan.listVM(cmdLine);
 		case DESTROY: return Config.vmMan.destroyVM(cmdLine);

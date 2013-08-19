@@ -22,7 +22,7 @@ public interface CloudInterface {
 	public ArrayList<VMelement> suspendVM(String id);
 	// return the information about a cloud plugin,like a user Manual
 	//public ArrayList<VMelement> getVMs();
-	public String getInfo();
+
 	
 	
 }

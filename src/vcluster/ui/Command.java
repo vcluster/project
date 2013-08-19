@@ -22,6 +22,7 @@ public enum Command {
 	
 	/*Commands of vmman Category*/
 	VMMAN (CMD_GROUP.VMMAN, "vmman, vman"),
+	SHOW(CMD_GROUP.VMMAN,"show"),
 	CREATE (CMD_GROUP.VMMAN, "create"),
 	START (CMD_GROUP.VMMAN, "start"),
 	SUSPEND (CMD_GROUP.VMMAN, "suspend"),

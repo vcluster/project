@@ -50,18 +50,41 @@ public class PlugmanExecutor {
 		
 		System.out.println("List the plugins in plugin directory :");
 		if(!st.hasMoreTokens()) {
-			System.out.println("Batch plugins : ");
-			for(String batchplugin : pm.getBatchPluginList()){
-				
-				System.out.println("      " + batchplugin);
-			}
+			
+			String cName = String.format("%-20s", "Name");
+			String cStat =String.format("%-12s", "Status");
+			String cType = String.format("%-12s", "Type");
+			String batch = String.format("%-12s", "Batch");
+			String cloudStr = String.format("%-12s", "Cloud");
+			String loadStr = String.format("%-12s", "Loaded");
+			String unloadStr = String.format("%-12s", "UnLoaded");
+			
 			System.out.println("----------------------------------------");
-			System.out.println("Cloud plugins : ");
+			System.out.println(cName+cStat+cType);
+			System.out.println("----------------------------------------");
+			for(String batchplugin : pm.getBatchPluginList()){
+				String name = String.format("%-20s", batchplugin);
+				String stat="";
+				if(PluginManager.isLoaded(batchplugin)){
+					stat = loadStr;
+				}else{
+					stat = unloadStr;
+				}
+				System.out.println(name+stat+batch);
+			}
+
 			for(String cloudplugin : cloudPluginsList){
 				
-				System.out.println("      " + cloudplugin);
+				String name = String.format("%-20s", cloudplugin);
+				String stat="";
+				if(PluginManager.isLoaded(cloudplugin)){
+					stat = loadStr;
+				}else{
+					stat = unloadStr;
+				}
+				System.out.println(name+stat+cloudStr);
 			}
-			
+			System.out.println("----------------------------------------");
 			
 			return true;
 		}
@@ -230,13 +253,8 @@ public class PlugmanExecutor {
 			return false;
 		}
 		String pluginName = st.nextToken();
-		if(pm.isLoaded(pluginName)){
-			System.out.println(PluginManager.loadedBatchPlugins.get(pluginName).getInfo());		
-			
-		}else{
-			System.out.println("This plugin doesn't exist!");
-		}
 		
+		System.out.println(PluginManager.getInfo(pluginName));		
 		if(st.hasMoreTokens()) {
 			PrintMsg.print(DMsgType.ERROR, "unexpected token \""+st.nextToken()+"\" found!");
 			return false;

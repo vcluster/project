@@ -51,27 +51,24 @@ public class CloudManager  {
 	}
 	public void dump()
 	{
-		System.out.println("----------------------------------------");
-		System.out.println("\tCloud Manager");
-		System.out.println("----------------------------------------");
+		String cName = String.format("%-12s", "Name");
+		String cInterface =String.format("%-20s", "Interface");
+		String cType = String.format("%-12s", "Type");
+		String cVMs = String.format("%-16s", "VMs");
+		System.out.println("-----------------------------------------------");
+		System.out.println(cName+cInterface+cType+cVMs);
+		System.out.println("-----------------------------------------------");
 
-		for(int i = 0; i < privateCloudList.size(); i++) {
-			Cloud e = privateCloudList.elementAt(i);
-			System.out.printf("[private cloude element] [%d]\n", i);
-			e.dump();
-			System.out.println();
+		for(Cloud cloud:this.getCloudList().values()){
+			String fName = String.format("%-12s", cloud.getCloudName());
+			String fInterface =String.format("%-20s", cloud.getCloudpluginName());
+			String fType = String.format("%-12s", cloud.getCloudType());
+			String fVMs = String.format("%-16s", cloud.getVmList().size());
+			System.out.println(fName+fInterface+fType+fVMs);
+			
 		}
 
-		System.out.println("----------------------------------------");
-
-		for(int i = 0; i < publicCloudList.size(); i++) {
-			Cloud e = publicCloudList.elementAt(i);
-			System.out.printf("[public cloude element] [%d]\n", i);
-			e.dump();
-			System.out.println();
-		}
-
-		System.out.println("----------------------------------------");
+		System.out.println("-----------------------------------------------");
 	}
 	
 	/*

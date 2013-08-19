@@ -298,11 +298,79 @@ public class VMManager extends Thread {
 		return true;
 	}
 
+	public boolean showVM(String cmdLine) {
+		// TODO Auto-generated method stub
+		StringTokenizer st = new StringTokenizer(cmdLine);		
+		String vmID = "";
+		Integer vID;
+		st.nextToken();
+		if(!st.hasMoreTokens()){
+			System.out.println("[USAGE : ]");
+			System.out.println("vmman");
+			System.out.println("    show VM_ID");
+			System.out.println("        [ --help] |-h ");
+			return false;
+		}
+
+		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a VM ID");			return false;}
+		String tmp = st.nextToken();
+		
+		if(tmp.equalsIgnoreCase("-h")||tmp.equalsIgnoreCase("--help")){
+			System.out.println("[USAGE : ]");
+			System.out.println("vmman");
+			System.out.println("    show VM_ID");
+			System.out.println("        [ --help] |-h ");
+			return false;
+		}else{
+			vmID = tmp;
+			try{
+				vID =new Integer(vmID);
+			}catch (NumberFormatException e){
+				System.out.println("[ERROR : ] VM ID has to be a number!");
+				return false;
+			}
+			if(!vmList.keySet().contains(vID)){
+				System.out.println("[ERROR : ] VM ID doesn't exist!");
+				return false;
+			}
+
+		}
+		String tName = String.format("%-11s", "CLOUD");
+		String tID =String.format("%-11s", "ID ");
+		String tStat = String.format("%-11s", "STATUS");
+		String tpriIP = String.format("%-11s", "privateIP");
+		String tpubIP = String.format("%-11s", "publicIP");
+		String tinID = String.format("%-11s", "internalID");
+		String tlauTime = String.format("%-11s", "launchTime");
+		Integer id = vID;
+		
+		String fName = String.format("%-16s", vmList.get(id).getCloudName());
+		String fID =String.format("%-16s", id);
+		String fStat = String.format("%-16s", vmList.get(id).getState());
+		String fpriIP = String.format("%-16s", vmList.get(id).getPrivateIP());
+		String fpubIP =String.format("%-16s", vmList.get(id).getPubicIP());
+		String finID = String.format("%-16s", vmList.get(id).getId());
+		String flauTime = String.format("%-16s", vmList.get(id).getTime());
+		
+		System.out.println("---------------------------------------");
+		System.out.println(tID+" : "+fID);
+		System.out.println(tName+" : "+fName);
+		System.out.println(tinID+" : "+finID);
+		System.out.println(tStat+" : "+fStat);
+		System.out.println(tpriIP+" : "+fpriIP);
+		System.out.println(tpubIP+" : "+fpubIP);	
+		System.out.println(tlauTime+" : "+flauTime);
+		System.out.println("---------------------------------------");
+		
+		return false;
+	}
+
 	public boolean destroyVM(String cmdLine) {
 		// TODO Auto-generated method stub
 		StringTokenizer st = new StringTokenizer(cmdLine);		
 		String cloudName = "";
 		String vmID = "";
+		Integer vID;
 		st.nextToken();
 		if(!st.hasMoreTokens()){
 			System.out.println("[USAGE : ]");
@@ -311,7 +379,6 @@ public class VMManager extends Thread {
 			System.out.println("        [ --help] |-h ");
 			return false;
 		}
-		Integer vID;
 		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a VM ID");			return false;}
 		String tmp = st.nextToken();
 		
