@@ -1,5 +1,7 @@
 package vcluster.ui;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 import vcluster.control.cloudman.CloudManager;
@@ -104,15 +106,23 @@ public class CmdExecutor {
 		case ENGMODE:
 			return VClusterExecutor.engmode(cmdLine);
 		case CHECK_P: 
-			if(PluginManager.loadedBatchPlugins.isEmpty()){
-				System.out.println("[ERROR : ] No plugin system,please load it first!");
-				PlugmanExecutor.load("load -b proxy-HTCondor");	
-			}
-    		return PluginManager.current_proxyExecutor.check_pool();
+				if(PluginManager.loadedBatchPlugins.isEmpty()){
+					if(yesORno()){
+						PlugmanExecutor.load("load -b proxy-HTCondor");	
+					}else{					
+						return false;
+						}
+
+				}
+				return PluginManager.current_proxyExecutor.check_pool();
+			
 	    case CHECK_Q: 
 			if(PluginManager.loadedBatchPlugins.isEmpty()){
-				System.out.println("[ERROR : ] No plugin system,please load it first!");
-				PlugmanExecutor.load("load -b proxy-HTCondor");	
+				if(yesORno()){
+					PlugmanExecutor.load("load -b proxy-HTCondor");				
+				}else{
+					return false;
+				}
 			}
 	    	return PluginManager.current_proxyExecutor.check_q();		
 			
@@ -121,7 +131,20 @@ public class CmdExecutor {
 		return true;
 	}
 	
-
+	private static boolean yesORno(){
+		System.out.println("No batch system,do you want to load proxy-HTCondor plugin?(y/n)");
+	    String yn = "";
+	    InputStreamReader input = new InputStreamReader(System.in);
+	    BufferedReader reader = new BufferedReader(input);
+	    
+	    try {
+		    /* get a command string */
+	    	yn = reader.readLine(); 
+	    	if(yn.equalsIgnoreCase("y")){return true;}else if(yn.equalsIgnoreCase("n")){return false;}
+	    	else{System.out.println("has to be y or n!");return false;}
+	    }
+	    catch(Exception e){return false;}
+	}
 	
 
 	private static boolean executeVMMAN(String cmdLine)
