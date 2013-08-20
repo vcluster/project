@@ -47,21 +47,34 @@ public class PlugmanExecutor {
 		// TODO Auto-generated method stub
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		st.nextToken();
+		boolean cfilter =true;
+		boolean bfilter =true;
+
+	if(st.hasMoreTokens()){
+		String para2 = st.nextToken().trim();
+		if(Command.TYPE_BATCH.contains(para2)){
+			cfilter=false;
+		}else if(Command.TYPE_CLOUD.contains(para2)){
+			bfilter=false;
+		}else{
+			System.out.println("[ERROR : ] Wrong parameter!");
+		}	
+	}
+		String cName = String.format("%-20s", "Name");
+		String cStat =String.format("%-12s", "Status");
+		String cType = String.format("%-12s", "Type");
+		String batch = String.format("%-12s", "Batch");
+		String cloudStr = String.format("%-12s", "Cloud");
+		String loadStr = String.format("%-12s", "Loaded");
+		String unloadStr = String.format("%-12s", "UnLoaded");
 		
 		System.out.println("List the plugins in plugin directory :");
-		if(!st.hasMoreTokens()) {
-			
-			String cName = String.format("%-20s", "Name");
-			String cStat =String.format("%-12s", "Status");
-			String cType = String.format("%-12s", "Type");
-			String batch = String.format("%-12s", "Batch");
-			String cloudStr = String.format("%-12s", "Cloud");
-			String loadStr = String.format("%-12s", "Loaded");
-			String unloadStr = String.format("%-12s", "UnLoaded");
-			
-			System.out.println("----------------------------------------");
-			System.out.println(cName+cStat+cType);
-			System.out.println("----------------------------------------");
+		
+		System.out.println("----------------------------------------");
+		System.out.println(cName+cStat+cType);
+		System.out.println("----------------------------------------");
+		
+		if(cfilter){
 			for(String batchplugin : pm.getBatchPluginList()){
 				String name = String.format("%-20s", batchplugin);
 				String stat="";
@@ -72,7 +85,9 @@ public class PlugmanExecutor {
 				}
 				System.out.println(name+stat+batch);
 			}
+		}
 
+		if(bfilter){
 			for(String cloudplugin : cloudPluginsList){
 				
 				String name = String.format("%-20s", cloudplugin);
@@ -84,68 +99,10 @@ public class PlugmanExecutor {
 				}
 				System.out.println(name+stat+cloudStr);
 			}
+		}
 			System.out.println("----------------------------------------");
 			
-			return true;
-		}
-		
-		String para2 = st.nextToken().trim();
-		if(Command.TYPE_BATCH.contains(para2)){
-			System.out.println("Batch plugins : ");
-			for(String batchplugin : pm.getBatchPluginList()){
-				
-				System.out.println("      " + batchplugin);
-			}
-		}else if(Command.TYPE_CLOUD.contains(para2)){
-			System.out.println("Cloud plugins : ");
-			for(String cloudplugin : cloudPluginsList){
-				
-				System.out.println("      " + cloudplugin);
-			}
-		}else if(Command.LOADED.contains(para2)){
-			if(!st.hasMoreTokens()){
-				System.out.println("Loaded Batch plugin : ");
-				for(String loadedcloud : pm.GetLoadedBatchPlugins()){
-					System.out.println("         " + loadedcloud);
-				}
-				System.out.println("Loaded Cloud plugins : ");
-				for(String loadedcloud : pm.GetLoadedCloudPlugins()){
-					System.out.println("         " + loadedcloud);
-				}
-			}else{
-				String type = st.nextToken();
-				if(Command.TYPE_BATCH.contains(type)){
-					System.out.println("Loaded Batch plugin : ");
-					for(String loadedcloud : pm.GetLoadedBatchPlugins()){
-						System.out.println("         " + loadedcloud);
-					}
-				}
-				else if(Command.TYPE_CLOUD.contains(type)){
-					System.out.println("Loaded Cloud plugins : ");
-					for(String loadedcloud : pm.GetLoadedCloudPlugins()){
-						System.out.println("         " + loadedcloud);
-					}
-				}
-				
-			}
-			
-			
-			
-		}else {
-			PrintMsg.print(DMsgType.ERROR, "no such a parameter like \""+para2+"\" !");
-			return false;
-		}
-		
-		if(st.hasMoreTokens()) {
-			PrintMsg.print(DMsgType.ERROR, "unexpected token \""+st.nextToken()+"\" found!");
-			return false;
-		}
-		
-		
-		if(st.hasMoreTokens()) {
-			PrintMsg.print(DMsgType.ERROR, "unexpected token \""+st.nextToken()+"\" found!");
-			return false;
-		}
+
 		return true;
 
 	}
@@ -242,7 +199,7 @@ public class PlugmanExecutor {
 		return false;			
 	}
 
-	public static boolean info(String cmdLine) {
+	public static boolean getInfo(String cmdLine) {
 		// TODO Auto-generated method stub
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		st.nextToken();

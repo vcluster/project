@@ -68,11 +68,11 @@ public class CmdExecutor {
 		
 		switch (command) {
 		case LOAD:
-			return PlugmanExecutor.load(cmdLine);
+			return PlugmanExecutor.load(cmdLine); 
 		case UNLOAD:
 			return PlugmanExecutor.unload(cmdLine);
 		case INFO:
-			return PlugmanExecutor.info(cmdLine);
+			return PlugmanExecutor.getInfo(cmdLine);
 		case LIST:
 			//System.out.print("                      1 : ");
 			return PlugmanExecutor.list(cmdLine);
