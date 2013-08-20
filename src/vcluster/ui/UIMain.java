@@ -1,11 +1,10 @@
 package vcluster.ui;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
-import vcluster.global.Config;
 import vcluster.global.VCluster;
 import vcluster.util.PrintMsg;
-import vcluster.util.Util;
 import vcluster.util.PrintMsg.DMsgType;
 
 public class UIMain {
@@ -80,7 +79,6 @@ public class UIMain {
 	}
 
 	public static void main(String[] args) throws Exception {
-
 		UIMain uimain = new UIMain();
 
 		boolean more = false;

@@ -56,7 +56,7 @@ public class Cloud{
 		String fType = String.format("%-12s", getCloudType());
 		String fVMs = String.format("%-16s", vmList.size());
 		System.out.println(fName+fInterface+fType+fVMs);
-		
+		Config.cloudMan.setCurrentCloud(this);
 	}
 		
 		

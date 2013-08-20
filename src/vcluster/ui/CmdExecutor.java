@@ -50,12 +50,18 @@ public class CmdExecutor {
 		Command command = getCommand(null,cmd);
 		
 		// if (command == Command.NOT_DEFINED) return false;
+		switch(command.getCmdGroup()){
+		case VCLMAN:return executeVCLMAN(command, cmdLine);
+		default:
+			break;
+		}
 		
-		switch (command.getCmdGroup()) {
-		case VCLMAN: return executeVCLMAN(command, cmdLine);
+		switch (command) {
 		case VMMAN: return executeVMMAN(cmdLine);
 		case PLUGMAN: return executePLUGMAN(cmdLine);		
 		case NOT_DEFINED: return false;
+		default:
+			break;
 		}
 		
 		return false;
@@ -89,6 +95,8 @@ public class CmdExecutor {
 	{
 		
 		switch (command) {
+		case VHELP:
+			return VClusterExecutor.help();
 		case DEBUG_MODE:
 			return VClusterExecutor.debug_mode(cmdLine);
 		case VMMAN:

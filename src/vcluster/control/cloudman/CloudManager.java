@@ -27,26 +27,26 @@ public class CloudManager  {
 	
 	public void dump(String type)
 	{
-		System.out.println("----------------------------------------");
-		System.out.println("\tCloud Manager");
-		System.out.println("----------------------------------------");
+		String cName = String.format("%-12s", "Name");
+		String cInterface =String.format("%-20s", "Interface");
+		String cType = String.format("%-12s", "Type");
+		String cVMs = String.format("%-16s", "VMs");
+		System.out.println("-----------------------------------------------");
+		System.out.println(cName+cInterface+cType+cVMs);
+		System.out.println("-----------------------------------------------");
 
-		if(type.equalsIgnoreCase("private")) {
-			for(int i = 0; i < privateCloudList.size(); i++) {
-				Cloud e = privateCloudList.elementAt(i);
-				System.out.printf("[private cloude element] [%d]\n", i);
-				e.dump();
-				System.out.println();
-			}
-		} else if (type.equalsIgnoreCase("public")) {
-			for(int i = 0; i < publicCloudList.size(); i++) {
-				Cloud e = publicCloudList.elementAt(i);
-				System.out.printf("[public cloude element] [%d]\n", i);
-				e.dump();
-				System.out.println();
+		for(Cloud cloud:this.getCloudList().values()){
+			if(cloud.getCloudType().toString().equalsIgnoreCase(type)){
+				String fName = String.format("%-12s", cloud.getCloudName());
+				String fInterface =String.format("%-20s", cloud.getCloudpluginName());
+				String fType = String.format("%-12s", cloud.getCloudType());
+				String fVMs = String.format("%-16s", cloud.getVmList().size());
+				System.out.println(fName+fInterface+fType+fVMs);
 			}
 		}
-		System.out.println("----------------------------------------");
+
+		System.out.println("-----------------------------------------------");
+		
 
 	}
 	public void dump()
@@ -93,25 +93,9 @@ public class CloudManager  {
 	}
 
 
-	public void setCurrentCloud(CloudType ctype, int no)
+	public void setCurrentCloud(Cloud cloud)
 	{
-		switch (ctype) {
-		case PRIVATE:
-			if (privateCloudList.size() < no) {
-				PrintMsg.print(DMsgType.ERROR, "exceed the size of private cloud list, [no]="+no);
-				return;
-			}
-			currentCloud = privateCloudList.elementAt(no);
-			break;
-			
-		case PUBLIC:
-			if (publicCloudList.size() < no) {
-				PrintMsg.print(DMsgType.ERROR, "exceed the size of public cloud list, [no]="+no);
-				return;
-			}
-			currentCloud = publicCloudList.elementAt(no);
-			break;
-		}
+		currentCloud = cloud;
 	}
 
 	public Cloud getCurrentCloud() 

@@ -7,6 +7,7 @@ import java.util.StringTokenizer;
 public enum Command {
 
 	/* Commands of vclman Category */
+	VHELP(CMD_GROUP.VCLMAN,"-h,--help,help"),
 	QUIT (CMD_GROUP.VCLMAN, "quit, exit, done, stop"),
 	DEBUG_MODE (CMD_GROUP.VCLMAN, "debug"),
 	MONITOR (CMD_GROUP.VCLMAN, "monitor, mon"),

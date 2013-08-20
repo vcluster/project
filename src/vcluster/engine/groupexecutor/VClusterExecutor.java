@@ -2,6 +2,8 @@ package vcluster.engine.groupexecutor;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
@@ -158,25 +160,7 @@ public class VClusterExecutor {
 			
 			if (st.hasMoreTokens()) {
 				
-				token = st.nextToken().trim();
 				
-				if(token.equalsIgnoreCase("private")) {
-					if (st.hasMoreTokens()) {
-						token = st.nextToken();
-						Config.cloudMan.setCurrentCloud(CloudType.PRIVATE, 
-								Integer.parseInt(token.trim()));
-					}
-				} else if(token.equalsIgnoreCase("public")) {
-					if (st.hasMoreTokens()) {
-						token = st.nextToken();
-						Config.cloudMan.setCurrentCloud(CloudType.PUBLIC, 
-								Integer.parseInt(token.trim()));
-					}
-				}
-				else {
-					System.out.println("[USAGE] : cloudman set <private | public> <cloud num>");
-					return false;
-				}
 			} else {
 				Config.cloudMan.dump();
 			}
@@ -432,6 +416,25 @@ public class VClusterExecutor {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+	}
+
+	public static boolean help() {
+		// TODO Auto-generated method stub
+		
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(new File("CommandList.txt")));
+			String aLine = "";
+			while ((aLine = br.readLine()) != null) {				
+				System.out.println(aLine);
+			}
+			br.close();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("File doesn't exist ,please check it on the directory!");
+			//e.printStackTrace();
+			}
+		return false;
 	}
 
 }

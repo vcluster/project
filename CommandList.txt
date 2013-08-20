@@ -1,0 +1,62 @@
+-------------------------------COMMANDS LIST-----------------------------------------------	
+	help | -h | --help
+	## list the commands list
+-------------------------------------------------------------------------------------------
+	plugman list [-options]
+
+		-b | --type=batch
+		-c | --type=cloud
+
+	plugman load [-options] [NAME]
+	
+		-b | --type=batch NAME
+		-c | --type=cloud NAME
+
+	plugman unload [NAME]
+
+	plugman info [NAME]
+-------------------------------------------------------------------------------------------
+
+	cloudman register [CONF_FILE]
+
+	cloudman dump // List all registerd clouds
+
+	cloudman 
+
+-------------------------------------------------------------------------------------------
+
+	vmman list [options] [NAME]
+
+		-refresh [NAME] //Get the realtime informations from specified cloud and 
+				//refresh the vms collection
+				//if cloud name isn't specified,then refresh all the clouds
+		-n       [NAME] //vmman list -n Gcloud
+		-a              //list available vms
+		-r              //running
+		-s              //suspended
+
+	vmman create [-options] [peremeter]
+		-h | --help
+		-n [VM_NUMS]
+		-c [CLOUD]
+
+		## vmman create -c Gcloud -n 2
+		## default cloud is the last loaded cloud,default nums is 1.
+
+	vmman suspend [id] 
+
+	vmman start [id]
+
+	vmman destroy [id]
+	
+	vmman show [id]
+
+-------------------------------------------------------------------------------------------
+
+	check_q | chkq
+
+	check_p | chkp
+
+-------------------------------------------------------------------------------------------
+
+	

@@ -3,6 +3,7 @@ package vcluster.control;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -220,10 +221,23 @@ public class VMManager extends Thread {
 		st.nextToken();
 //		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a VM ID");			return false;}
 		if( st.hasMoreTokens()){
-			String tmp = st.nextToken();		
+			String tmp = st.nextToken();
+			HashMap<String,Cloud> cc = new HashMap<String,Cloud>();			
 			if(tmp.equalsIgnoreCase("-refresh")){
+				String name="";
+				if(st.hasMoreTokens()){
+					name = st.nextToken();
+					if(!Config.cloudMan.getCloudList().keySet().contains(name)){
+						System.out.println("[ERROR : ] "+ name+ " has not been loaded!");
+						return false;						
+					}
+					cc.put(name, Config.cloudMan.getCloudList().get(name));
+					cloudFilter = name;
+				}else{
+					cc = Config.cloudMan.getCloudList();
+				}
 				TreeMap<Integer,VMelement> temp = new TreeMap<Integer,VMelement>();
-				for(Cloud cloud : Config.cloudMan.getCloudList().values()){
+				for(Cloud cloud : cc.values()){
 					cloud.listVMs();
 					if(getVmList()==null)continue;
 					for(VMelement vm : cloud.getVmList().values()){	
