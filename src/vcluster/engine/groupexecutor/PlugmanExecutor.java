@@ -13,8 +13,8 @@ import vcluster.util.PrintMsg.DMsgType;
 public class PlugmanExecutor {
 
 	static PluginManager pm = new PluginManager();
-	static List<String> cloudPluginsList = pm.getCloudPluginList();
-	static List<String> batchPluginsList = pm.getBatchPluginList();	
+	static List<String> cloudPluginsList = PluginManager.getCloudPluginList();
+	static List<String> batchPluginsList = PluginManager.getBatchPluginList();	
 	//static StringTokenizer st = new StringTokenizer("");
 	
 	public static boolean plugman(String cmdLine){
@@ -74,8 +74,8 @@ public class PlugmanExecutor {
 		System.out.println(cName+cStat+cType);
 		System.out.println("----------------------------------------");
 		
-		if(cfilter){
-			for(String batchplugin : pm.getBatchPluginList()){
+		if(bfilter){
+			for(String batchplugin : PluginManager.getBatchPluginList()){
 				String name = String.format("%-20s", batchplugin);
 				String stat="";
 				if(PluginManager.isLoaded(batchplugin)){
@@ -87,7 +87,7 @@ public class PlugmanExecutor {
 			}
 		}
 
-		if(bfilter){
+		if(cfilter){
 			for(String cloudplugin : cloudPluginsList){
 				
 				String name = String.format("%-20s", cloudplugin);
