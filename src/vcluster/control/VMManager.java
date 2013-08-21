@@ -252,10 +252,34 @@ public class VMManager extends Thread {
 						if(flag)temp.put(new Integer(Config.vmMan.getcurrId()), vm);
 					}
 				}
+
 				for(Integer id:temp.keySet()){
 					
 					vmList.put(id, temp.get(id));
+					
 				}
+				ArrayList<Integer> ids = new ArrayList<Integer>();
+				
+				for(Integer id:vmList.keySet()){
+					boolean flag = true;
+					boolean flagx = false;
+					for(Cloud cloud:Config.cloudMan.getCloudList().values()){
+						for(VMelement vm : cloud.getVmList().values()){
+							if(vm.getId().equals(vmList.get(id).getId())){
+								flag = false;
+								flagx = true;
+								
+								break;
+							}
+						}
+						if(flagx){flagx = false;break;}
+					}
+					if(flag)ids.add(id);					
+				}
+				for(Integer id:ids){
+					vmList.remove(id);
+				}
+				
 			}else if(tmp.equalsIgnoreCase("-a")||tmp.equalsIgnoreCase("--type=available")){
 				filter="RUNNING";
 			}else if(tmp.equalsIgnoreCase("-r")||tmp.equalsIgnoreCase("--type=running")){
@@ -540,8 +564,7 @@ public class VMManager extends Thread {
 	private boolean done = false;
 	private BlockingQueue <VMMessage> msgQueue;
 	private Vector<Integer> vecTempID = null;
-    protected TreeMap <Integer, VMelement> vmList = null;
-  
+    protected TreeMap <Integer, VMelement> vmList = null;  
    }
 
 
