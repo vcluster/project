@@ -21,6 +21,7 @@ import org.opennebula.client.vm.VirtualMachine;
 
 import vcluster.control.VMMessage.VMMsgType;
 import vcluster.control.cloudman.Cloud;
+import vcluster.control.cloudman.CloudManager;
 import vcluster.global.Config;
 import vcluster.global.Config.CloudType;
 import vcluster.global.Config.VMState;
@@ -222,19 +223,19 @@ public class VMManager extends Thread {
 //		if(!st.hasMoreTokens()){System.out.println("[ERROR : ] Expected a VM ID");			return false;}
 		if( st.hasMoreTokens()){
 			String tmp = st.nextToken();
-			HashMap<String,Cloud> cc = new HashMap<String,Cloud>();			
+			TreeMap<String,Cloud> cc = new TreeMap<String,Cloud>();			
 			if(tmp.equalsIgnoreCase("-refresh")){
 				String name="";
 				if(st.hasMoreTokens()){
 					name = st.nextToken();
-					if(!Config.cloudMan.getCloudList().keySet().contains(name)){
+					if(!CloudManager.getCloudList().keySet().contains(name)){
 						System.out.println("[ERROR : ] "+ name+ " has not been loaded!");
 						return false;						
 					}
-					cc.put(name, Config.cloudMan.getCloudList().get(name));
+					cc.put(name, CloudManager.getCloudList().get(name));
 					cloudFilter = name;
 				}else{
-					cc = Config.cloudMan.getCloudList();
+					cc = CloudManager.getCloudList();
 				}
 				TreeMap<Integer,VMelement> temp = new TreeMap<Integer,VMelement>();
 				for(Cloud cloud : cc.values()){

@@ -3,29 +3,13 @@ package vcluster.control.cloudman;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import vcluster.global.Config;
-import vcluster.global.Config.CloudType;
-import vcluster.util.PrintMsg;
-import vcluster.util.PrintMsg.DMsgType;
+import java.util.TreeMap;
 
 public class CloudManager  {
 
 	/* later it may be a thread */
-	
-	
-	public CloudManager() {
-		privateCloudList = new Vector <Cloud>();
-		publicCloudList = new Vector <Cloud>();
-		
-	}
-	
-	
-	public void dump(String type)
+
+	public static void dump(String type)
 	{
 		String cName = String.format("%-12s", "Name");
 		String cInterface =String.format("%-20s", "Interface");
@@ -35,7 +19,7 @@ public class CloudManager  {
 		System.out.println(cName+cInterface+cType+cVMs);
 		System.out.println("-----------------------------------------------");
 
-		for(Cloud cloud:this.getCloudList().values()){
+		for(Cloud cloud:cloudList.values()){
 			if(cloud.getCloudType().toString().equalsIgnoreCase(type)){
 				String fName = String.format("%-12s", cloud.getCloudName());
 				String fInterface =String.format("%-20s", cloud.getCloudpluginName());
@@ -46,10 +30,9 @@ public class CloudManager  {
 		}
 
 		System.out.println("-----------------------------------------------");
-		
 
 	}
-	public void dump()
+	public static void dump()
 	{
 		String cName = String.format("%-12s", "Name");
 		String cInterface =String.format("%-20s", "Interface");
@@ -59,7 +42,7 @@ public class CloudManager  {
 		System.out.println(cName+cInterface+cType+cVMs);
 		System.out.println("-----------------------------------------------");
 
-		for(Cloud cloud:this.getCloudList().values()){
+		for(Cloud cloud:cloudList.values()){
 			String fName = String.format("%-12s", cloud.getCloudName());
 			String fInterface =String.format("%-20s", cloud.getCloudpluginName());
 			String fType = String.format("%-12s", cloud.getCloudType());
@@ -77,159 +60,128 @@ public class CloudManager  {
 	 * 1. find a cloud system which there is a room for requested vms
 	 *    -  a single cloud system or multiple cloud system?
 	 *  
-	 */
-	public Cloud findCloudSystem(int vms) {
-		
-		/* this function has to be intelligent to find an available cloud system. 
-		 * at this moment, it just returns predefined one
-		 */
-		if (privateCloudList.size() == 0) {
-			PrintMsg.print(DMsgType.ERROR, "No available cloud system found!");
-			return null;
-		}
-		
-		//return privateCloudList.elementAt(0);
-		return publicCloudList.elementAt(0);
-	}
+	 */	
 
-
-	public void setCurrentCloud(Cloud cloud)
+	public static void setCurrentCloud(Cloud cloud)
 	{
 		currentCloud = cloud;
 	}
 
-	public Cloud getCurrentCloud() 
+	public static Cloud getCurrentCloud() 
 	{
 		return currentCloud;
 	}
-	
-	public boolean addCloudElement(Cloud e)
-	{
-		CloudType ctype = e.getCloudType();
-		if (ctype == CloudType.PRIVATE) {
-			privateCloudList.add(e);
-			
-			PrintMsg.print(DMsgType.MSG, e.stringCloudType()+" added.");
-			return true;
-		}
-		
-		if (ctype == CloudType.PUBLIC) {
-			publicCloudList.add(e);
-			PrintMsg.print(DMsgType.MSG, e.stringCloudType()+" added.");
-			return true;
-		}
-		
-		PrintMsg.print(DMsgType.ERROR, "check the cloud type, "+e.stringCloudType());
-		return false;
-	}
-	
-	public void incCurrentVMs(Cloud e, int vms) 
-	{
-		e.incCurrentVMs(vms);
-	}
 
-	/*
-	public boolean addCloudElement(CloudType ctype, String epoint, int max) 
-	{
-		CloudElement element = new CloudElement(ctype, epoint, max);
-		
-		if (ctype == CloudType.PRIVATE) {
-			privateCloudList.add(element);
-			
-			PrintMsg.print(DMsgType.MSG, element.stringCloudType()+" added.");
-			return true;
+	private static boolean chkConf(ArrayList<String> conf){
+		boolean flag = true;
+		if(conf.size()<3){
+			System.out.println("[ERROR : ] Configuration file format is incorrect,please check the format! ==> "+conf.get(0));
+			flag = false;
+			return false;
 		}
-		
-		if (ctype == CloudType.PUBLIC) {
-			publicCloudList.add(element);
-			PrintMsg.print(DMsgType.MSG, element.stringCloudType()+" added.");
-			return true;
+		String[] l1 = conf.get(0).split("=");
+		String[] l2 = conf.get(1).split("=");
+		String[] l3 = conf.get(2).split("=");
+		if(l1.length<2||l2.length<2||l3.length<2){
+			System.out.println("[ERROR : ] Configuration file format is incorrect,please check the format! ==> "+conf.get(0));
+			flag = false;
+			return flag;
 		}
-		
-		PrintMsg.print(DMsgType.ERROR, "check the cloud type, "+element.stringCloudType());
-		return false;
+		if(!l1[0].trim().equalsIgnoreCase("name")||!l2[0].trim().equalsIgnoreCase("interface")||!l3[0].trim().equalsIgnoreCase("type")){
+			System.out.println("[ERROR : ] Configuration file format is incorrect,please check the format! ==> "+conf.get(0));
+			flag = false;
+			return flag;
+		}
+		return flag;
 	}
-	*/
+	
+	private static ArrayList<ArrayList<String>> handleConf(String confFile){
 
-	public boolean loadCloudElments(String confFile, CloudManager cman) 
-	{
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(confFile));
-			
+		
+		ArrayList<ArrayList<String>> confList = new  ArrayList<ArrayList<String>>();		
+		BufferedReader br ;
+		try{
+			br = new BufferedReader(new FileReader(confFile));
 			String aLine = "";
-			List<String> conf = new ArrayList<String>() ;
-			String cName = String.format("%-12s", "Name");
-			String cInterface =String.format("%-20s", "Interface");
-			String cType = String.format("%-12s", "Type");
-			String cVMs = String.format("%-16s", "VMs");
-			System.out.println("-----------------------------------------------");
-			System.out.println(cName+cInterface+cType+cVMs);
-			System.out.println("-----------------------------------------------");
+			ArrayList<String> conf = new ArrayList<String>() ;
 			while ((aLine = br.readLine()) != null) {
 				if (aLine.equalsIgnoreCase("[cloudelement]")) {
 					if(!conf.isEmpty()){
-						String name = conf.get(0).split("=")[1].trim();
-
-						boolean flag = true;
-						for(Cloud c : getCloudList().values()){
-							if(name.equals(c.getCloudName())){
-								System.out.println("There is already a cloud named "+name+" exists!");
-								flag = false;
-							}
+						if(chkConf(conf)){
+							confList.add(conf);
 						}
-						if(flag){
-							Cloud cloud = new Cloud(conf);
-							cman.addCloudElement(cloud);
-						}
-						conf = new ArrayList<String>();
+						conf = new ArrayList<String>();	
 					}
+				
 				}else{					
 					conf.add(aLine);
-				}
-				
+				}				
 			}
-			String name = conf.get(0).split("=")[1].trim();
-
-			boolean flag = true;
-			for(Cloud c : getCloudList().values()){
-				if(name.equals(c.getCloudName())){
-					System.out.println("There is already a cloud named "+name+" exists!");
-					flag = false;
-				}
+			if(chkConf(conf)){
+				confList.add(conf);
 			}
-			if(flag){
-				Cloud cloud = new Cloud(conf);
-				cman.addCloudElement(cloud);
-			}
-			System.out.println("-----------------------------------------------");			
 			br.close();
-	    } catch (Exception e) {
-	    	e.printStackTrace();
-	    	PrintMsg.print(DMsgType.ERROR, e.getMessage());
-	    	System.out.println("mark 1");
-	    	return false;
-	    } 
+			
+		}catch(Exception e){
+			System.out.println("Configuration file doesn't exist ,please check it!");
+			return confList;
+		}
+		
+		return confList;
+	}
+
+	public static boolean loadCloudElments(String confFile) 
+	{			
+		ArrayList<ArrayList<String>> confList = handleConf(confFile);
+		ArrayList<Cloud> tempCL = new ArrayList<Cloud>();
+		for(ArrayList<String> conf:confList){
+			String name = conf.get(0).split("=")[1].trim();
+			boolean flag = false;
+			if(cloudList!=null&&!cloudList.isEmpty()){
+				for(Cloud c : getCloudList().values()){
+					if(name.equals(c.getCloudName())){
+						System.out.println("There is already a cloud named "+name+" exists!");
+						flag = true;
+						break;
+					}
+				}
+				if(flag)continue;
+			}
+			Cloud cloud = new Cloud(conf);
+			if(cloud.getCloudName()!=null&cloud.getCloudpluginName()!=null&cloud.getCloudType()!=null)
+			cloudList.put(cloud.getCloudName(), cloud);
+			tempCL.add(cloud);
+		}
+		String cName = String.format("%-12s", "Name");
+		String cInterface =String.format("%-20s", "Interface");
+		String cType = String.format("%-12s", "Type");
+		String cVMs = String.format("%-16s", "VMs");
+		System.out.println("-----------------------------------------------");
+		System.out.println(cName+cInterface+cType+cVMs);
+		System.out.println("-----------------------------------------------");
+
+		for(Cloud cloud:tempCL){
+			String fName = String.format("%-12s", cloud.getCloudName());
+			String fInterface =String.format("%-20s", cloud.getCloudpluginName());
+			String fType = String.format("%-12s", cloud.getCloudType());
+			String fVMs = String.format("%-16s", cloud.getVmList().size());
+			System.out.println(fName+fInterface+fType+fVMs);
+			
+		}
+
+		System.out.println("-----------------------------------------------");
+		
 		return true;
 	}
 	
-	public HashMap<String, Cloud> getCloudList(){
-		HashMap<String,Cloud> cl = new HashMap<String,Cloud>();
-		for(Cloud cloud : privateCloudList){
-			cl.put(cloud.getCloudName(), cloud);
-		}
-		for(Cloud cloud : publicCloudList){
-			cl.put(cloud.getCloudName(), cloud);
-		}
-		return cl;
-		
+	public static TreeMap<String, Cloud> getCloudList(){
+		return cloudList;		
 	}
 	
-	private Vector <Cloud> privateCloudList;
-	private Vector <Cloud> publicCloudList;
+
 	
 	/* this is only used when executing commands from command line */
 	private static Cloud currentCloud = null;
-
+	private static TreeMap<String,Cloud> cloudList = new TreeMap<String,Cloud>();
     
 }
-

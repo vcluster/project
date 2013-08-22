@@ -44,6 +44,10 @@ public class Cloud{
 				setCloudName(aValue);
 			}
 		}
+		if(cloudName==null||cloudType==null||cloudpluginName==null){
+			return;
+		}
+		
 		if(!PluginManager.loadedCloudPlugins.containsKey(this.cloudpluginName))PlugmanExecutor.load("load -c "+cloudpluginName);		
 		cp = PluginManager.loadedCloudPlugins.get(this.cloudpluginName);
 		this.listVMs();
@@ -51,12 +55,7 @@ public class Cloud{
 		for(VMelement vm : getVmList().values()){
 			Config.vmMan.getVmList().put(new Integer(Config.vmMan.getcurrId()), vm);
 		}
-		String fName = String.format("%-12s", getCloudName());
-		String fInterface =String.format("%-20s", getCloudpluginName());
-		String fType = String.format("%-12s", getCloudType());
-		String fVMs = String.format("%-16s", vmList.size());
-		System.out.println(fName+fInterface+fType+fVMs);
-		Config.cloudMan.setCurrentCloud(this);
+		CloudManager.setCurrentCloud(this);
 	}
 		
 		

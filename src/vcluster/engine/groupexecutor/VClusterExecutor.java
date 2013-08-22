@@ -12,7 +12,6 @@ import java.util.StringTokenizer;
 
 import vcluster.control.VMManager;
 import vcluster.global.Config;
-import vcluster.global.Config.CloudType;
 import vcluster.monitoring.MonitoringMan;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
@@ -133,14 +132,14 @@ public class VClusterExecutor {
 				token = st.nextToken().trim();
 				
 				if(token.equalsIgnoreCase("private") || token.equalsIgnoreCase("public"))
-					Config.cloudMan.dump(token);
+					CloudManager.dump(token);
 				else {
 					System.out.println("[USAGE] : cloudman dump [<private | public>]");
 					return false;
 				}
 				
 			} else {
-				Config.cloudMan.dump();
+				CloudManager.dump();
 			}
 			return true;
 		}
@@ -153,7 +152,7 @@ public class VClusterExecutor {
 			}
 
 			token = st.nextToken().trim();
-			return Config.cloudMan.loadCloudElments(token, Config.cloudMan);
+			return CloudManager.loadCloudElments(token);
 		}
 		
 		if (token.equalsIgnoreCase("set")) {
@@ -162,13 +161,13 @@ public class VClusterExecutor {
 				
 				
 			} else {
-				Config.cloudMan.dump();
+				CloudManager.dump();
 			}
 			return true;
 		}
 
 		if (token.equalsIgnoreCase("current")) {
-			Cloud cloud = Config.cloudMan.getCurrentCloud();
+			Cloud cloud = CloudManager.getCurrentCloud();
 			cloud.dump();
 			return true;
 		}
