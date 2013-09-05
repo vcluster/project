@@ -97,20 +97,20 @@ A \vb+vcluster+ command consists of \tbf{Command Category} and \tbf{Real Command
   
 \end{Verbatim}
 
-There is a special command category called \vb+vclman+ which can be omitted. Types of commands belonging to this category are including configurations, start and stop of \vb+vcluster+.
+There is a special command category called \vb+vclman+ which can be omitted. Types of commands belonging to this category are including configurations, \vb+start+ and \vb+stop+ of subsystems of \vb+vcluster+.
 
 \newpage
 
-\section{Commands of \ttt{vclman} Category}
+\section{Commands included in \ttt{vclman} Category}
 
-Commands to belong to this category are including commands related to configuration, settings, starting and ending modules. \vb+vclman+ is generally obmitted. You can print out all commands in this category with \vb+--help+ options. 
+Commands in this category are including configuration, settings, starting and ending modules. \vb+vclman+ is generally obmitted. You can print out all commands in this category with \vb+--help+ option. 
 
 
 \begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
 =true, tabsize=4, frame=lines]
 
   vclman 
-    --help     list up commands belong to this category, 
+    --help     list up commands which belong to this category, 
                all commands and usages
   
 \end{Verbatim}
@@ -131,7 +131,7 @@ vclmann
       
 \end{Verbatim}
 
-\vb+check_q+ command prints out the status of a queue. It can be used with an option to extract specific jobs. For example, \vb+-r+ option returns the number of running jobs while \vb+-i+ and \vb+-h+ return the number of idle jobs and holding jobs respectivley. Without an option, it shows all information. The following shows examples of \vb+check_q+
+\vb+check_q+ command prints out the status of a queue. It can be used with an option to extract specific jobs. For example, \vb+-r+ option returns the number of running jobs while \vb+-i+ and \vb+-h+ return the number of idle jobs and holding jobs respectivley. Without an option, it shows all information. The following shows examples of \vb+check_q+ command.
 
 
 \begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
@@ -156,7 +156,7 @@ vcluster> check_q --type=hold
 
 \subsection{\ttt{check\_p}}
 
-This command checks the status of a pool of a batch system. Since this command requests data from an underlying batch system, a batch system plugin has to be loaded first.
+This command checks the status of a pool of a batch system. Since this command requests data from an underlying batch system, a batch system plugin must be loaded first.
 
 \begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
 =true, tabsize=4, frame=lines]
@@ -170,8 +170,8 @@ vclmann
       
 \end{Verbatim}
 
-\vb+--help+ option shows the usage of this command and the other options used in this command. 
-\vb+check_p+ command prints out the status of a pool. It can be used with an option to extract specific systems. For example, \vb+-r+ option returns the number of running machines while \vb+-i+ returns the number of idle. \vb+-t+ option shows how machines are in trouble, which is not servicing. The following shows some examples of this command.
+\vb+--help+ option shows the usage of this command.
+\vb+check_p+ command prints out the status of a pool. It can be used with an option to extract specific systems. For example, \vb+-r+ option returns the number of running machines while \vb+-i+ returns the number of idle. \vb+-t+ option shows how machines are in trouble, which is not in service. The following shows some examples of this command.
 
 
 \begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
@@ -195,20 +195,75 @@ vcluster> check_p --type=trouble
 
 
 
+
+\subsection{\ttt{start}}
+
+This command makes a subsystem to start its service. For example, \vb+vmman+, virtual manager, has to be running before creating virtual machines.
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+vclmann 
+    start
+      [ --help |
+        vmman | ] 
+      
+\end{Verbatim}
+
+\vb+--help+ option shows the usage of this command and the other options which can be used in this command. 
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+vcluster> vclman start vmman
+
+vcluster> start vmman
+
+\end{Verbatim}
+
+
+
+
+\subsection{\ttt{stop}}
+
+This command makes a subsystem to stop its service. For example, \vb+vmman+, virtual manager, has to be running before creating virtual machines. In order to stop this service, use \vb+stop+ command.
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+vclmann 
+    stop
+      [ --help |
+        vmman | ] 
+      
+\end{Verbatim}
+
+\vb+--help+ option shows the usage of this command and the other options which can be used in this command. 
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+vcluster> vclman stop vmman
+
+vcluster> stop vmman
+
+\end{Verbatim}
+
+
 \newpage
 
-\section{Commands of \ttt{vmman} Category}
+\section{Commands included in \ttt{vmman} Category}
 
 All virtual machines are managed by \vb+vmman+ (Virtual Machine Manager). Virtual machines are created through a cloud plugin and such virtual machines should be tracked by \vb+vmman+.
 
-Like the other catetories, \vb+--help+ option provides information on commands belonging to this category.
+Like the other categories, \vb+--help+ option provides information on commands that belong to this category.
 
 
 \begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
 =true, tabsize=4, frame=lines]
 
   vmman 
-    --help     list up commands belong to this category, 
+    --help     list up commands that belong to this category, 
                all commands and usages
   
 \end{Verbatim}
@@ -257,7 +312,7 @@ vcluster> vmman list --name=amazon
 
 This command creates a virtual machine in a cloud system. It can specify a cloud to create a virtual machine or bunch of virtual machines. Without any option, it creates a virtual machine in a default cloud. This command has to communicate with an underlying cloud plugin in order to generate proper command for the cloud. Since a new virtual machine has to be created, \vb+vmman+ has to be involved in order to keep track of the newly created virtual machine.
 
-\textcolor{red}{We have to decide whether this command should be belonging to \ttt{vmman} category rather than \ttt{vclman} category. I currently put this command in \ttt{vmman} catetory because this command anyway has to communicate with \ttt{vmman}.}
+\textcolor{red}{We have to decide whether this command should be included in \ttt{vmman} category rather than \ttt{vclman} category. I currently put this command in \ttt{vmman} category because this command anyway has to communicate with \ttt{vmman}.}
 
 \begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
 =true, tabsize=4, frame=lines]
@@ -300,7 +355,7 @@ vcluster> vmman create -c fermicloud -n 2
 
 \section{Commands of \ttt{plugman} Category}
 
-All commands after \vb+plugman+ are plugin related ones. Such commands are including load, unload, list of plugins. There are two types of plugins which are batch plugin and cloud plugin, respectivley. We will discuss plugin related commands in the following subsections.
+All commands after \vb+plugman+ are plugin related ones. Such commands are including load, unload, list of plugins. There are two types of plugins which are batch plugin and cloud plugin, respectively. We will discuss plugin related commands in the following subsections.
 
 Like a general Linux command, \vb+--help+ option shows the usages of \vb+plugman+ and commands.
 
@@ -327,7 +382,7 @@ plugman
 \end{Verbatim}
 
 
-The options \vb+-c+ and \vb+--type=cloud+ are identical. These options are saying that we are about to load cloud type plugin(s). Like the cloud type options, we can use \vb+-b+ and \vb+--type=batch+ options for a batch type plugin. Pleas note that unlike a cloud type plugin, only one batch plugin should be provided.
+The options \vb+-c+ and \vb+--type=cloud+ are identical. These options are saying that we are about to load cloud type plugin(s). Like the cloud type options, we can use \vb+-b+ and \vb+--type=batch+ options for a batch type plugin. Please note that unlike a cloud type plugin, only one batch plugin should be provided.
 
 Examples for this command are as below:
 
@@ -387,7 +442,7 @@ plugman
 \end{Verbatim}
 
 
-Since \vb+vcluster+ does not have \vb+register+ command, it retrieves all plugins under a specifided plugin directory. When listing up plugins currently being used, option \vb+-l+ or \vb+--loaded+ can be used at the end of command.
+Since \vb+vcluster+ does not have \vb+register+ command, it retrieves all plugins under a specified plugin directory. When listing up plugins currently being used, option \vb+-l+ or \vb+--loaded+ can be used at the end of command.
 
 \begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
 =true, tabsize=4, frame=lines]
@@ -424,11 +479,11 @@ vcluster> plugman list --loaded -b
 
 \end{Verbatim}
 
-\textcolor{red}{TODO: when listing up all plugins under a directory, the output should exlicitly mention that the outputs are coming from a directory, not from memory.}
+\textcolor{red}{TODO: when listing up all plugins under a directory, the output should explicitly mention that the outputs are coming from a directory, not from memory.}
 
 
 \subsection{\ttt{info}}
-This command prints the information about a plugin. It will be used to retrieve detail information about the plugin. \textcolor{red}{TODO: plugin interface needs to provide this feature. We may need to introduce a structure containing required fields for this command.}
+This command prints the information about a plugin. It will be used to retrieve detailed information about the plugin. \textcolor{red}{TODO: plugin interface needs to provide this feature. We may need to introduce a structure containing required fields for this command.}
 
 \begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
 =true, tabsize=4, frame=lines]
@@ -448,6 +503,215 @@ vcluster> plugman info plugin-1
 \end{Verbatim}
 
 
+
+\newpage
+
+\section{Commands included in \ttt{cloudman} Category}
+
+This command category is related with the management of cloud systems. It handles the information about cloud systems which will be used in \vb+vcluster+. In order to create a virtual machine, \vb+vcluster+ must load cloud systems first. In general, this command category handles \vb+cloudelement+ defined in a configuration file.
+
+Like a general Linux command, \vb+--help+ option shows the usages of \vb+cloudman+ and commands.
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+  cloudman 
+    -help     list up all options and usages
+  
+\end{Verbatim}
+
+
+\subsection{\ttt{register}}
+This command registers cloud systems defined in a configuration file as \vb+cloudelement+. 
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+cloudman 
+    register <cloudsystem config file>
+      
+\end{Verbatim}
+
+It registers all cloud systems defined in \vb+<cloudsystem config file>+. All cloud systems are defined as \vb+cloudelemet+ in the configuration file. The following shows an example. \textcolor{red}{TODO: we have to finalize all necessary fields in cloudelement.}
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+[cloudelement]
+type = private
+name = mycloud
+interface = proxy-opnenebula
+endpoint = 150.183.234.2
+max = 20
+
+[cloudelement]
+type = private
+name = yourcloud
+interface = proxy-openstack
+endpoint = 150.183.234.3
+max = 20
+
+[cloudelement]
+type = public
+endpoint = http://fcl002.fnal.gov:4567/
+accesskey = rsyoung
+secretkey = <rsyoung's secretkey>
+instancetype = m1.test
+image = ami-00000171
+max = 10
+version = 2011-05-15
+signatureversion = 2
+signaturemethod = HmacSHA256
+
+[cloudelement]
+type = public
+endpoint = https://ec2.amazonaws.com/
+accesskey = <your ec2 access key>
+secretkey = <your ec2 secret key>
+instancetype = m1.large
+keyname = seoyoungnoh_key 
+image = ami-00000171
+max = 30
+version = 2011-05-15
+signatureversion = 2
+signaturemethod = HmacSHA256
+rsyoung@diogenes:~/developments/vcluster$ 
+      
+\end{Verbatim}
+
+
+Below shows an example of this command.
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+vcluster> cloudman register cloudsystems.conf
+
+\end{Verbatim}
+
+
+
+\subsection{\ttt{load}}
+This command loads a cloud system which has been unloaded. The cloud system must be defined in cloud system configuration file. When \vb+cloudman+ registers the configuration file, the cloud system was loaded at the first time, but at a certain point, it was intentionally unloaed in order to prevent to launch virtual machines by \vb+vmman+. 
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+cloudman 
+    load
+      CLOUDNAME... 
+      
+\end{Verbatim}
+
+If a cloud system has been already loaded, then this command does not affect the cloud system information; otherwise, the cloud system will be activated and \vb+vmman+ can create virtual machines. 
+
+Examples for this command are as below:
+
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+vcluster> cloudman load fermicloud
+vcluster> cloudman load fermicloud gcloud
+
+\end{Verbatim}
+
+
+\subsection{\ttt{unload}}
+This command unloads a cloud system which has been already loaded. 
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+cloudman 
+    unload PLUGIN...
+      
+\end{Verbatim}
+
+Below shows an example of this command.
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+vcluster> plugman unload plugin-1
+vcluster> plugman unload plugin-1 plugin-2
+
+\end{Verbatim}
+
+
+
+
+\subsection{\ttt{list}}
+This command lists up all designated plugins. Option \vb+--help+ shows the usage of this command and options in detail.
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+plugman 
+    list --help
+      
+\end{Verbatim}
+
+
+Since \vb+vcluster+ does not have \vb+register+ command, it retrieves all plugins under a specified plugin directory. When listing up plugins currently being used, option \vb+-l+ or \vb+--loaded+ can be used at the end of command.
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+plugman 
+    list
+      -c | --type=cloud 
+      -b | --type=batch
+      -l | --loaded
+      
+\end{Verbatim}
+
+You may combine \vb+-c+ and \vb+-l+ options to show up all loaded cloud plugins. The following shows examples of this command.
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+vcluster> plugman list -c
+vcluster> plugman list --type=cloud
+
+vcluster> plugman list -b
+vcluster> plugman list --type=batch
+
+vcluster> plugman list -l
+vcluster> plugman list --loaded
+
+vcluster> plugman list -l -c
+vcluster> plugman list -l --type=cloud
+vcluster> plugman list --loaded -c
+
+vcluster> plugman list -l -b
+vcluster> plugman list -l --type=batch
+vcluster> plugman list --loaded -b
+
+\end{Verbatim}
+
+\textcolor{red}{TODO: when listing up all plugins under a directory, the output should explicitly mention that the outputs are coming from a directory, not from memory.}
+
+
+\subsection{\ttt{info}}
+This command prints the information about a plugin. It will be used to retrieve detailed information about the plugin. \textcolor{red}{TODO: plugin interface needs to provide this feature. We may need to introduce a structure containing required fields for this command.}
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+plugman 
+    info PLUGIN
+      
+\end{Verbatim}
+
+Below shows an example of this command.
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+vcluster> plugman info plugin-1
+      
+\end{Verbatim}
 
 
 
