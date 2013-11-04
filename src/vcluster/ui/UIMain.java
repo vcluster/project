@@ -3,6 +3,7 @@ package vcluster.ui;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import vcluster.control.VMManager;
 import vcluster.global.VCluster;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;

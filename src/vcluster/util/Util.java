@@ -4,15 +4,39 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
+import java.util.TreeMap;
 
 import vcluster.global.Config;
 import vcluster.util.PrintMsg.DMsgType;
 
 public class Util {
+	public static TreeMap<String, Boolean> listVSlist(ArrayList<String> arr1,ArrayList<String> arr2){
+		TreeMap<String,Boolean> hsm = new TreeMap<String,Boolean>();
+		ArrayList<String> temp = new ArrayList<String>();
+		for(String str1 : arr1){
+			for(String str2 : arr2){
+				if(str1.equals(str2)){
+					temp.add(str1);
+				}
+				
+			}
+		}
+		
+		arr1.removeAll(temp);
+		arr2.removeAll(temp);
+		for(String str : arr1){
+			hsm.put(str, new Boolean(false));
+		}
+		for(String str : arr2){
+			hsm.put(str, new Boolean(true));
+		}
+		return hsm;
+	}
 
 	public static boolean loadConfig(String configFile)
 	{

@@ -4,11 +4,13 @@ package vcluster.global;
 import vcluster.control.VMManager;
 import vcluster.control.cloudman.CloudManager;
 import vcluster.monitoring.MonitoringMan;
+import vcluster.util.HandleXML;
 
 public class Config {
 
 	public static String configFile = "vcluster.conf";
 	public static final String xmlFile = "response.xml";
+	public static final String initXML ="vcluster.xml";
 	
 	public static String CONDOR_IPADDR = "150.183.233.59";
 	public static String ONE_IPADDR = "150.183.233.59";
@@ -23,6 +25,7 @@ public class Config {
 	public static MonitoringMan monMan = null;
 	public static VMManager vmMan = null;
 	public static CloudManager cloudMan = null;
+	public static HandleXML hdXML = null;
 	
 	public static boolean DEBUG_MODE = false;
 	

@@ -11,12 +11,13 @@ import java.net.UnknownHostException;
 import java.util.StringTokenizer;
 
 import vcluster.control.VMManager;
+import vcluster.control.cloudman.Cloud;
+import vcluster.control.cloudman.CloudManager;
 import vcluster.global.Config;
 import vcluster.monitoring.MonitoringMan;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
 import vcluster.util.Util;
-import vcluster.control.cloudman.*;
 
 public class VClusterExecutor {
 	public static boolean debug_mode(String cmdLine)
@@ -150,20 +151,22 @@ public class VClusterExecutor {
 				System.out.println("[USAGE] : cloudman register <cloudelement conf file>");
 				return false;
 			}
-
 			token = st.nextToken().trim();
+			
 			return CloudManager.loadCloudElments(token);
 		}
 		
-		if (token.equalsIgnoreCase("set")) {
-			
-			if (st.hasMoreTokens()) {
-				
-				
-			} else {
-				CloudManager.dump();
-			}
-			return true;
+		if (token.equalsIgnoreCase("deploy")) {
+
+				if (!st.hasMoreTokens()) {
+					System.out.println("[ERROR : ] Expect a cloud name!");
+					return false;
+				}
+				else{
+					String [] arg = cmdLine.replace("cloudman deploy ", "").split(" ");
+					return CloudManager.deploy(arg);
+				}
+
 		}
 
 		if (token.equalsIgnoreCase("current")) {

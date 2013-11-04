@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-import vcluster.control.cloudman.CloudManager;
+import vcluster.engine.groupexecutor.CloudmanExecutor;
 import vcluster.engine.groupexecutor.PlugmanExecutor;
 import vcluster.engine.groupexecutor.VClusterExecutor;
 import vcluster.global.Config;
@@ -55,18 +55,39 @@ public class CmdExecutor {
 		default:
 			break;
 		}
-		
+
 		switch (command) {
 		case VMMAN: return executeVMMAN(cmdLine);
+		case CLOUDMAN:return executeCLOUDMAN(cmdLine);
 		case PLUGMAN: return executePLUGMAN(cmdLine);		
 		case NOT_DEFINED: return false;
 		default:
 			break;
 		}
 		
-		return false;
+		return true;
 	}
 	
+	private static boolean executeCLOUDMAN(String cmdLine) {
+		// TODO Auto-generated method stub
+		StringTokenizer st = new StringTokenizer(cmdLine);
+		String cmdg= st.nextToken().trim();		
+		String cmd = st.nextToken().trim();
+		Command command = getCommand(Command.CMD_GROUP.CLOUDMAN.toString(),cmd);
+		//cmdLine = cmdLine.replace(cmd, "").trim();
+		cmdLine = cmdLine.replace(cmdg, "").trim();
+		switch (command) {
+		case REGISTER:
+			return CloudmanExecutor.register(cmdLine); 
+		case LOADCLOUD:
+			return CloudmanExecutor.load(cmdLine);
+		case LISTCLOUD:
+			return CloudmanExecutor.list(cmdLine);
+		default:
+			return CloudmanExecutor.undefined(cmdLine);					
+		}		
+	}
+
 	private static boolean executePLUGMAN(String cmdLine) {
 		cmdLine = cmdLine.replace("plugman ", "");
 		StringTokenizer st = new StringTokenizer(cmdLine);
@@ -82,10 +103,8 @@ public class CmdExecutor {
 		case INFO:
 			return PlugmanExecutor.getInfo(cmdLine);
 		case LIST:
-			//System.out.print("                      1 : ");
 			return PlugmanExecutor.list(cmdLine);
 		default:
-			//System.out.print("                      2 : ");
 			return PlugmanExecutor.undefined(cmdLine);					
 		}
 
@@ -114,7 +133,7 @@ public class CmdExecutor {
 		case ENGMODE:
 			return VClusterExecutor.engmode(cmdLine);
 		case CHECK_P: 
-				if(PluginManager.loadedBatchPlugins.isEmpty()){
+				if(PluginManager.current_proxyExecutor==null){
 					if(yesORno()){
 						PlugmanExecutor.load("load -b proxy-HTCondor");	
 					}else{					
@@ -125,7 +144,7 @@ public class CmdExecutor {
 				return PluginManager.current_proxyExecutor.check_pool();
 			
 	    case CHECK_Q: 
-			if(PluginManager.loadedBatchPlugins.isEmpty()){
+			if(PluginManager.current_proxyExecutor==null){
 				if(yesORno()){
 					PlugmanExecutor.load("load -b proxy-HTCondor");				
 				}else{
@@ -158,23 +177,7 @@ public class CmdExecutor {
 	private static boolean executeVMMAN(String cmdLine)
 	{
 
-		/*
-		RUN_INSTANCE (CMD_GROUP.CLOUD, "RunInstances, runinstance, ri, runinst, runins, run"),
-		START_INSTANCE (CMD_GROUP.CLOUD, "StartInstances, startinstance, si, startinst, startins, start"),
-		STOP_INSTANCE (CMD_GROUP.CLOUD, "StopInstances, stopinstance, stop"),
-		DESCRIBE_INSTANCE (CMD_GROUP.CLOUD, "DescribeInstances, describeinstance, din, dins, descinst, descins"),
-		TERMINATE_INSTANCE (CMD_GROUP.CLOUD, "TerminateInstances, terminateinstance, terminate, ti, kill, killins"),
-		DESCRIBE_IMAGE (CMD_GROUP.CLOUD, "DescribeImages, describeimage, dim, dimg, descimg"),
-		*/
-		
-		// command.toPrint();
-		
-		/* first check if a vm can be launched using cloud API
-		 * if so, call registered function (plug-in based).
-		 * if not, call REST API for a specified cloud system,
-		 * which is chosen from cloud system pool based on priority.
-		 */
-		
+
 		
 		cmdLine = cmdLine.replace("vmman ", "");
 		StringTokenizer st = new StringTokenizer(cmdLine);

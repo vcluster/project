@@ -2,13 +2,7 @@ package vcluster.control;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.SortedMap;
-import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -23,23 +17,21 @@ import vcluster.control.VMMessage.VMMsgType;
 import vcluster.control.cloudman.Cloud;
 import vcluster.control.cloudman.CloudManager;
 import vcluster.global.Config;
-import vcluster.global.Config.CloudType;
 import vcluster.global.Config.VMState;
-import vcluster.ui.Command;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
 
 public class VMManager extends Thread {
 
-	public VMManager()
-	{
+	static{
 		vmList = new TreeMap<Integer, VMelement>();
-		
+		id = 0;
+		done = false;
 		msgQueue =  new ArrayBlockingQueue <VMMessage>(100);
 		vecTempID = new Vector<Integer>();
 	}
 
-	public BlockingQueue <VMMessage> getMsgQueue() {
+	public static BlockingQueue <VMMessage> getMsgQueue() {
 		return msgQueue;
 	}
 
@@ -170,7 +162,7 @@ public class VMManager extends Thread {
 	
 	public boolean createVM(String cmdLine) {
 		// TODO Auto-generated method stub
-		Cloud cloud = Config.cloudMan.getCurrentCloud();
+		Cloud currCloud = CloudManager.getCurrentCloud();
 		int vms = 1;
 		String [] str = cmdLine.split(" ");
 		ArrayList<String> cmdList = new ArrayList<String>();
@@ -190,27 +182,27 @@ public class VMManager extends Thread {
 		}
 		if(cmdList.size()==1){
 			cmdList.add("-c");
-			cmdList.add(cloud.getCloudName());
+			cmdList.add(currCloud.getCloudName());
 			cmdList.add("-n");
 			cmdList.add("1");
 		}
 		if(!cmdList.get(1).equals("-c")){
 			cmdList.add(1,"-c");
-			cmdList.add(2,cloud.getCloudName());
+			cmdList.add(2,currCloud.getCloudName());
 		}
 		if(!cmdList.get(3).equalsIgnoreCase("-n")){
 			cmdList.add(3, "-n");
 			cmdList.add(4, "1");
 		}
 		System.out.println("");
-		cloud = Config.cloudMan.getCloudList().get(cmdList.get(2));
-		if(cloud==null){
+		currCloud = CloudManager.getCloudList().get(cmdList.get(2));
+		if(currCloud==null){
 			System.out.println("[ERROR : ] Cloud doesn't exist! please check the cloud name...");
 			System.out.println("");
 			return false;
 		}
 		vms = Integer.parseInt(cmdList.get(4));
-			return cloud.createVM(vms);
+			return currCloud.createVM(vms);
 
 	}
 
@@ -541,31 +533,23 @@ public class VMManager extends Thread {
 
 	
 	
-	public int getcurrId() {
+	public static int getcurrId() {
 		return id++;
 	}
 
-	public void setcurrId(int id) {
-		this.id = id;
-	}
 
 
-
-	public TreeMap<Integer,VMelement> getVmList() {
+	public static TreeMap<Integer,VMelement> getVmList() {
 		return vmList;
 	}
 
-	public void setVmList(TreeMap<Integer, VMelement> vmList) {
-		this.vmList = vmList;
-	}
 
 
-
-	private int id;
-	private boolean done = false;
-	private BlockingQueue <VMMessage> msgQueue;
-	private Vector<Integer> vecTempID = null;
-    protected TreeMap <Integer, VMelement> vmList = null;  
+	private static int id;
+	private static boolean done;
+	private static BlockingQueue <VMMessage> msgQueue;
+	private static Vector<Integer> vecTempID ;
+    private static TreeMap <Integer, VMelement> vmList;  
    }
 
 

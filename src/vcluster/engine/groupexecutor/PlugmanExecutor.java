@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import vcluster.plugman.Plugin;
 import vcluster.plugman.PluginManager;
 import vcluster.ui.Command;
 import vcluster.util.PrintMsg;
@@ -12,9 +13,8 @@ import vcluster.util.PrintMsg.DMsgType;
 
 public class PlugmanExecutor {
 
-	static PluginManager pm = new PluginManager();
-	static List<String> cloudPluginsList = PluginManager.getCloudPluginList();
-	static List<String> batchPluginsList = PluginManager.getBatchPluginList();	
+	//static List<String> cloudPluginsList = PluginManager.getCloudPluginList();
+	//static List<String> batchPluginsList = PluginManager.getBatchPluginList();	
 	//static StringTokenizer st = new StringTokenizer("");
 	
 	public static boolean plugman(String cmdLine){
@@ -34,12 +34,9 @@ public class PlugmanExecutor {
 		
 		if(Command.HELP.contains(para)){
 			System.out.println(getUsage());
-			return false;
-			
+			return false;			
 		}		
-		
-		return false;
-			
+		return false;			
 	}
 	
 	
@@ -63,48 +60,19 @@ public class PlugmanExecutor {
 		String cName = String.format("%-20s", "Name");
 		String cStat =String.format("%-12s", "Status");
 		String cType = String.format("%-12s", "Type");
-		String batch = String.format("%-12s", "Batch");
-		String cloudStr = String.format("%-12s", "Cloud");
-		String loadStr = String.format("%-12s", "Loaded");
-		String unloadStr = String.format("%-12s", "UnLoaded");
-		
-		System.out.println("List the plugins in plugin directory :");
-		
+		System.out.println("List the plugins in plugin directory :");		
 		System.out.println("----------------------------------------");
 		System.out.println(cName+cStat+cType);
+		System.out.println("----------------------------------------");		
+
+		for(Plugin plugin : PluginManager.pluginList.values()){
+			String name = String.format("%-20s", plugin.getPluginName());
+			String stat=String.format("%-12s", plugin.getPluginStatus());
+			String type=String.format("%-12s", plugin.getPluginType());
+			System.out.println(name+stat+type);
+		}
 		System.out.println("----------------------------------------");
-		
-		if(bfilter){
-			for(String batchplugin : PluginManager.getBatchPluginList()){
-				String name = String.format("%-20s", batchplugin);
-				String stat="";
-				if(PluginManager.isLoaded(batchplugin)){
-					stat = loadStr;
-				}else{
-					stat = unloadStr;
-				}
-				System.out.println(name+stat+batch);
-			}
-		}
-
-		if(cfilter){
-			for(String cloudplugin : cloudPluginsList){
-				
-				String name = String.format("%-20s", cloudplugin);
-				String stat="";
-				if(PluginManager.isLoaded(cloudplugin)){
-					stat = loadStr;
-				}else{
-					stat = unloadStr;
-				}
-				System.out.println(name+stat+cloudStr);
-			}
-		}
-			System.out.println("----------------------------------------");
-			
-
 		return true;
-
 	}
 
 	public static boolean load(String cmdLine) {
@@ -149,11 +117,11 @@ public class PlugmanExecutor {
 	    }
 			for(String pluginName:pluginNames){
 				//System.out.println(pluginName);
-				if(batchPluginsList.contains(pluginName)|cloudPluginsList.contains(pluginName)){
+				if(PluginManager.pluginList.keySet().contains(pluginName)){
 
 					try {
 						//System.out.println(pluginPath + File.separator + pluginName);
-						pm.LoadPlugin(pluginPath + File.separator + pluginName+".jar",pluginType);
+						PluginManager.LoadPlugin(pluginPath + File.separator + pluginName+".jar",pluginType);
 
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
@@ -185,7 +153,7 @@ public class PlugmanExecutor {
 		}
 		while(st.hasMoreTokens()){
 			try {
-				pm.UnloadPlugin(st.nextToken());
+				PluginManager.UnloadPlugin(st.nextToken());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				System.out.println(e.getMessage());

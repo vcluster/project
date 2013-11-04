@@ -11,32 +11,36 @@ public enum Command {
 	QUIT (CMD_GROUP.VCLMAN, "quit, exit, done, stop"),
 	DEBUG_MODE (CMD_GROUP.VCLMAN, "debug"),
 	MONITOR (CMD_GROUP.VCLMAN, "monitor, mon"),
-	CLOUDMAN (CMD_GROUP.VCLMAN, "cloudman, clman, cman"),
-	PLUGMAN (CMD_GROUP.PLUGMAN, "plugin,pluginman,plugman,pm"),
 	//SHOW (CMD_GROUP.VCLMAN, "show, sh"),
 	LOADCONF (CMD_GROUP.VCLMAN, "loadf"),
 	//SET (CMD_GROUP.VCLMAN, "set"),
 	ENGMODE (CMD_GROUP.VCLMAN, "engmode"),	
-	CHECK_P (CMD_GROUP.VCLMAN, "chkp, chkpool, checkpool, check_p"),
-	CHECK_Q (CMD_GROUP.VCLMAN, "chkq, chkqueue, checkqueue, check_q"),
+	CHECK_P (CMD_GROUP.VCLMAN, "chkp,check_p"),
+	CHECK_Q (CMD_GROUP.VCLMAN, "chkq,check_q"),
 	
+	
+	/*Commands of cloudman Category*/
+	CLOUDMAN(CMD_GROUP.CLOUDMAN,"cloudman,cm"),
+	REGISTER(CMD_GROUP.CLOUDMAN,"register,rgst"),
+	LISTCLOUD(CMD_GROUP.CLOUDMAN,"list,ls"),
+	LOADCLOUD(CMD_GROUP.CLOUDMAN,"load,ld"),
 	
 	/*Commands of vmman Category*/
-	VMMAN (CMD_GROUP.VMMAN, "vmman, vman"),
-	SHOW(CMD_GROUP.VMMAN,"show"),
-	CREATE (CMD_GROUP.VMMAN, "create"),
-	START (CMD_GROUP.VMMAN, "start"),
-	SUSPEND (CMD_GROUP.VMMAN, "suspend"),
-	LISTVM (CMD_GROUP.VMMAN, "list"),
-	DESTROY (CMD_GROUP.VMMAN, "destroy,kill"),
+	VMMAN (CMD_GROUP.VMMAN, "vmman, vm"),
+	SHOW(CMD_GROUP.VMMAN,"show,sh"),
+	CREATE (CMD_GROUP.VMMAN, "create,crt"),
+	START (CMD_GROUP.VMMAN, "start,st"),
+	SUSPEND (CMD_GROUP.VMMAN, "suspend,ssp"),
+	LISTVM (CMD_GROUP.VMMAN, "list,ls"),
+	DESTROY (CMD_GROUP.VMMAN, "destroy,dt"),
 	
 	
 	/*Commands of plugman Category*/
-
-	LOAD (CMD_GROUP.PLUGMAN, "load"),
-	UNLOAD (CMD_GROUP.PLUGMAN, "unload"),
+	PLUGMAN(CMD_GROUP.PLUGMAN,"plugman,pm"),
+	LOAD (CMD_GROUP.PLUGMAN, "load,ld"),
+	UNLOAD (CMD_GROUP.PLUGMAN, "unload,uld"),
 	LIST (CMD_GROUP.PLUGMAN, "list,ls"),
-	INFO (CMD_GROUP.PLUGMAN, "info"),
+	INFO (CMD_GROUP.PLUGMAN, "info,ifo"),
 	
 	
 	/*parameters*/	
@@ -45,39 +49,7 @@ public enum Command {
 	TYPE_CLOUD(CMD_GROUP.PARAMETER,"-c,-cloud,--type=cloud"),
 	LOADED(CMD_GROUP.PARAMETER,"-l,-loaded,--loaded"),
 	
-	/* cloud plugin commands which are translated to corresponding underlying
-	 * cloud commands. Cloud plugin(s) can communicate with a proxy running
-	 * on a cloud system or through EC2 API.
-	 */
-	/*
-	 * The following commands now should be combined to vmman. Commands in vmman are including
-	 *  create
-	 *  destroy
-	 *  suspend
-	 *  list
-	 * 
-	 * For example, create command will create a virtual machine. This command 
-	 * initially contacts a cloud plugin first, if the plugin implements EC2 interface, 
-	 * it will generate http string to create a virtual machine; otherwise, it directly
-	 * sends a cloud command like "onevm create <template>"
-	 * 
-	 * 
-	RUN_INSTANCE (CMD_GROUP.CLOUD, "RunInstances, runinstance, ri, runinst, runins, run"),
-	START_INSTANCE (CMD_GROUP.CLOUD, "StartInstances, startinstance, si, startinst, startins, start"),
-	STOP_INSTANCE (CMD_GROUP.CLOUD, "StopInstances, stopinstance, stop"),
-	DESCRIBE_INSTANCE (CMD_GROUP.CLOUD, "DescribeInstances, describeinstance, din, dins, descinst, descins"),
-	TERMINATE_INSTANCE (CMD_GROUP.CLOUD, "TerminateInstances, terminateinstance, terminate, ti, kill, killins"),
-	DESCRIBE_IMAGE (CMD_GROUP.CLOUD, "DescribeImages, describeimage, dim, dimg, descimg"),
-	*/
 
-	
-	/* the following commands should be removed and integrated to vcluster commands
-	 * 
-	 */
-	//CONDOR (CMD_GROUP.PROXY_SERVER, "condor_status, condor_q"),
-	//ONEVM (CMD_GROUP.PROXY_SERVER, "onevm, oneimage, onevnet"),
-	
-	/* not defined */
 	NOT_DEFINED (CMD_GROUP.NOT_DEFINED, "not_defined");
 
 	private String command;

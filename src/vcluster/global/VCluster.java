@@ -1,11 +1,18 @@
 package vcluster.global;
 
+import vcluster.util.HandleXML;
 
 public class VCluster {
 
 	public static boolean init() {
-		Config.cloudMan = new vcluster.control.cloudman.CloudManager();
+
 		Config.vmMan = new vcluster.control.VMManager();
+		//Config.hdXML = new vcluster.util.HandleXML();
+		try{
+			HandleXML.restore();
+		}catch(Exception e){
+			
+		}
 		return true;
 	}
 }

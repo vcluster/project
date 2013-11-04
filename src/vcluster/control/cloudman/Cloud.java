@@ -1,22 +1,28 @@
 package vcluster.control.cloudman;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
+import vcluster.control.VMManager;
+import vcluster.control.VMelement;
 import vcluster.engine.groupexecutor.PlugmanExecutor;
 import vcluster.global.Config;
 import vcluster.global.Config.CloudType;
 import vcluster.plugman.CloudInterface;
 import vcluster.plugman.PluginManager;
+import vcluster.util.HandleXML;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
-import vcluster.control.*;
 
 public class Cloud{
 	
+	public Cloud() {
+		// TODO Auto-generated constructor stub
+	}
+
+
 	public Cloud(List<String> conf) {
 		this.conf = conf;
 		for(String aLine : conf){
@@ -44,22 +50,33 @@ public class Cloud{
 				setCloudName(aValue);
 			}
 		}
-		if(cloudName==null||cloudType==null||cloudpluginName==null){
-			return;
-		}
-		
-		if(!PluginManager.loadedCloudPlugins.containsKey(this.cloudpluginName))PlugmanExecutor.load("load -c "+cloudpluginName);		
-		cp = PluginManager.loadedCloudPlugins.get(this.cloudpluginName);
-		this.listVMs();
-		if(getVmList()==null)return;
-		for(VMelement vm : getVmList().values()){
-			Config.vmMan.getVmList().put(new Integer(Config.vmMan.getcurrId()), vm);
-		}
-		CloudManager.setCurrentCloud(this);
+		isLoaded = false;
+		//HandleXML.addCloudElement(conf);
 	}
 		
 		
-	
+	public boolean load(){	
+		if(cloudName==null||cloudType==null||cloudpluginName==null){
+			return false;
+		}
+		if(!PluginManager.isLoaded(cloudpluginName))PlugmanExecutor.load("load -c "+cloudpluginName);		
+		cp = (CloudInterface)PluginManager.pluginList.get(cloudpluginName).getInstance();
+		this.listVMs();
+		if(getVmList()==null)return false;
+		for(VMelement vm : getVmList().values()){
+			Integer id = new Integer(VMManager.getcurrId());
+			VMManager.getVmList().put(id, vm);
+		}
+		CloudManager.setCurrentCloud(this);		
+		isLoaded = true;
+		String fName = String.format("%-12s", getCloudName());
+		String fInterface =String.format("%-20s", getCloudpluginName());
+		String fType = String.format("%-12s", getCloudType());
+		String fVMs = String.format("%-16s", vmList.size());
+		System.out.println(fName+fInterface+fType+fVMs);
+		HandleXML.setCloudAttribute(cloudName,"isLoaded", "true");
+		return true;
+	}
 	
 	public int getCurrentVMs() {
 		return currentVMs;
@@ -235,6 +252,17 @@ public class Cloud{
 
 
 
+	public boolean isLoaded() {
+		return isLoaded;
+	}
+
+
+	public void setIsLoaded(boolean isLoaded) {
+		this.isLoaded = isLoaded;
+	}
+
+
+
 	private String cloudName;
 	private String cloudpluginName;
 	private List<String> conf;
@@ -242,5 +270,6 @@ public class Cloud{
 	private CloudType cloudType;
 	private CloudInterface cp;
 	private TreeMap<String, VMelement> vmList;
+	private boolean isLoaded;
 	
 }
