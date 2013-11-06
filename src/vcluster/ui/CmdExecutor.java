@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
+import vcluster.control.cloudman.CloudManager;
 import vcluster.engine.groupexecutor.CloudmanExecutor;
 import vcluster.engine.groupexecutor.PlugmanExecutor;
 import vcluster.engine.groupexecutor.VClusterExecutor;
@@ -130,6 +131,8 @@ public class CmdExecutor {
 			return VClusterExecutor.load(cmdLine);
 		//case SET:
 		//	return VClusterExecutor.set(cmdLine);
+		case PRINTARC:
+			return CloudManager.printArchitecture();
 		case ENGMODE:
 			return VClusterExecutor.engmode(cmdLine);
 		case CHECK_P: 

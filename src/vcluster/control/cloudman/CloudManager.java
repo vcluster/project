@@ -5,12 +5,28 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+import vcluster.control.VMelement;
 import vcluster.util.HandleXML;
 
 public class CloudManager  {
 
 	/* later it may be a thread */
 
+	public static boolean printArchitecture(){
+		for(Cloud c : cloudList.values()){
+			System.out.println("---------------------------------------------------------------------------------------");
+			System.out.println(c.getCloudName());
+			for(Host h : c.getHostList().values()){
+				System.out.println("      "+h.getId()+"  MaxVmNum : "+h.getMaxVmNum()+"   Current VmNum : " + h.getVmList().size());
+				for(VMelement v : h.getVmList().values()){
+					System.out.println("        "+v.getId());					
+				}				
+			}
+			System.out.println("---------------------------------------------------------------------------------------");
+		}		
+		return true;
+	}
+	
 	public static void dump(String type)
 	{
 		String cName = String.format("%-12s", "Name");

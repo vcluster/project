@@ -1,5 +1,11 @@
 package vcluster.control.cloudman;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -21,7 +27,11 @@ public class Cloud{
 	public Cloud() {
 		// TODO Auto-generated constructor stub
 	}
+	public static void main(String[] arg){
+		
 
+		
+	}
 
 	public Cloud(List<String> conf) {
 		this.conf = conf;
@@ -48,6 +58,16 @@ public class Cloud{
 			}else if((aKey.equalsIgnoreCase("Name"))){
 
 				setCloudName(aValue);
+			//	System.out.println(aValue);
+			}else if(aKey.equalsIgnoreCase("hosts")){
+			//	System.out.println(aValue);
+				hostList = new TreeMap<String,Host> ();
+				String [] hostlist = aValue.split(",");
+				for(int i = 0 ; i<hostlist.length;i++){
+					String hostname = hostlist[i].split("/")[0];
+					String MaxVMNum = hostlist[i].split("/")[1]; 
+					hostList.put(hostname, new Host(Integer.parseInt(MaxVMNum),hostname));
+				}
 			}
 		}
 		isLoaded = false;
@@ -139,9 +159,23 @@ public class Cloud{
 		for(VMelement vm : vmlist){
 			vm.setCloudName(getCloudName());
 			vmList.put(vm.getId(), vm);
-			//System.out.println(i++ + "             " + vm.getId() + "  " + vm.getState());
+			if(hostList.size()>1){
+				
+				String hostname = vm.getHostname();
+				//System.out.println(hostname+"    : test");
+				Host h = hostList.get(hostname);
+				if(h!=null){
+					h.getVmList().put(vm.getId(), vm);
+				}
+
+				//System.out.println(i++ + "             " + vm.getId() + "  " + vm.getState());
+			}else if(hostList.size()==1){
+				for(Host host : hostList.values()){
+					host.getVmList().putAll(vmList);
+				}
+			}
+
 		}
-		
 		return true;
 	}
 	
@@ -261,7 +295,12 @@ public class Cloud{
 		this.isLoaded = isLoaded;
 	}
 
-
+	public TreeMap<String, Host> getHostList() {
+		return hostList;
+	}
+	public void setHostList(TreeMap<String, Host> hostList) {
+		this.hostList = hostList;
+	}
 
 	private String cloudName;
 	private String cloudpluginName;
@@ -271,5 +310,7 @@ public class Cloud{
 	private CloudInterface cp;
 	private TreeMap<String, VMelement> vmList;
 	private boolean isLoaded;
+	private TreeMap<String,Host> hostList;
+
 	
 }

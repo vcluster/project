@@ -17,6 +17,7 @@ public enum Command {
 	ENGMODE (CMD_GROUP.VCLMAN, "engmode"),	
 	CHECK_P (CMD_GROUP.VCLMAN, "chkp,check_p"),
 	CHECK_Q (CMD_GROUP.VCLMAN, "chkq,check_q"),
+	PRINTARC (CMD_GROUP.VCLMAN, "print,prac"),
 	
 	
 	/*Commands of cloudman Category*/
