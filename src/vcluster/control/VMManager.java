@@ -190,10 +190,16 @@ public class VMManager extends Thread {
 			cmdList.add(1,"-c");
 			cmdList.add(2,currCloud.getCloudName());
 		}
+
 		if(!cmdList.get(3).equalsIgnoreCase("-n")){
 			cmdList.add(3, "-n");
 			cmdList.add(4, "1");
 		}
+		if(!cmdList.get(5).equalsIgnoreCase("-h")){
+			cmdList.add(5, "-h");
+			cmdList.add(6, "host1");
+		}
+		
 		System.out.println("");
 		currCloud = CloudManager.getCloudList().get(cmdList.get(2));
 		if(currCloud==null){
@@ -202,7 +208,7 @@ public class VMManager extends Thread {
 			return false;
 		}
 		vms = Integer.parseInt(cmdList.get(4));
-			return currCloud.createVM(vms);
+			return currCloud.createVM(vms,cmdList.get(6));
 
 	}
 

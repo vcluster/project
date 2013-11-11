@@ -126,8 +126,16 @@ public class Cloud{
 		}
 	}
 
-	public boolean createVM(int maxCount) {
+	public boolean createVM(int maxCount,String hostId) {
 		// TODO Auto-generated method stub
+		int i = 100;
+		for(int j =0;j<conf.size();j++){
+			if(conf.get(j).contains("instancetype")){
+				i = j;
+				break;
+			}
+		}
+		if(i!=100)conf.set(i, "instancetype = m1."+hostId);
 		cp.RegisterCloud(conf);
 		ArrayList<VMelement> vmlist = cp.createVM(maxCount);
 		if(vmlist==null || vmlist.isEmpty()){
