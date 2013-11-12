@@ -55,6 +55,7 @@ public class Cloud{
 								
 			}else if((aKey.equalsIgnoreCase("Interface"))){
 				setCloudpluginName(aValue);
+				cp = (CloudInterface)PluginManager.pluginList.get(cloudpluginName).getInstance();
 			}else if((aKey.equalsIgnoreCase("Name"))){
 
 				setCloudName(aValue);
@@ -128,14 +129,16 @@ public class Cloud{
 
 	public boolean createVM(int maxCount,String hostId) {
 		// TODO Auto-generated method stub
-		int i = 100;
-		for(int j =0;j<conf.size();j++){
-			if(conf.get(j).contains("instancetype")){
-				i = j;
-				break;
+		if(!hostId.equalsIgnoreCase("host1")){
+			int i = 100;
+			for(int j =0;j<conf.size();j++){
+				if(conf.get(j).contains("template")){
+					i = j;
+					break;
+				}
 			}
+			if(i!=100)conf.set(i, "template = templates/"+hostId+".one");
 		}
-		if(i!=100)conf.set(i, "instancetype = m1."+hostId);
 		cp.RegisterCloud(conf);
 		ArrayList<VMelement> vmlist = cp.createVM(maxCount);
 		if(vmlist==null || vmlist.isEmpty()){
@@ -167,8 +170,7 @@ public class Cloud{
 		for(VMelement vm : vmlist){
 			vm.setCloudName(getCloudName());
 			vmList.put(vm.getId(), vm);
-			if(hostList.size()>1){
-				
+			if(hostList.size()>1){				
 				String hostname = vm.getHostname();
 				//System.out.println(hostname+"    : test");
 				Host h = hostList.get(hostname);

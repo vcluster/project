@@ -191,11 +191,11 @@ public class VMManager extends Thread {
 			cmdList.add(2,currCloud.getCloudName());
 		}
 
-		if(!cmdList.get(3).equalsIgnoreCase("-n")){
+		if(cmdList.size()<4||!cmdList.get(3).equalsIgnoreCase("-n")){
 			cmdList.add(3, "-n");
 			cmdList.add(4, "1");
 		}
-		if(!cmdList.get(5).equalsIgnoreCase("-h")){
+		if(cmdList.size()<6 || !cmdList.get(5).equalsIgnoreCase("-h")){
 			cmdList.add(5, "-h");
 			cmdList.add(6, "host1");
 		}
@@ -237,18 +237,20 @@ public class VMManager extends Thread {
 				}
 				TreeMap<Integer,VMelement> temp = new TreeMap<Integer,VMelement>();
 				for(Cloud cloud : cc.values()){
-					cloud.listVMs();
-					if(getVmList()==null)continue;
-					for(VMelement vm : cloud.getVmList().values()){	
-						boolean flag = true;
-						for(Integer id:vmList.keySet()){
-							if(vm.getId().equals(vmList.get(id).getId())){
-								temp.put(id, vm);
-								flag = false;
-								break;
-							}
-						}	
-						if(flag)temp.put(new Integer(Config.vmMan.getcurrId()), vm);
+					if(cloud.isLoaded()){
+						cloud.listVMs();
+						if(getVmList()==null)continue;
+						for(VMelement vm : cloud.getVmList().values()){	
+							boolean flag = true;
+							for(Integer id:vmList.keySet()){
+								if(vm.getId().equals(vmList.get(id).getId())){
+									temp.put(id, vm);
+									flag = false;
+									break;
+								}
+							}	
+							if(flag)temp.put(new Integer(Config.vmMan.getcurrId()), vm);
+						}
 					}
 				}
 
@@ -263,15 +265,17 @@ public class VMManager extends Thread {
 					boolean flag = true;
 					boolean flagx = false;
 					for(Cloud cloud:Config.cloudMan.getCloudList().values()){
-						for(VMelement vm : cloud.getVmList().values()){
-							if(vm.getId().equals(vmList.get(id).getId())){
-								flag = false;
-								flagx = true;
-								
-								break;
+						if(cloud.isLoaded()){
+							for(VMelement vm : cloud.getVmList().values()){
+								if(vm.getId().equals(vmList.get(id).getId())){
+									flag = false;
+									flagx = true;
+									
+									break;
+								}
 							}
-						}
-						if(flagx){flagx = false;break;}
+							if(flagx){flagx = false;break;}
+					}
 					}
 					if(flag)ids.add(id);					
 				}
