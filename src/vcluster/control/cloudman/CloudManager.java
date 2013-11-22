@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 import vcluster.control.VMelement;
+import vcluster.global.Config;
 import vcluster.util.HandleXML;
 
 public class CloudManager  {
@@ -14,16 +15,20 @@ public class CloudManager  {
 
 	public static boolean printArchitecture(){
 		for(Cloud c : cloudList.values()){
-			System.out.println("---------------------------------------------------------------------------------------");
+			if(c.isLoaded()){
+			System.out.println("---------------------------------------");
 			System.out.println(c.getCloudName());
 			for(Host h : c.getHostList().values()){
-				System.out.println("      "+h.getId()+"  MaxVmNum : "+h.getMaxVmNum()+"   Current VmNum : " + h.getVmList().size());
+				System.out.println("      "+h.getId()+"  : "+h.getMaxVmNum()+"/" + h.getVmList().size());
+				System.out.println("        ID       Activity");	
 				for(VMelement v : h.getVmList().values()){
-					System.out.println("        "+v.getId());					
+					System.out.println("        "+v.getId()+"   "+v.isIdle());					
 				}				
 			}
-			System.out.println("---------------------------------------------------------------------------------------");
-		}		
+			System.out.println("---------------------------------------");
+		
+			}
+		}
 		return true;
 	}
 	
@@ -213,6 +218,7 @@ public class CloudManager  {
 	}
 	
 	public static TreeMap<String, Cloud> getCloudList(){
+		//Config.vmMan.listVM("vmman list -refresh");
 		return cloudList;		
 	}
 	

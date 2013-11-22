@@ -1,149 +1,22 @@
 package vcluster.control;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
-import java.util.Vector;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
-import org.opennebula.client.Client;
-import org.opennebula.client.OneResponse;
-import org.opennebula.client.vm.VirtualMachine;
-
-import vcluster.control.VMMessage.VMMsgType;
 import vcluster.control.cloudman.Cloud;
 import vcluster.control.cloudman.CloudManager;
 import vcluster.global.Config;
 import vcluster.global.Config.VMState;
-import vcluster.util.PrintMsg;
-import vcluster.util.PrintMsg.DMsgType;
 
 public class VMManager extends Thread {
 
 	static{
 		vmList = new TreeMap<Integer, VMelement>();
 		id = 0;
-		done = false;
-		msgQueue =  new ArrayBlockingQueue <VMMessage>(100);
-		vecTempID = new Vector<Integer>();
 	}
 
-	public static BlockingQueue <VMMessage> getMsgQueue() {
-		return msgQueue;
-	}
-
-	public void run() {
-		VMMessage aMsg = null;
-		while(!done) {
-			try {
-				aMsg = msgQueue.take();
-				PrintMsg.print(DMsgType.MSG, "message type = "+aMsg.toString());
-				processMessage(aMsg);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	private boolean processMessage(VMMessage aMsg) {
-		
-		VMMsgType aType = aMsg.getMessageType();
-		int numVMs = aMsg.getPrivateData();
-		
-		switch(aType) {
-		case LAUNCH: return createVM(numVMs+"");
-		}
-		return false;
-	}
-	
-	public void dump()
-	{
-		System.out.println("----------------------------------------");
-		System.out.println("\tVM Manager");
-		System.out.println("----------------------------------------");
-
-		Vector <Integer>v = new Vector <Integer>(vmList.keySet());
-		Collections.sort(v);
-		Iterator <Integer> it = v.iterator();
-		while(it.hasNext()) {
-			Integer key = it.next();
-	    	VMelement vm = (VMelement)vmList.get(key);
-			System.out.println("\tID: "+vm.getId()+"\t"+vm.getState());
-		}
-		System.out.println("----------------------------------------");
-	}
-	
-	public void shutDwon() 
-	{
-		/* notify to the other services, e.g. monitoring */
-		msgQueue.clear();
-		msgQueue = null;
-		
-		done = true;
-	}
-	
-	public boolean addVMElement(int id,VMelement vm) 
-	{
-		Object ret = vmList.put(new Integer(id), vm);
-		if (ret != null) return false;
-		return true;
-	}
-	
-	private boolean RESTLaunch(Cloud cloud, int numVMs)
-	{
-		PrintMsg.print(DMsgType.MSG, "launching "+numVMs+" vms using REST API.");
-	    
-	    for(int i = 0 ; i < numVMs; i++) {
-	    	//PluginManager.current_cloudExecutor.rest_launch(cloud);
-	    }
-	    
-	    return true;
-	}
-
-	
-	private boolean isAllVMRunning(Client oneClient) {
-
-		int vmID;
-		boolean allRunning = true;
-		for(int i = 0; i < vecTempID.size(); i++) {
-			vmID = vecTempID.elementAt(i).intValue();
-			
-			VirtualMachine vm = new VirtualMachine(vmID, oneClient);
-			
-			/* to load the data first using the info method */
-			OneResponse rc = vm.info();
-			String status = vm.status();
-			
-			PrintMsg.print(DMsgType.MSG, "vm "+vm.getName()+", id " + vm.getId()
-					+", status = "+status);
-
-			VMelement element = findVMElement(vmID);
-			VMState newVMState = getVMState(status);
-			if (newVMState != element.getState()) {
-				
-				PrintMsg.print(DMsgType.MSG, "state update: "+element.getState()
-						+" --> "+newVMState);
-
-				/* update vm state */
-				updateVMState(vmList.get(vmID), newVMState);
-				
-				PrintMsg.print(DMsgType.MSG, "new state, " + vmList.get(vmID).getState());
-			}
-			
-			if(status == null || !status.equalsIgnoreCase("runn")) 
-				allRunning = false;
-		}
-		return allRunning;
-	}
-	
-	private void updateVMState(VMelement e, VMState state) {
-		e.setState(state);
-	}
-	
-	public VMState getVMState(String vmState) {
+	public static VMState getVMState(String vmState) {
 		
 		if(vmState == null) return VMState.NOT_DEFINED;
 
@@ -155,12 +28,7 @@ public class VMManager extends Thread {
 	}
 
 	
-	private VMelement findVMElement(int id) {
-		return vmList.get(id);
-	}
-	
-	
-	public boolean createVM(String cmdLine) {
+	public static boolean createVM(String cmdLine) {
 		// TODO Auto-generated method stub
 		Cloud currCloud = CloudManager.getCurrentCloud();
 		int vms = 1;
@@ -212,7 +80,7 @@ public class VMManager extends Thread {
 
 	}
 
-	public boolean listVM(String cmdLine) {
+	public static boolean listVM(String cmdLine) {
 		// TODO Auto-generated method stu
 		String filter ="";
 		String cloudFilter="";
@@ -249,7 +117,7 @@ public class VMManager extends Thread {
 									break;
 								}
 							}	
-							if(flag)temp.put(new Integer(Config.vmMan.getcurrId()), vm);
+							if(flag)temp.put(new Integer(VMManager.getcurrId()), vm);
 						}
 					}
 				}
@@ -264,7 +132,7 @@ public class VMManager extends Thread {
 				for(Integer id:vmList.keySet()){
 					boolean flag = true;
 					boolean flagx = false;
-					for(Cloud cloud:Config.cloudMan.getCloudList().values()){
+					for(Cloud cloud:CloudManager.getCloudList().values()){
 						if(cloud.isLoaded()){
 							for(VMelement vm : cloud.getVmList().values()){
 								if(vm.getId().equals(vmList.get(id).getId())){
@@ -299,47 +167,71 @@ public class VMManager extends Thread {
 			}
 		}	
 		
-		String tName = String.format("%-16s", "CLOUD");
-		String tID =String.format("%-12s", "ID");
-		String tStat = String.format("%-16s", "STATUS");
-		System.out.println("----------------------------------------");
-		System.out.println(tID+tStat+tName);
-		System.out.println("----------------------------------------");
+		String tName = String.format("%-10s", "CLOUD");
+		String tID =String.format("%-5s", "ID");
+		String tStat = String.format("%-10s", "STATUS");
+		String tPrivateIp =  String.format("%-18s", "PrivateIP");
+		String tPublicIp =  String.format("%-18s", "PublicIP");
+		String tActivity =  String.format("%-10s", "Activity");
+		String tInternalID =  String.format("%-12s", "IntnlID");
+		String line =  "---------------------------------------------------------------------------------------";
+		System.out.println(line);
+		System.out.println(tID+tInternalID+tStat+tActivity+tPrivateIp+tPublicIp+tName);
+		System.out.println(line);
 			int runNum = 0;
 			int totalNum = 0;
 			for(Integer id : vmList.keySet()){
+				VMelement vm = vmList.get(id);
 				if(!cloudFilter.equals("")&&vmList.get(id).getCloudName().equals(cloudFilter)){
-					String fName = String.format("%-16s", vmList.get(id).getCloudName());
-					String fID =String.format("%-12s", id);
-					String fStat = String.format("%-16s", vmList.get(id).getState());
+					String fName = String.format("%-10s", vmList.get(id).getCloudName());
+					String fID =String.format("%-5s", id);
+					String fStat = String.format("%-10s", vmList.get(id).getState());
+					String fPrivateIp =  String.format("%-18s", vm.getPrivateIP());
+					String fPublicIp =  String.format("%-18s", vm.getPubicIP());
+					String fActivity =  String.format("%-10s", vm.isIdle());
+					String fInternalID =  String.format("%-12s", vm.getId());
+					
+					
 					if(vmList.get(id).getState().equals(Config.VMState.RUNNING))runNum++;
-					System.out.println(fID+fStat+fName);
+					System.out.println(fID+fInternalID+fStat+fActivity+fPrivateIp+fPublicIp+fName);
 					totalNum++;
 				}
 				if(!filter.equals("")&&vmList.get(id).getState().toString().equals(filter)){
-					String fName = String.format("%-16s", vmList.get(id).getCloudName());
-					String fID =String.format("%-12s", id);
-					String fStat = String.format("%-16s", vmList.get(id).getState());
+					String fName = String.format("%-10s", vmList.get(id).getCloudName());
+					String fID =String.format("%-5s", id);
+					String fStat = String.format("%-10s", vmList.get(id).getState());
+					String fPrivateIp =  String.format("%-18s", vm.getPrivateIP());
+					String fPublicIp =  String.format("%-18s", vm.getPubicIP());
+					String fActivity =  String.format("%-10s", vm.isIdle());
+					String fInternalID =  String.format("%-12s", vm.getId());
+					
+					
 					if(vmList.get(id).getState().equals(Config.VMState.RUNNING))runNum++;
-					System.out.println(fID+fStat+fName);
+					System.out.println(fID+fInternalID+fStat+fActivity+fPrivateIp+fPublicIp+fName);
 					totalNum++;
 				}
 				if(filter.equals("")&cloudFilter.equals("")){
-					String fName = String.format("%-16s", vmList.get(id).getCloudName());
-					String fID =String.format("%-12s", id);
-					String fStat = String.format("%-16s", vmList.get(id).getState());
+					String fName = String.format("%-10s", vmList.get(id).getCloudName());
+					String fID =String.format("%-5s", id);
+					String fStat = String.format("%-10s", vmList.get(id).getState());
+					String fPrivateIp =  String.format("%-18s", vm.getPrivateIP());
+					String fPublicIp =  String.format("%-18s", vm.getPubicIP());
+					String fActivity =  String.format("%-10s", vm.isIdle());
+					String fInternalID =  String.format("%-12s", vm.getId());
+					
+					
 					if(vmList.get(id).getState().equals(Config.VMState.RUNNING))runNum++;
-					System.out.println(fID+fStat+fName);
+					System.out.println(fID+fInternalID+fStat+fActivity+fPrivateIp+fPublicIp+fName);
 					totalNum++;
 				}
 			}
-			System.out.println("----------------------------------------");
+			System.out.println(line);
 			System.out.println("      Running VMs :  "+runNum+"/"+totalNum);
-			System.out.println("----------------------------------------");
+			System.out.println(line);
 		return true;
 	}
 
-	public boolean showVM(String cmdLine) {
+	public static boolean showVM(String cmdLine) {
 		// TODO Auto-generated method stub
 		StringTokenizer st = new StringTokenizer(cmdLine);		
 		String vmID = "";
@@ -383,6 +275,7 @@ public class VMManager extends Thread {
 		String tpubIP = String.format("%-11s", "publicIP");
 		String tinID = String.format("%-11s", "internalID");
 		String tlauTime = String.format("%-11s", "launchTime");
+		String activity = String.format("%-11s", "Activity");
 		Integer id = vID;
 		
 		String fName = String.format("%-16s", vmList.get(id).getCloudName());
@@ -392,6 +285,7 @@ public class VMManager extends Thread {
 		String fpubIP =String.format("%-16s", vmList.get(id).getPubicIP());
 		String finID = String.format("%-16s", vmList.get(id).getId());
 		String flauTime = String.format("%-16s", vmList.get(id).getTime());
+		String factivity = String.format("%-16s", vmList.get(id).isIdle());
 		
 		System.out.println("---------------------------------------");
 		System.out.println(tID+" : "+fID);
@@ -400,13 +294,14 @@ public class VMManager extends Thread {
 		System.out.println(tStat+" : "+fStat);
 		System.out.println(tpriIP+" : "+fpriIP);
 		System.out.println(tpubIP+" : "+fpubIP);	
+		System.out.println(activity+" : "+factivity);
 		System.out.println(tlauTime+" : "+flauTime);
 		System.out.println("---------------------------------------");
 		
 		return false;
 	}
 
-	public boolean destroyVM(String cmdLine) {
+	public static boolean destroyVM(String cmdLine) {
 		// TODO Auto-generated method stub
 		StringTokenizer st = new StringTokenizer(cmdLine);		
 		String cloudName = "";
@@ -445,13 +340,13 @@ public class VMManager extends Thread {
 		}
 		cloudName = vmList.get(vID).getCloudName();
 		String inId = vmList.get(vID).getId();
-		Cloud cloud = Config.cloudMan.getCloudList().get(cloudName);
+		Cloud cloud = CloudManager.getCloudList().get(cloudName);
 		cloud.destroyVM(inId);
 		vmList.remove(vID);
 		return true;
 	}
 
-	public boolean suspendVM(String cmdLine) {
+	public static boolean suspendVM(String cmdLine) {
 		// TODO Auto-generated method stub
 		StringTokenizer st = new StringTokenizer(cmdLine);		
 		String cloudName = "";
@@ -490,13 +385,13 @@ public class VMManager extends Thread {
 		}
 		cloudName = vmList.get(vID).getCloudName();
 		String inId = vmList.get(vID).getId();
-		Cloud cloud = Config.cloudMan.getCloudList().get(cloudName);
+		Cloud cloud = CloudManager.getCloudList().get(cloudName);
 		cloud.suspendVM(inId);
 		
 		return true;
 	}
 
-	public boolean startVM(String cmdLine) {
+	public static boolean startVM(String cmdLine) {
 		// TODO Auto-generated method stub
 		StringTokenizer st = new StringTokenizer(cmdLine);		
 		String cloudName = "";
@@ -535,7 +430,7 @@ public class VMManager extends Thread {
 		}
 		cloudName = vmList.get(vID).getCloudName();
 		String inId = vmList.get(vID).getId();
-		Cloud cloud = Config.cloudMan.getCloudList().get(cloudName);
+		Cloud cloud = CloudManager.getCloudList().get(cloudName);
 		cloud.startVM(inId);
 		
 		return true;
@@ -553,13 +448,10 @@ public class VMManager extends Thread {
 		return vmList;
 	}
 
-
+	
 
 	private static int id;
-	private static boolean done;
-	private static BlockingQueue <VMMessage> msgQueue;
-	private static Vector<Integer> vecTempID ;
-    private static TreeMap <Integer, VMelement> vmList;  
+	private static TreeMap <Integer, VMelement> vmList;  
    }
 
 

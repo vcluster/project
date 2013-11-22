@@ -18,6 +18,7 @@ public enum Command {
 	CHECK_P (CMD_GROUP.VCLMAN, "chkp,check_p"),
 	CHECK_Q (CMD_GROUP.VCLMAN, "chkq,check_q"),
 	PRINTARC (CMD_GROUP.VCLMAN, "print,prac"),
+	TESTALGO(CMD_GROUP.VCLMAN, "algo"),
 	
 	
 	/*Commands of cloudman Category*/

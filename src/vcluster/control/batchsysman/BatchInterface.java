@@ -1,6 +1,8 @@
-package vcluster.plugman;
+package vcluster.control.batchsysman;
 
 import java.io.File;
+import java.util.ArrayList;
+
 
 /**
  * BatchInterface interface,all the batch system plug-in should implements this interface.
@@ -9,12 +11,7 @@ import java.io.File;
 public interface BatchInterface{
 	//connect to batch system,conf is a file includes the connection informations.
 	public boolean ConnectTo(File conf);
-	public boolean check_pool();
-	public boolean check_q();
-	public int getTotalJob();
-	public int getIdleJob();
-	public int getRunningJob();
-	public int getHeldJob();
-
+	public PoolStatus getPoolStatus();
+	public QStatus getQStatus();
 
 }

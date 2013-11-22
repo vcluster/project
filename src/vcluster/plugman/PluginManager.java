@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
+import vcluster.control.batchsysman.BatchInterface;
 import vcluster.ui.Command;
 import vcluster.util.HandleXML;
 

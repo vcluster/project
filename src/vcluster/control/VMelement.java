@@ -15,7 +15,7 @@ public class VMelement {
 	private String cloudName;
 	private String privateIP;
 	private String pubicIP;
-	
+	private int isIdle;
 	public VMelement() {
 		this.id = "";
 		this.state = VMState.PENDING;
@@ -29,6 +29,7 @@ public class VMelement {
 		this.cloudName = "";
 		this.privateIP="";
 		this.pubicIP="";
+		this.isIdle = 3;
 	}
 	
 	
@@ -116,6 +117,18 @@ public class VMelement {
 		
 	}
 	
+
+	public int isIdle() {
+		// TODO Auto-generated method stub
+		return this.isIdle;
+	}
+	
+	
+	public void setIsIdle(int isIdle) {
+		this.isIdle = isIdle;
+	}
+
+
 	public String stringVMState() {
 		
 		switch(state) {
@@ -129,7 +142,8 @@ public class VMelement {
 		}
 		return "NOT_DEFINED";
 	}
-	
+
+
 	
 	
 

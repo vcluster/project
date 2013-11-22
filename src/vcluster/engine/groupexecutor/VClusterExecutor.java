@@ -70,42 +70,12 @@ public class VClusterExecutor {
 		}
 		
 		token = st.nextToken().trim();
-		
-		if (token.equalsIgnoreCase("stop")) {
-			if (Config.vmMan == null) {
-				PrintMsg.print(DMsgType.MSG, "vm manager is not running.");
-			} else {
-				Config.vmMan.shutDwon();
-				PrintMsg.print(DMsgType.MSG, "monitoring is stopped.");
-				Config.vmMan = null;
-			}
-			return false;
-		}
-		
-		if (token.equalsIgnoreCase("dump")) {
-			if (Config.vmMan == null) {
-				PrintMsg.print(DMsgType.MSG, "vm manager is not running.");
-			} else {
-				Config.vmMan.dump();
-			}
-			return false;
-		}
-		
-		
+			
 		
 		if (!token.equalsIgnoreCase("start")) {
 			PrintMsg.print(DMsgType.ERROR, "undefined command, "+token);
 			return false;
 		}
-
-		/* from here, we have to handle start command */
-		if (Config.vmMan !=  null) {
-			PrintMsg.print(DMsgType.ERROR, "vm manager is running....");
-			return false;
-		}
-		
-		Config.vmMan = new VMManager();
-		Config.vmMan.start();
 
 		return true;
 	}
@@ -232,13 +202,6 @@ public class VClusterExecutor {
 			return false;
 		}
 		
-		if (Config.vmMan != null) {
-			Config.monMan = new MonitoringMan(Config.vmMan);
-			Config.monMan.start();
-		}
-		else {
-			PrintMsg.print(DMsgType.ERROR, "vmman is not running");
-		}
 		
 		return true;
 	}
@@ -332,80 +295,6 @@ public class VClusterExecutor {
 			return false;
 		}
 
-		return true;
-	}
-	
-	public static boolean engmode(String cmdLine)
-	{
-
-
-		/* remove the keyword engmode */
-		String cmd = cmdLine.replaceFirst("engmode", "");
-		// System.out.println("Command = "+cmd);
-		
-		
-		
-        Socket socket = null;
-        BufferedReader in = null;
-        DataOutputStream out = null;
-        
-        try {
-        	//socket = new Socket("127.0.0.1", 9734);
-        	socket = new Socket("ce03.sdfarm.kr", 9734);
-        	
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new DataOutputStream(socket.getOutputStream());
-            out.flush();
-            /* make an integer to unsigned int */
-            int userInput = 16;
-            userInput <<= 8;
-            userInput |=  1;
-            userInput &= 0x7FFFFFFF;
-
-            /*
-             * easy and simple way is using writeInt() function, 
-             * but writing an integer to socket through writeInt() 
-             * causes "connection reset" problem because an additional data being
-             * transmitted.
-             * 
-             * In order to resolve this problem, we use write() function after
-             * converting the integer to byte[].
-             */
-            String s = Integer.toString(userInput);
-            byte[] b = s.getBytes();
-            
-            out.write(b, 0, b.length);
-            out.write(cmd.getBytes(), 0, cmd.getBytes().length);
-
-            char[] cbuf = new char[1024];
-            
-            while (in.read(cbuf, 0, 1024) != -1) {
-            	String str = new String(cbuf);
-    	        str = str.trim();
-    	        
-    	        if (str.contains("Total") && !str.contains("Owner")) {
-    	        	//PoolStatus.extractInfo(str);
-    	        	//PoolStatus.printQStatus();
-    	        	BatchExecutor.check_pool();
-    	        }
-    	        
-    	        for(int i = 0; i< 1024; i++)
-    	        	cbuf[i] = '\0';
-            }
-        } catch (UnknownHostException e) {
-    		PrintMsg.print(DMsgType.ERROR, e.getMessage());
-            closeStream(in, out, socket);
-    		
-    		return false;
-        } catch (IOException e) {
-    		PrintMsg.print(DMsgType.ERROR, e.getMessage());
-            closeStream(in, out, socket);
-            
-            return false;
-        }
-        
-        closeStream(in, out, socket);
- 		
 		return true;
 	}
 	

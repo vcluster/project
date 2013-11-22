@@ -13,6 +13,8 @@ import java.util.TreeMap;
 
 import vcluster.control.VMManager;
 import vcluster.control.VMelement;
+import vcluster.control.batchsysman.Slot;
+import vcluster.engine.groupexecutor.BatchExecutor;
 import vcluster.engine.groupexecutor.PlugmanExecutor;
 import vcluster.global.Config;
 import vcluster.global.Config.CloudType;
@@ -67,7 +69,8 @@ public class Cloud{
 				for(int i = 0 ; i<hostlist.length;i++){
 					String hostname = hostlist[i].split("/")[0];
 					String MaxVMNum = hostlist[i].split("/")[1]; 
-					hostList.put(hostname, new Host(Integer.parseInt(MaxVMNum),hostname));
+					
+					hostList.put(hostname, new Host(Integer.parseInt(MaxVMNum),hostname,this.cloudName));
 				}
 			}
 		}
@@ -147,8 +150,9 @@ public class Cloud{
 		}
 		for(VMelement vm : vmlist){
 			vm.setCloudName(cloudName);
+			vm.setHostname(hostId);
 			this.vmList.put(vm.getId(), vm);
-			Config.vmMan.getVmList().put(Config.vmMan.getcurrId(), vm);
+			VMManager.getVmList().put(VMManager.getcurrId(), vm);
 			System.out.println(cloudName+"   "+vm.getId()+"   "+vm.getState());
 		}
 		if(maxCount==1){
@@ -163,29 +167,19 @@ public class Cloud{
 		// TODO Auto-generated method stub
 		cp.RegisterCloud(conf);
 	//	HashMap<String,VMelement> vms = new HashMap<String,VMelement>();
-		ArrayList<VMelement> vmlist = cp.listVMs();
+		ArrayList<VMelement> cVmList = cp.listVMs();
 		vmList = new TreeMap<String,VMelement>();
 		//int i = 1;
-		if(vmlist==null||vmlist.size()==0)return false;
-		for(VMelement vm : vmlist){
-			vm.setCloudName(getCloudName());
-			vmList.put(vm.getId(), vm);
-			if(hostList.size()>1){				
-				String hostname = vm.getHostname();
-				//System.out.println(hostname+"    : test");
-				Host h = hostList.get(hostname);
-				if(h!=null){
-					h.getVmList().put(vm.getId(), vm);
-				}
-
-				//System.out.println(i++ + "             " + vm.getId() + "  " + vm.getState());
-			}else if(hostList.size()==1){
-				for(Host host : hostList.values()){
-					host.getVmList().putAll(vmList);
-				}
+		if(cVmList==null||cVmList.size()==0)return false;
+		for(VMelement vm : cVmList){
+			if(!this.cloudName.equalsIgnoreCase("Gcloud")){
+				vm.setHostname("host1");
 			}
-
+			vm.setCloudName(getCloudName());
+			vmList.put(vm.getId(), vm);			
 		}
+		
+		BatchExecutor.mapingActivityToVm();
 		return true;
 	}
 	
@@ -311,7 +305,43 @@ public class Cloud{
 	public void setHostList(TreeMap<String, Host> hostList) {
 		this.hostList = hostList;
 	}
+	
+	public void setPriority(int i) {
+		// TODO Auto-generated method stub
+		this.priority = i;
+	}
 
+	public int getPriority() {
+		return priority;
+	}
+
+	public String slotNameToVMId(String slotName){
+		String vmId="";
+		if(cloudName.equals("Gcloud")){
+			if(slotName.contains(".")){
+				vmId=slotName.replace(".kisti", "").split("-")[1].replace("vm", "").trim();
+			}else{
+				vmId=slotName.split("-")[1].replace("vm", "");
+			}
+			
+		}else if(cloudName.equalsIgnoreCase("fermicloud")){
+			
+		}else if(cloudName.equalsIgnoreCase("amazon")){
+			
+			String ip = slotName.replace(".amaz", "").replaceAll("-", ".");
+			System.out.println(ip);
+			for(VMelement vm : vmList.values()){
+				if(vm.getPrivateIP().equalsIgnoreCase(ip)){
+					vmId = vm.getId();
+				}
+			}
+		}
+		return vmId;
+	}
+	
+	
+	
+	
 	private String cloudName;
 	private String cloudpluginName;
 	private List<String> conf;
@@ -321,6 +351,7 @@ public class Cloud{
 	private TreeMap<String, VMelement> vmList;
 	private boolean isLoaded;
 	private TreeMap<String,Host> hostList;
+	private int priority;
 
 	
 }

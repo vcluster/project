@@ -67,10 +67,9 @@ public class QStatusChecker extends Thread {
 	private synchronized void getQStatus() 
 	{
 		try {
-			BatchExecutor.check_q();
 			
-			int runningJobs = BatchExecutor.getRunningJob();
-			int idleJobs = BatchExecutor.getIdleJob();
+			int runningJobs = BatchExecutor.getQStatus().getRunningJob();
+			int idleJobs = BatchExecutor.getQStatus().getIdleJob();
 			
 			if (runningJobs <= 0) runningJobs = 1;
 			ratio = (double) (idleJobs/(runningJobs));

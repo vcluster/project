@@ -23,8 +23,8 @@ public class Config {
 	public enum CloudType {PRIVATE, PUBLIC, NOT_DEFINED};
 
 	public static MonitoringMan monMan = null;
-	public static VMManager vmMan = null;
-	public static CloudManager cloudMan = null;
+	//public static VMManager vmMan = null;
+	//public static CloudManager cloudMan = null;
 	public static HandleXML hdXML = null;
 	
 	public static boolean DEBUG_MODE = false;

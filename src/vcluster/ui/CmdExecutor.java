@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
+import vcluster.control.VMManager;
 import vcluster.control.cloudman.CloudManager;
+import vcluster.engine.groupexecutor.BatchExecutor;
 import vcluster.engine.groupexecutor.CloudmanExecutor;
 import vcluster.engine.groupexecutor.PlugmanExecutor;
 import vcluster.engine.groupexecutor.VClusterExecutor;
@@ -24,7 +26,7 @@ public class CmdExecutor {
 	{
 		/* shutdown Manager first */
 		if (Config.monMan != null) Config.monMan.shutDwon();
-		if (Config.vmMan != null) Config.vmMan.shutDwon();
+	
 	}
 
 	public static boolean isQuit(String aCmd)
@@ -34,7 +36,7 @@ public class CmdExecutor {
 
 			/* shutdown Manager first */
 			if (Config.monMan != null) Config.monMan.shutDwon();
-			if (Config.vmMan != null) Config.vmMan.shutDwon();
+		
 			
 			return true;
 		}
@@ -115,6 +117,8 @@ public class CmdExecutor {
 	{
 		
 		switch (command) {
+		case TESTALGO:
+			return vcluster.plugin.PriorityBased.algo();
 		case VHELP:
 			return VClusterExecutor.help();
 		case DEBUG_MODE:
@@ -132,9 +136,7 @@ public class CmdExecutor {
 		//case SET:
 		//	return VClusterExecutor.set(cmdLine);
 		case PRINTARC:
-			return CloudManager.printArchitecture();
-		case ENGMODE:
-			return VClusterExecutor.engmode(cmdLine);
+			return CloudManager.printArchitecture();		
 		case CHECK_P: 
 				if(PluginManager.current_proxyExecutor==null){
 					if(yesORno()){
@@ -144,7 +146,12 @@ public class CmdExecutor {
 						}
 
 				}
-				return PluginManager.current_proxyExecutor.check_pool();
+			try {
+				return BatchExecutor.getPoolStatus().printPoolStatus();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				return false;
+			}
 			
 	    case CHECK_Q: 
 			if(PluginManager.current_proxyExecutor==null){
@@ -154,7 +161,7 @@ public class CmdExecutor {
 					return false;
 				}
 			}
-	    	return PluginManager.current_proxyExecutor.check_q();		
+	    	return PluginManager.current_proxyExecutor.getQStatus().printQStatus();		
 			
 		}
 		
@@ -190,12 +197,12 @@ public class CmdExecutor {
 		
 		//System.out.println(cmdLine);
 		switch (command) {
-		case SHOW: return Config.vmMan.showVM(cmdLine);
-		case CREATE: return Config.vmMan.createVM(cmdLine);
-		case LISTVM: return Config.vmMan.listVM(cmdLine);
-		case DESTROY: return Config.vmMan.destroyVM(cmdLine);
-		case SUSPEND: return Config.vmMan.suspendVM(cmdLine);
-		case START: return Config.vmMan.startVM(cmdLine);
+		case SHOW: return VMManager.showVM(cmdLine);
+		case CREATE: return VMManager.createVM(cmdLine);
+		case LISTVM: return VMManager.listVM(cmdLine);
+		case DESTROY: return VMManager.destroyVM(cmdLine);
+		case SUSPEND: return VMManager.suspendVM(cmdLine);
+		case START: return VMManager.startVM(cmdLine);
 		default:System.out.println("command is not defined"); 
 			break;
 		

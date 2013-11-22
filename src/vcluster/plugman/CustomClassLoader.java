@@ -8,6 +8,8 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import vcluster.control.batchsysman.BatchInterface;
+
 /**
  * This class extends java.lang.ClassLoader,which is responsible for loading java classes into the JVM dynamically.In this class,we override the method "loadClass" 
  * to make it can load class files into the JVM from the plugins forder.

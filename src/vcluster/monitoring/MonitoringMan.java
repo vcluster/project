@@ -4,9 +4,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 import vcluster.control.VMManager;
-import vcluster.control.VMMessage;
-import vcluster.control.VMMessage.VMExeType;
-import vcluster.control.VMMessage.VMMsgType;
 import vcluster.global.Config;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
@@ -22,7 +19,7 @@ public class MonitoringMan extends Thread {
 		qc = new QStatusChecker(Config.DEFAULT_SLEEP_SEC, msgQueue);
 		
 		vmMan = vmman;
-		vmManMsgQueue = vmMan.getMsgQueue();
+
 	}
 	
 	public void dump()
@@ -39,45 +36,16 @@ public class MonitoringMan extends Thread {
 			try {
 				aMsg = msgQueue.take();
 				PrintMsg.print(DMsgType.MSG, "message type = "+aMsg.toString());
-				processMessage(aMsg);
+				
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	private boolean processMessage(MonMessage aMsg) {
-		
-		switch(aMsg.getMessageType()) {
-		case QCHECKER: return processQCheckerMsg(aMsg.getPrivateData());
-		}
-		return false;
-	}
+	
 
-	private synchronized 
-	boolean processQCheckerMsg(int numVM) {
-
-		if (numVM < 1) return false;
-		
-		/* need to launch vms */
-		if(vmManMsgQueue != null) {
-			VMMessage msgType = new VMMessage(VMMsgType.LAUNCH, VMExeType.OCA, numVM); 
-			
-			try {
-				vmManMsgQueue.put(msgType);
-				PrintMsg.print(DMsgType.MSG, "Mon Manager...I am waiting from VMMan....");
-				this.wait();
-				PrintMsg.print(DMsgType.MSG, "Mon Manager...woke up");
-				
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		wakeUpQStatusChecker();
-		
-		return true;
-	}
+	
 	
 	private void wakeUpQStatusChecker() {
 		
@@ -103,14 +71,11 @@ public class MonitoringMan extends Thread {
 		*/
 	}
 	
-	public void setVMMsgQueue(BlockingQueue <VMMessage> msgQ) {
-		vmManMsgQueue = msgQ;
-	}
+	
 	
 	private boolean done = false;
 	private QStatusChecker qc = null;
-	private BlockingQueue <MonMessage> msgQueue;
-	private BlockingQueue <VMMessage> vmManMsgQueue;
+	private BlockingQueue <MonMessage> msgQueue;	
 	private VMManager vmMan;
 
 
