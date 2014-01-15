@@ -1,8 +1,8 @@
-package vcluster.control;
+package vcluster.control.vmman;
 
 import vcluster.global.Config.VMState;
 
-public class VMelement {
+public class Vm {
 	private String id;
 	private VMState state;
 	private String name;
@@ -16,7 +16,7 @@ public class VMelement {
 	private String privateIP;
 	private String pubicIP;
 	private int isIdle;
-	public VMelement() {
+	public Vm() {
 		this.id = "";
 		this.state = VMState.PENDING;
 		this.name = "";

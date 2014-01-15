@@ -1,8 +1,8 @@
 package vcluster.global;
 
 
-import vcluster.control.VMManager;
 import vcluster.control.cloudman.CloudManager;
+import vcluster.control.vmman.VmManager;
 import vcluster.monitoring.MonitoringMan;
 import vcluster.util.HandleXML;
 

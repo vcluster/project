@@ -1,4 +1,4 @@
-package vcluster.control;
+package vcluster.control.vmman;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -9,10 +9,10 @@ import vcluster.control.cloudman.CloudManager;
 import vcluster.global.Config;
 import vcluster.global.Config.VMState;
 
-public class VMManager extends Thread {
+public class VmManager extends Thread {
 
 	static{
-		vmList = new TreeMap<Integer, VMelement>();
+		vmList = new TreeMap<Integer, Vm>();
 		id = 0;
 	}
 
@@ -103,12 +103,12 @@ public class VMManager extends Thread {
 				}else{
 					cc = CloudManager.getCloudList();
 				}
-				TreeMap<Integer,VMelement> temp = new TreeMap<Integer,VMelement>();
+				TreeMap<Integer,Vm> temp = new TreeMap<Integer,Vm>();
 				for(Cloud cloud : cc.values()){
 					if(cloud.isLoaded()){
 						cloud.listVMs();
 						if(getVmList()==null)continue;
-						for(VMelement vm : cloud.getVmList().values()){	
+						for(Vm vm : cloud.getVmList().values()){	
 							boolean flag = true;
 							for(Integer id:vmList.keySet()){
 								if(vm.getId().equals(vmList.get(id).getId())){
@@ -117,7 +117,7 @@ public class VMManager extends Thread {
 									break;
 								}
 							}	
-							if(flag)temp.put(new Integer(VMManager.getcurrId()), vm);
+							if(flag)temp.put(new Integer(VmManager.getcurrId()), vm);
 						}
 					}
 				}
@@ -134,7 +134,7 @@ public class VMManager extends Thread {
 					boolean flagx = false;
 					for(Cloud cloud:CloudManager.getCloudList().values()){
 						if(cloud.isLoaded()){
-							for(VMelement vm : cloud.getVmList().values()){
+							for(Vm vm : cloud.getVmList().values()){
 								if(vm.getId().equals(vmList.get(id).getId())){
 									flag = false;
 									flagx = true;
@@ -181,7 +181,7 @@ public class VMManager extends Thread {
 			int runNum = 0;
 			int totalNum = 0;
 			for(Integer id : vmList.keySet()){
-				VMelement vm = vmList.get(id);
+				Vm vm = vmList.get(id);
 				if(!cloudFilter.equals("")&&vmList.get(id).getCloudName().equals(cloudFilter)){
 					String fName = String.format("%-10s", vmList.get(id).getCloudName());
 					String fID =String.format("%-5s", id);
@@ -444,14 +444,14 @@ public class VMManager extends Thread {
 
 
 
-	public static TreeMap<Integer,VMelement> getVmList() {
+	public static TreeMap<Integer,Vm> getVmList() {
 		return vmList;
 	}
 
 	
 
 	private static int id;
-	private static TreeMap <Integer, VMelement> vmList;  
+	private static TreeMap <Integer, Vm> vmList;  
    }
 
 

@@ -1,9 +1,10 @@
 
-package vcluster.plugin;
+package vcluster.plugins;
 import java.util.TreeMap;
 
 import vcluster.control.*;
 import vcluster.control.cloudman.*;
+import vcluster.control.vmman.Vm;
 import vcluster.global.Config;
 /**
  * @author Amol
@@ -103,7 +104,7 @@ public class PriorityBased {
 		//{
     		for(Host h: c.getHostList().values())
     		{
-    			for(VMelement vm: h.getVmList().values())
+    			for(Vm vm: h.getVmList().values())
     			{
     				if(vm.isIdle()==1)
     				{

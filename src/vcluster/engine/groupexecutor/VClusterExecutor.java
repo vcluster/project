@@ -10,9 +10,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.StringTokenizer;
 
-import vcluster.control.VMManager;
 import vcluster.control.cloudman.Cloud;
 import vcluster.control.cloudman.CloudManager;
+import vcluster.control.vmman.VmManager;
 import vcluster.global.Config;
 import vcluster.monitoring.MonitoringMan;
 import vcluster.util.PrintMsg;

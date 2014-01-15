@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2013-10-01/">    <requestId>12327e6b-0abd-486a-b8e7-2a1195a9c0e8</requestId>    <reservationSet/>
+</DescribeInstancesResponse>
+

@@ -3,14 +3,14 @@ package vcluster.monitoring;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import vcluster.control.VMManager;
+import vcluster.control.vmman.VmManager;
 import vcluster.global.Config;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
 
 public class MonitoringMan extends Thread {
 	
-	public MonitoringMan(VMManager vmman)
+	public MonitoringMan(VmManager vmman)
 	{
 		if (vmman == null) {
 			PrintMsg.print(DMsgType.ERROR, "vmman is null");
@@ -76,7 +76,7 @@ public class MonitoringMan extends Thread {
 	private boolean done = false;
 	private QStatusChecker qc = null;
 	private BlockingQueue <MonMessage> msgQueue;	
-	private VMManager vmMan;
+	private VmManager vmMan;
 
 
 

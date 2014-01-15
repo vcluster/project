@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import vcluster.control.VMelement;
+import vcluster.control.vmman.Vm;
 import vcluster.global.Config;
 import vcluster.util.HandleXML;
 
@@ -21,7 +21,7 @@ public class CloudManager  {
 			for(Host h : c.getHostList().values()){
 				System.out.println("      "+h.getId()+"  : "+h.getMaxVmNum()+"/" + h.getVmList().size());
 				System.out.println("        ID       Activity");	
-				for(VMelement v : h.getVmList().values()){
+				for(Vm v : h.getVmList().values()){
 					System.out.println("        "+v.getId()+"   "+v.isIdle());					
 				}				
 			}
@@ -165,6 +165,41 @@ public class CloudManager  {
 		
 		return confList;
 	}
+	
+	private static ArrayList<ArrayList<String>> handlelog(){
+		String logfile = "e:/dataAnalysis/CollectorLog";
+		
+		ArrayList<ArrayList<String>> confList = new  ArrayList<ArrayList<String>>();		
+		BufferedReader br ;
+		try{
+			br = new BufferedReader(new FileReader(logfile));
+			String aLine = "";
+			ArrayList<String> conf = new ArrayList<String>() ;
+			while ((aLine = br.readLine()) != null) {
+				if (aLine.equalsIgnoreCase("[cloudelement]")) {
+					if(!conf.isEmpty()){
+						if(chkConf(conf)){
+							confList.add(conf);
+						}
+						conf = new ArrayList<String>();	
+					}
+				
+				}else{
+					if(!aLine.trim().isEmpty())conf.add(aLine);
+				}				
+			}
+			if(chkConf(conf)){
+				confList.add(conf);
+			}
+			br.close();
+			
+		}catch(Exception e){
+			System.out.println("Configuration file doesn't exist ,please check it!");
+			return confList;
+		}
+		
+		return confList;
+	}
 
 	public static boolean loadCloudElments(String confFile) 
 	{			
@@ -245,6 +280,31 @@ public class CloudManager  {
 			}
 		}
 		System.out.println("-------------------------------------------------------");
+		return flag;
+	}
+
+
+
+	public static boolean undeploy(String[] name) {
+		// TODO Auto-generated method stub
+		boolean flag = true;
+
+		for(int i = 0;i<name.length;i++){
+			
+			try {
+				Cloud c = cloudList.get(name[i].trim());
+				if(!c.getVmList().isEmpty()){
+					System.out.println(name[i]+" still have vms are running!");
+					return false;
+				}
+				CloudManager.cloudList.remove(name[i]);
+			} catch (NullPointerException e) {
+				// TODO Auto-generated catch block
+				
+				System.out.println(name[i]+" Cloud doesn't exist!");
+				e.printStackTrace();
+			}
+		}
 		return flag;
 	}
 

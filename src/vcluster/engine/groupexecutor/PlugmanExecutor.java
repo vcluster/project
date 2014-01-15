@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import vcluster.plugman.Plugin;
-import vcluster.plugman.PluginManager;
+import vcluster.plugins.plugman.Plugin;
+import vcluster.plugins.plugman.PluginManager;
 import vcluster.ui.Command;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;

@@ -4,14 +4,14 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-import vcluster.control.VMManager;
 import vcluster.control.cloudman.CloudManager;
+import vcluster.control.vmman.VmManager;
 import vcluster.engine.groupexecutor.BatchExecutor;
 import vcluster.engine.groupexecutor.CloudmanExecutor;
 import vcluster.engine.groupexecutor.PlugmanExecutor;
 import vcluster.engine.groupexecutor.VClusterExecutor;
 import vcluster.global.Config;
-import vcluster.plugman.PluginManager;
+import vcluster.plugins.plugman.PluginManager;
 
 /**
  * @author huangdada
@@ -86,6 +86,8 @@ public class CmdExecutor {
 			return CloudmanExecutor.load(cmdLine);
 		case LISTCLOUD:
 			return CloudmanExecutor.list(cmdLine);
+		case UNLOADCLOUD:
+			return CloudmanExecutor.unload(cmdLine);
 		default:
 			return CloudmanExecutor.undefined(cmdLine);					
 		}		
@@ -118,7 +120,7 @@ public class CmdExecutor {
 		
 		switch (command) {
 		case TESTALGO:
-			return vcluster.plugin.PriorityBased.algo();
+			return vcluster.plugins.PriorityBased.algo();
 		case VHELP:
 			return VClusterExecutor.help();
 		case DEBUG_MODE:
@@ -197,12 +199,12 @@ public class CmdExecutor {
 		
 		//System.out.println(cmdLine);
 		switch (command) {
-		case SHOW: return VMManager.showVM(cmdLine);
-		case CREATE: return VMManager.createVM(cmdLine);
-		case LISTVM: return VMManager.listVM(cmdLine);
-		case DESTROY: return VMManager.destroyVM(cmdLine);
-		case SUSPEND: return VMManager.suspendVM(cmdLine);
-		case START: return VMManager.startVM(cmdLine);
+		case SHOW: return VmManager.showVM(cmdLine);
+		case CREATE: return VmManager.createVM(cmdLine);
+		case LISTVM: return VmManager.listVM(cmdLine);
+		case DESTROY: return VmManager.destroyVM(cmdLine);
+		case SUSPEND: return VmManager.suspendVM(cmdLine);
+		case START: return VmManager.startVM(cmdLine);
 		default:System.out.println("command is not defined"); 
 			break;
 		

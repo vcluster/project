@@ -282,11 +282,15 @@ vmman
         [ -a | --type=available 
           -r | --type=running 
           -s | --type=suspended]
-        -n CLOUD_NAME | --name=CLOUDNAME ] 
-      
+        -n CLOUD_NAME | --name=CLOUDNAME  
+        -refresh [CLOUD_NAME]
+      	]
 \end{Verbatim}
 
 Without any option, it lists up all virtual machines. Option \vb+-a+ shows how many virtual machines are available. Option \vb+-r+ extracts only running virtual machines while \vb+-s+ does suspended virtual machines.  It can also specify a cloud with \vb+-n+ or \vb+--name+ option. 
+
+when there is an option "-refresh",vcluster would connect to clouds and get the real time vmss
+informations then refresh the vm container
 
 The below shows examples of \vb+list+ command.
 
@@ -304,6 +308,8 @@ vcluster> vmman list -s
 vcluster> vmman list -n amazon
 
 vcluster> vmman list --name=amazon
+
+vcluster> vmman list -refresh fermicloud
 
 \end{Verbatim}
 
@@ -343,15 +349,56 @@ vcluster> vmman create -c fermicloud -n 2
 
 
 \subsection{\ttt{destroy}}
-\textcolor{red}{TODO: make a command rule for destroying virtual machines.}
+This command remove a specified virtual machine from cloud.
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
 
+vmman 
+    destroy 
+      [ --help ] |
+	  [ID] 
+      
+\end{Verbatim}
 
 
 \subsection{\ttt{suspend}}
-\textcolor{red}{TODO: make a command rule for suspending virtual machines.}
+This command suspend a specified virtual machine from cloud.
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
 
-
+vmman 
+    suspend 
+      [ --help ] |
+	  [ID] 
+      
+\end{Verbatim}
 \newpage
+\subsection{\ttt{start}}
+This command starts a suspended virtual machine,it can only performed on a VM whose status
+is suspend
+
+
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+vmman 
+    start 
+      [ --help ] |
+	  [ID] 
+      
+\end{Verbatim}
+
+\subsection{\ttt{show}}
+This command lists the detail informations of a virtual machine,including internal id in cloud,private and public ip address,launch time,etc.
+\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
+=true, tabsize=4, frame=lines]
+
+vmman 
+    show 
+      [ --help ] |
+	  [ID] 
+      
+\end{Verbatim}
 
 \section{Commands of \ttt{plugman} Category}
 
@@ -485,6 +532,7 @@ vcluster> plugman list --loaded -b
 \subsection{\ttt{info}}
 This command prints the information about a plugin. It will be used to retrieve detailed information about the plugin. \textcolor{red}{TODO: plugin interface needs to provide this feature. We may need to introduce a structure containing required fields for this command.}
 
+
 \begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
 =true, tabsize=4, frame=lines]
 
@@ -501,7 +549,6 @@ Below shows an example of this command.
 vcluster> plugman info plugin-1
       
 \end{Verbatim}
-
 
 
 \newpage
@@ -624,7 +671,7 @@ This command unloads a cloud system which has been already loaded.
 =true, tabsize=4, frame=lines]
 
 cloudman 
-    unload PLUGIN...
+    unload CLOUD...
       
 \end{Verbatim}
 
@@ -633,8 +680,8 @@ Below shows an example of this command.
 \begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
 =true, tabsize=4, frame=lines]
 
-vcluster> plugman unload plugin-1
-vcluster> plugman unload plugin-1 plugin-2
+vcluster> plugman unload cloud-1
+vcluster> plugman unload cloud-1 cloud-2
 
 \end{Verbatim}
 
@@ -642,76 +689,18 @@ vcluster> plugman unload plugin-1 plugin-2
 
 
 \subsection{\ttt{list}}
-This command lists up all designated plugins. Option \vb+--help+ shows the usage of this command and options in detail.
+This command lists up all registered clouds,inclouding loaded and unloaded clouds. Option \vb+--help+ shows the usage of this command and options in detail.
 
 \begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
 =true, tabsize=4, frame=lines]
 
-plugman 
-    list --help
-      
+cloudman 
+        list
+          -l | --loaded
+          -u | --unloaded
 \end{Verbatim}
 
 
-Since \vb+vcluster+ does not have \vb+register+ command, it retrieves all plugins under a specified plugin directory. When listing up plugins currently being used, option \vb+-l+ or \vb+--loaded+ can be used at the end of command.
-
-\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
-=true, tabsize=4, frame=lines]
-
-plugman 
-    list
-      -c | --type=cloud 
-      -b | --type=batch
-      -l | --loaded
-      
-\end{Verbatim}
-
-You may combine \vb+-c+ and \vb+-l+ options to show up all loaded cloud plugins. The following shows examples of this command.
-
-\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
-=true, tabsize=4, frame=lines]
-
-vcluster> plugman list -c
-vcluster> plugman list --type=cloud
-
-vcluster> plugman list -b
-vcluster> plugman list --type=batch
-
-vcluster> plugman list -l
-vcluster> plugman list --loaded
-
-vcluster> plugman list -l -c
-vcluster> plugman list -l --type=cloud
-vcluster> plugman list --loaded -c
-
-vcluster> plugman list -l -b
-vcluster> plugman list -l --type=batch
-vcluster> plugman list --loaded -b
-
-\end{Verbatim}
-
-\textcolor{red}{TODO: when listing up all plugins under a directory, the output should explicitly mention that the outputs are coming from a directory, not from memory.}
-
-
-\subsection{\ttt{info}}
-This command prints the information about a plugin. It will be used to retrieve detailed information about the plugin. \textcolor{red}{TODO: plugin interface needs to provide this feature. We may need to introduce a structure containing required fields for this command.}
-
-\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
-=true, tabsize=4, frame=lines]
-
-plugman 
-    info PLUGIN
-      
-\end{Verbatim}
-
-Below shows an example of this command.
-
-\begin{Verbatim}[fontfamily=courier, fontsize = \small, obeytabs
-=true, tabsize=4, frame=lines]
-
-vcluster> plugman info plugin-1
-      
-\end{Verbatim}
 
 
 

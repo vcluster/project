@@ -1,4 +1,4 @@
-package vcluster.plugman;
+package vcluster.plugins.plugman;
 
 import vcluster.util.HandleXML;
 

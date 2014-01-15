@@ -73,4 +73,19 @@ public class CloudmanExecutor {
 		return true;
 	}
 
+	public static boolean unload(String cmdLine) {
+		// TODO Auto-generated method stub
+		StringTokenizer st = new StringTokenizer(cmdLine);
+		String cmd = st.nextToken();
+		if (!st.hasMoreTokens()) {
+			System.out.println("[ERROR : ] Expect a cloud name!");
+			return false;
+		}else{			
+			String [] arg = cmdLine.replace(cmd, "").trim().split(" ");	
+			
+			return CloudManager.undeploy(arg);
+		}
+		
+	}
+
 }

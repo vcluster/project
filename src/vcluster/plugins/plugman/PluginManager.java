@@ -1,4 +1,4 @@
-package vcluster.plugman;
+package vcluster.plugins.plugman;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
-import vcluster.control.batchsysman.BatchInterface;
+import vcluster.plugins.BatchInterface;
+import vcluster.plugins.CloudInterface;
 import vcluster.ui.Command;
 import vcluster.util.HandleXML;
 

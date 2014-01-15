@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2011-05-15/">
+<requestId>412266d1-f827-4c06-9e66-e5dbd2d9dddc</requestId>
+<reservationSet>
+<item>
+<reservationId>default</reservationId>
+<ownerId>dada</ownerId>
+<groupSet>
+<item>
+<groupId>default</groupId>
+</item>
+</groupSet>
+<instancesSet/>
+</item>
+</reservationSet>
+</DescribeInstancesResponse>
+

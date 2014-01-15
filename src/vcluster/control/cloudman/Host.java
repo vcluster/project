@@ -3,9 +3,10 @@ package vcluster.control.cloudman;
 import java.util.TreeMap;
 
 import vcluster.control.*;
+import vcluster.control.vmman.Vm;
 
 public class Host {
-	private TreeMap<String,VMelement> vmList;
+	private TreeMap<String,Vm> vmList;
 	private String cloudName;
 	private int maxVmNum;
 	private int currVmNum;
@@ -33,12 +34,12 @@ public class Host {
 		this.maxVmNum = maxVmNum;
 		this.id = id;
 		this.cloudName = cloudName;
-		vmList = new TreeMap<String,VMelement>();
+		vmList = new TreeMap<String,Vm>();
 	}
 	
-	public TreeMap<String, VMelement> getVmList() {
-		vmList = new TreeMap<String,VMelement> ();
-		for(VMelement vm : CloudManager.getCloudList().get(cloudName).getVmList().values()){
+	public TreeMap<String, Vm> getVmList() {
+		vmList = new TreeMap<String,Vm> ();
+		for(Vm vm : CloudManager.getCloudList().get(cloudName).getVmList().values()){
 			if(vm.getHostname().equalsIgnoreCase(id)){
 				//System.out.println(vm.getHostname()+" : "+ id + "   mark");
 				vmList.put(vm.getId(), vm);
@@ -47,7 +48,7 @@ public class Host {
 		currVmNum = vmList.size();
 		return vmList;
 	}
-	public void setVmList(TreeMap<String, VMelement> vmList) {
+	public void setVmList(TreeMap<String, Vm> vmList) {
 		this.vmList = vmList;
 	}
 	public int getMaxVmNum() {

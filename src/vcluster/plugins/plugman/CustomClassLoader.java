@@ -1,4 +1,4 @@
-package vcluster.plugman;
+package vcluster.plugins.plugman;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +8,8 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import vcluster.control.batchsysman.BatchInterface;
+import vcluster.plugins.BatchInterface;
+import vcluster.plugins.CloudInterface;
 
 /**
  * This class extends java.lang.ClassLoader,which is responsible for loading java classes into the JVM dynamically.In this class,we override the method "loadClass" 

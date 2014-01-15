@@ -11,15 +11,15 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
-import vcluster.control.VMManager;
-import vcluster.control.VMelement;
 import vcluster.control.batchsysman.Slot;
+import vcluster.control.vmman.Vm;
+import vcluster.control.vmman.VmManager;
 import vcluster.engine.groupexecutor.BatchExecutor;
 import vcluster.engine.groupexecutor.PlugmanExecutor;
 import vcluster.global.Config;
 import vcluster.global.Config.CloudType;
-import vcluster.plugman.CloudInterface;
-import vcluster.plugman.PluginManager;
+import vcluster.plugins.CloudInterface;
+import vcluster.plugins.plugman.PluginManager;
 import vcluster.util.HandleXML;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
@@ -87,9 +87,9 @@ public class Cloud{
 		cp = (CloudInterface)PluginManager.pluginList.get(cloudpluginName).getInstance();
 		this.listVMs();
 		if(getVmList()==null)return false;
-		for(VMelement vm : getVmList().values()){
-			Integer id = new Integer(VMManager.getcurrId());
-			VMManager.getVmList().put(id, vm);
+		for(Vm vm : getVmList().values()){
+			Integer id = new Integer(VmManager.getcurrId());
+			VmManager.getVmList().put(id, vm);
 		}
 		CloudManager.setCurrentCloud(this);		
 		isLoaded = true;
@@ -143,16 +143,16 @@ public class Cloud{
 			if(i!=100)conf.set(i, "template = templates/"+hostId+".one");
 		}
 		cp.RegisterCloud(conf);
-		ArrayList<VMelement> vmlist = cp.createVM(maxCount);
+		ArrayList<Vm> vmlist = cp.createVM(maxCount);
 		if(vmlist==null || vmlist.isEmpty()){
 			System.out.println("Operation failed!");
 			return false;
 		}
-		for(VMelement vm : vmlist){
+		for(Vm vm : vmlist){
 			vm.setCloudName(cloudName);
 			vm.setHostname(hostId);
 			this.vmList.put(vm.getId(), vm);
-			VMManager.getVmList().put(VMManager.getcurrId(), vm);
+			VmManager.getVmList().put(VmManager.getcurrId(), vm);
 			System.out.println(cloudName+"   "+vm.getId()+"   "+vm.getState());
 		}
 		if(maxCount==1){
@@ -167,11 +167,11 @@ public class Cloud{
 		// TODO Auto-generated method stub
 		cp.RegisterCloud(conf);
 	//	HashMap<String,VMelement> vms = new HashMap<String,VMelement>();
-		ArrayList<VMelement> cVmList = cp.listVMs();
-		vmList = new TreeMap<String,VMelement>();
+		ArrayList<Vm> cVmList = cp.listVMs();
+		vmList = new TreeMap<String,Vm>();
 		//int i = 1;
 		if(cVmList==null||cVmList.size()==0)return false;
-		for(VMelement vm : cVmList){
+		for(Vm vm : cVmList){
 			if(!this.cloudName.equalsIgnoreCase("Gcloud")){
 				vm.setHostname("host1");
 			}
@@ -187,12 +187,12 @@ public class Cloud{
 	public boolean destroyVM(String id) {
 		// TODO Auto-generated method stub
 		cp.RegisterCloud(conf);
-		ArrayList<VMelement> vmlist = cp.destroyVM(id);
+		ArrayList<Vm> vmlist = cp.destroyVM(id);
 		if(vmlist==null || vmlist.isEmpty()){
 			System.out.println("Operation failed!");
 			return false;
 		}
-		for(VMelement vm : vmlist){
+		for(Vm vm : vmlist){
 			vmList.remove(vm.getId());
 			System.out.println(cloudName+"   "+vm.getId()+"   "+vm.getState());
 		}
@@ -202,13 +202,13 @@ public class Cloud{
 	public boolean startVM(String id) {
 		// TODO Auto-generated method stub
 		cp.RegisterCloud(conf);
-		ArrayList<VMelement> vmlist = cp.startVM(id);
+		ArrayList<Vm> vmlist = cp.startVM(id);
 		
 		if(vmlist==null || vmlist.isEmpty()){
 			System.out.println("Operation failed!");
 			return false;
 		}
-		for(VMelement vm : vmlist){
+		for(Vm vm : vmlist){
 			vmList.get(vm.getId()).setState(vm.getState());
 			System.out.println(cloudName+"   "+vm.getId()+"   "+vm.getState());
 		}
@@ -218,12 +218,12 @@ public class Cloud{
 	public boolean suspendVM(String id) {
 		// TODO Auto-generated method stub
 		cp.RegisterCloud(conf);
-		ArrayList<VMelement> vmlist = cp.suspendVM(id);
+		ArrayList<Vm> vmlist = cp.suspendVM(id);
 		if(vmlist==null || vmlist.isEmpty()){
 			System.out.println("Operation failed!");
 			return false;
 		}
-		for(VMelement vm : vmlist){
+		for(Vm vm : vmlist){
 			vmList.get(vm.getId()).setState(vm.getState());
 			System.out.println(cloudName+"   "+vm.getId()+"   "+vm.getState());
 		}
@@ -280,11 +280,11 @@ public class Cloud{
 
 
 
-	public TreeMap<String,VMelement> getVmList() {
+	public TreeMap<String,Vm> getVmList() {
 		return vmList;
 	}
 
-	public void setVmList(TreeMap<String, VMelement> vmList) {
+	public void setVmList(TreeMap<String, Vm> vmList) {
 		this.vmList = vmList;
 	}
 
@@ -330,7 +330,7 @@ public class Cloud{
 			
 			String ip = slotName.replace(".amaz", "").replaceAll("-", ".");
 			System.out.println(ip);
-			for(VMelement vm : vmList.values()){
+			for(Vm vm : vmList.values()){
 				if(vm.getPrivateIP().equalsIgnoreCase(ip)){
 					vmId = vm.getId();
 				}
@@ -348,7 +348,7 @@ public class Cloud{
 	private int currentVMs;
 	private CloudType cloudType;
 	private CloudInterface cp;
-	private TreeMap<String, VMelement> vmList;
+	private TreeMap<String, Vm> vmList;
 	private boolean isLoaded;
 	private TreeMap<String,Host> hostList;
 	private int priority;

@@ -26,6 +26,7 @@ public enum Command {
 	REGISTER(CMD_GROUP.CLOUDMAN,"register,rgst"),
 	LISTCLOUD(CMD_GROUP.CLOUDMAN,"list,ls"),
 	LOADCLOUD(CMD_GROUP.CLOUDMAN,"load,ld"),
+	UNLOADCLOUD(CMD_GROUP.CLOUDMAN,"unload,unld"),
 	
 	/*Commands of vmman Category*/
 	VMMAN (CMD_GROUP.VMMAN, "vmman, vm"),

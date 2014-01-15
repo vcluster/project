@@ -19,6 +19,10 @@ public class PoolStatus {
 		this.backfillSlot = backfillSlot;
 	}
 
+	public PoolStatus() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public void setUnClaimedSlot(int unClaimedSlot) {
 		this.unClaimedSlot = unClaimedSlot;
 	}
