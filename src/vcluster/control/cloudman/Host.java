@@ -2,7 +2,6 @@ package vcluster.control.cloudman;
 
 import java.util.TreeMap;
 
-import vcluster.control.*;
 import vcluster.control.vmman.Vm;
 
 public class Host {
@@ -12,8 +11,25 @@ public class Host {
 	private int currVmNum;
 	private int remainingVmNum;
 	private String id;
+	private String ipmiID;
+	private int powerStat;
 	
-	
+	public int getPowerStat() {
+		return powerStat;
+	}
+
+	public void setPowerStat(int powerStat) {
+		this.powerStat = powerStat;
+	}
+
+	public String getIpmiID() {
+		return ipmiID;
+	}
+
+	public void setIpmiID(String ipmiID) {
+		this.ipmiID = ipmiID;
+	}
+
 	public int getRemainingVmNum() {
 		return remainingVmNum;
 	}
@@ -36,6 +52,7 @@ public class Host {
 		this.cloudName = cloudName;
 		vmList = new TreeMap<String,Vm>();
 	}
+	
 	
 	public TreeMap<String, Vm> getVmList() {
 		vmList = new TreeMap<String,Vm> ();

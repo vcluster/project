@@ -87,7 +87,11 @@ public class CmdExecutor {
 		case LISTCLOUD:
 			return CloudmanExecutor.list(cmdLine);
 		case UNLOADCLOUD:
-			return CloudmanExecutor.unload(cmdLine);
+			return CloudmanExecutor.unload(cmdLine);	
+		case HOSTON:
+			return CloudmanExecutor.hoston(cmdLine);
+		case HOSTOFF:
+			return CloudmanExecutor.hostoff(cmdLine);	
 		default:
 			return CloudmanExecutor.undefined(cmdLine);					
 		}		
@@ -120,7 +124,11 @@ public class CmdExecutor {
 		
 		switch (command) {
 		case TESTALGO:
-			return vcluster.plugins.PriorityBased.algo();
+			return vcluster.plugins.PriorityBased.algo();			
+		case TESTCHKQ:
+			String time = cmdLine.split(" ")[1].trim();
+			int t = Integer.parseInt(time);
+			return vcluster.plugins.PriorityBased.chkq(t);	
 		case VHELP:
 			return VClusterExecutor.help();
 		case DEBUG_MODE:
@@ -205,6 +213,8 @@ public class CmdExecutor {
 		case DESTROY: return VmManager.destroyVM(cmdLine);
 		case SUSPEND: return VmManager.suspendVM(cmdLine);
 		case START: return VmManager.startVM(cmdLine);
+		case MIGRATE:
+			return VmManager.migrate(cmdLine);
 		default:System.out.println("command is not defined"); 
 			break;
 		

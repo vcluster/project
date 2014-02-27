@@ -12,6 +12,11 @@ import vcluster.control.vmman.Vm;
 import vcluster.plugins.plugman.PluginManager;
 
 public class BatchExecutor {
+	static{
+		if(PluginManager.current_proxyExecutor==null){
+			PlugmanExecutor.load("load -b proxy-HTCondor");	
+		}
+	}
 	public static void mapingActivityToVm(){
 		ArrayList<Slot> slotList = getPoolStatus().getSlotList();
 		for(Cloud c : CloudManager.getCloudList().values()){
@@ -42,6 +47,7 @@ public class BatchExecutor {
 	}
 
 	public static PoolStatus getPoolStatus(){
+		//BatchExecutor.mapingActivityToVm();
 		return PluginManager.current_proxyExecutor.getPoolStatus();
 	}
 	public static QStatus getQStatus(){

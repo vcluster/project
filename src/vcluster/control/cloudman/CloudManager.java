@@ -151,6 +151,7 @@ public class CloudManager  {
 				
 				}else{
 					if(!aLine.trim().isEmpty())conf.add(aLine);
+					//System.out.println(aLine);
 				}				
 			}
 			if(chkConf(conf)){
@@ -221,7 +222,7 @@ public class CloudManager  {
 			Cloud cloud = new Cloud(conf);
 			if(cloud.getCloudName()!=null&cloud.getCloudpluginName()!=null&cloud.getCloudType()!=null)
 			cloudList.put(cloud.getCloudName(), cloud);
-			HandleXML.addCloudElement(conf);
+			//HandleXML.addCloudElement(conf);
 			tempCL.add(cloud);
 		}
 		String cName = String.format("%-12s", "Name");
@@ -313,5 +314,6 @@ public class CloudManager  {
 	/* this is only used when executing commands from command line */
 	private static Cloud currentCloud = null;
 	private static TreeMap<String,Cloud> cloudList = new TreeMap<String,Cloud>();
+
     
 }

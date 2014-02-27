@@ -2,6 +2,7 @@ package vcluster.engine.groupexecutor;
 
 import java.util.StringTokenizer;
 
+import vcluster.control.cloudman.Cloud;
 import vcluster.control.cloudman.CloudManager;
 
 public class CloudmanExecutor {
@@ -87,5 +88,50 @@ public class CloudmanExecutor {
 		}
 		
 	}
+
+	public static boolean hoston(String cmdLine) {
+		// TODO Auto-generated method stub
+		StringTokenizer st = new StringTokenizer(cmdLine);
+		String cmd = st.nextToken();
+		if (!st.hasMoreTokens()) {
+			System.out.println("[ERROR : ] Expect a cloud name!");
+			return false;
+		}
+		String cloudname = st.nextToken().trim();
+		if (!st.hasMoreTokens()) {
+			System.out.println("[ERROR : ] Expect a host id!");
+			return false;
+		}
+		String hostID = st.nextToken().trim();
+		Cloud cloud = CloudManager.getCloudList().get(cloudname);
+		
+		
+		return cloud.hoston(hostID);
+		
+		}
+
+	public static boolean hostoff(String cmdLine) {
+		// TODO Auto-generated method stub
+		StringTokenizer st = new StringTokenizer(cmdLine);
+		String cmd = st.nextToken();
+		if (!st.hasMoreTokens()) {
+			System.out.println("[ERROR : ] Expect a cloud name!");
+			return false;
+		}
+		String cloudname = st.nextToken().trim();
+		if (!st.hasMoreTokens()) {
+			System.out.println("[ERROR : ] Expect a host id!");
+			return false;
+		}
+		String hostID = st.nextToken().trim();
+		
+		Cloud cloud = CloudManager.getCloudList().get(cloudname);
+		
+		
+		return cloud.hostoff(hostID);
+		
+	}
+
+
 
 }

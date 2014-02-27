@@ -22,7 +22,12 @@ public interface CloudInterface  {
 	public ArrayList<Vm> suspendVM(String id);
 	// return the information about a cloud plugin,like a user Manual
 	//public ArrayList<VMelement> getVMs();
-
+	//start a given host
+	public boolean hoston(String ipmiID);
+	//shut down a given host
+	public boolean hostoff(String ipmiID);
+	//migrate vm from host1 to host2
+	public boolean migrate(String vmid,String hostid);
 	
 	
 }

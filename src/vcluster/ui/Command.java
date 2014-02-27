@@ -19,6 +19,7 @@ public enum Command {
 	CHECK_Q (CMD_GROUP.VCLMAN, "chkq,check_q"),
 	PRINTARC (CMD_GROUP.VCLMAN, "print,prac"),
 	TESTALGO(CMD_GROUP.VCLMAN, "algo"),
+	TESTCHKQ(CMD_GROUP.VCLMAN, "tchkq"),
 	
 	
 	/*Commands of cloudman Category*/
@@ -26,7 +27,9 @@ public enum Command {
 	REGISTER(CMD_GROUP.CLOUDMAN,"register,rgst"),
 	LISTCLOUD(CMD_GROUP.CLOUDMAN,"list,ls"),
 	LOADCLOUD(CMD_GROUP.CLOUDMAN,"load,ld"),
-	UNLOADCLOUD(CMD_GROUP.CLOUDMAN,"unload,unld"),
+	UNLOADCLOUD(CMD_GROUP.CLOUDMAN,"unload,unld"),	
+	HOSTON(CMD_GROUP.CLOUDMAN,"hoston"),
+	HOSTOFF(CMD_GROUP.CLOUDMAN,"hostoff"),
 	
 	/*Commands of vmman Category*/
 	VMMAN (CMD_GROUP.VMMAN, "vmman, vm"),
@@ -36,6 +39,7 @@ public enum Command {
 	SUSPEND (CMD_GROUP.VMMAN, "suspend,ssp"),
 	LISTVM (CMD_GROUP.VMMAN, "list,ls"),
 	DESTROY (CMD_GROUP.VMMAN, "destroy,dt"),
+	MIGRATE(CMD_GROUP.VMMAN,"migrate,mig"),
 	
 	
 	/*Commands of plugman Category*/

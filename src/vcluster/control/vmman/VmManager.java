@@ -117,7 +117,11 @@ public class VmManager extends Thread {
 									break;
 								}
 							}	
-							if(flag)temp.put(new Integer(VmManager.getcurrId()), vm);
+							if(flag){
+								Integer uId = new Integer(VmManager.getcurrId());
+									vm.setuId(uId);
+									temp.put(uId, vm);
+							}
 						}
 					}
 				}
@@ -125,6 +129,7 @@ public class VmManager extends Thread {
 				for(Integer id:temp.keySet()){
 					
 					vmList.put(id, temp.get(id));
+					
 					
 				}
 				ArrayList<Integer> ids = new ArrayList<Integer>();
@@ -448,10 +453,51 @@ public class VmManager extends Thread {
 		return vmList;
 	}
 
-	
+	public static boolean migrate(String cmdLine) {
+		// TODO Auto-generated method stub
+		StringTokenizer st = new StringTokenizer(cmdLine);
+		String cmd = st.nextToken();
+		if (!st.hasMoreTokens()) {
+			System.out.println("[ERROR : ] Expect a cloud name!");
+			return false;
+		}
+		String cloudname = st.nextToken().trim();
+		if (!st.hasMoreTokens()) {
+			System.out.println("[ERROR : ] Expect the source VM id!");
+			return false;
+		}
+		String vmID = st.nextToken().trim();
+		if (!st.hasMoreTokens()) {
+			System.out.println("[ERROR : ] Expect a target host id!");
+			return false;
+		}
+		String hostID = st.nextToken().trim();
+		
+		
+		Cloud cloud = CloudManager.getCloudList().get(cloudname);
+		
+		
+		Integer vID;
+		try{
+			vID =new Integer(vmID);
+		}catch (NumberFormatException e){
+			System.out.println("[ERROR : ] VM ID has to be a number!");
+			return false;
+		}
+		if(!vmList.keySet().contains(vID)){
+			System.out.println("[ERROR : ] VM ID doesn't exist!");
+			return false;
+		}
+
+	String inId = vmList.get(vID).getId();
+		
+		
+		return cloud.migrate(inId,hostID);
+	}	
 
 	private static int id;
-	private static TreeMap <Integer, Vm> vmList;  
+	private static TreeMap <Integer, Vm> vmList;
+ 
    }
 
 

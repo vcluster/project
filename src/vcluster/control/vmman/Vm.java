@@ -3,6 +3,7 @@ package vcluster.control.vmman;
 import vcluster.global.Config.VMState;
 
 public class Vm {
+	private Integer uId;
 	private String id;
 	private VMState state;
 	private String name;
@@ -17,6 +18,7 @@ public class Vm {
 	private String pubicIP;
 	private int isIdle;
 	public Vm() {
+		this.uId = new Integer(0);
 		this.id = "";
 		this.state = VMState.PENDING;
 		this.name = "";
@@ -32,6 +34,15 @@ public class Vm {
 		this.isIdle = 3;
 	}
 	
+	
+	public Integer getuId() {
+		return uId;
+	}
+
+
+	public void setuId(Integer uId) {
+		this.uId = uId;
+	}
 	
 	public String getPrivateIP() {
 		return privateIP;

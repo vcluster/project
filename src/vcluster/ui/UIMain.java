@@ -13,7 +13,7 @@ public class UIMain {
 
 	public UIMain()
 	{
-		VCluster.init();
+		//VCluster.init();
 		//if(!Config.configFile.isEmpty())
 		//	Util.loadConfig(Config.configFile);
 	}
