@@ -123,6 +123,9 @@ public class CmdExecutor {
 	{
 		
 		switch (command) {
+		case TESTDEMO:
+			 PluginManager.current_loadbalancer.activate();	
+			 return true;		
 		case TESTALGO:
 			return vcluster.plugins.PriorityBased.algo();			
 		case TESTCHKQ:
@@ -171,7 +174,9 @@ public class CmdExecutor {
 					return false;
 				}
 			}
-	    	return PluginManager.current_proxyExecutor.getQStatus().printQStatus();		
+	    	return PluginManager.current_proxyExecutor.getQStatus().printQStatus();
+		default:
+			break;		
 			
 		}
 		

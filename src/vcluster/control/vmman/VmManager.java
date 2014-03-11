@@ -456,7 +456,7 @@ public class VmManager extends Thread {
 	public static boolean migrate(String cmdLine) {
 		// TODO Auto-generated method stub
 		StringTokenizer st = new StringTokenizer(cmdLine);
-		String cmd = st.nextToken();
+		st.nextToken();
 		if (!st.hasMoreTokens()) {
 			System.out.println("[ERROR : ] Expect a cloud name!");
 			return false;

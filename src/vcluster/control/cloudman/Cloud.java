@@ -1,26 +1,17 @@
 package vcluster.control.cloudman;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
-import vcluster.control.batchsysman.Slot;
 import vcluster.control.vmman.Vm;
 import vcluster.control.vmman.VmManager;
 import vcluster.engine.groupexecutor.BatchExecutor;
 import vcluster.engine.groupexecutor.PlugmanExecutor;
-import vcluster.global.Config;
 import vcluster.global.Config.CloudType;
 import vcluster.plugins.CloudInterface;
 import vcluster.plugins.plugman.PluginManager;
-import vcluster.util.HandleXML;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
 
@@ -29,12 +20,6 @@ public class Cloud{
 	public Cloud() {
 		// TODO Auto-generated constructor stub
 	}
-	public static void main(String[] arg){
-		
-
-		
-	}
-
 	public Cloud(List<String> conf) {
 		this.conf = conf;
 		for(String aLine : conf){
@@ -117,9 +102,7 @@ public class Cloud{
 	protected void incCurrentVMs(int vms) {
 		currentVMs += vms;
 	}
-	
-	
-	
+		
 	public List<String> getConf() {
 		return conf;
 	}
@@ -188,8 +171,7 @@ public class Cloud{
 		BatchExecutor.mapingActivityToVm();
 		return true;
 	}
-	
-	
+		
 	public boolean destroyVM(String id) {
 		// TODO Auto-generated method stub
 		cp.RegisterCloud(conf);

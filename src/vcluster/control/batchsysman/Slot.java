@@ -55,15 +55,9 @@ public class Slot {
 		return activity;
 	}
 
-
-
-
 	public void setActivity(int activity) {
 		this.activity = activity;
 	}
-
-
-
 
 	public static enum IdType {PRIVATEIP, PUBLICIP, VMID, VMHOSTNAME,NOTDEFINED };
 		

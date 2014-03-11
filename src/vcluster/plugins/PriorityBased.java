@@ -3,18 +3,19 @@ package vcluster.plugins;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import vcluster.control.*;
 import vcluster.control.batchsysman.QStatus;
-import vcluster.control.cloudman.*;
+import vcluster.control.cloudman.Cloud;
+import vcluster.control.cloudman.CloudManager;
+import vcluster.control.cloudman.Host;
 import vcluster.control.vmman.Vm;
 import vcluster.control.vmman.VmManager;
-import vcluster.global.Config;
 import vcluster.plugins.plugman.PluginManager;
 /**
  * @author Amol
  *
  */
 public class PriorityBased {
+	
 	private static TreeMap<String,Cloud> vclusterArch;
 	static{
 		vclusterArch = CloudManager.getCloudList();
@@ -188,6 +189,7 @@ public class PriorityBased {
     	int totalCloud = 0;
     	
     	for(Cloud d:vclusterArch.values())
+    		d.getCloudName();
     		totalCloud++;
     	
     	c.setPriority(totalCloud-1);

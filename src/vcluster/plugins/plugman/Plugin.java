@@ -1,6 +1,5 @@
 package vcluster.plugins.plugman;
 
-import vcluster.util.HandleXML;
 
 public class Plugin {
 	

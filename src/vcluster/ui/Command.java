@@ -20,6 +20,7 @@ public enum Command {
 	PRINTARC (CMD_GROUP.VCLMAN, "print,prac"),
 	TESTALGO(CMD_GROUP.VCLMAN, "algo"),
 	TESTCHKQ(CMD_GROUP.VCLMAN, "tchkq"),
+	TESTDEMO(CMD_GROUP.VCLMAN,"start blancer"),
 	
 	
 	/*Commands of cloudman Category*/
@@ -54,6 +55,7 @@ public enum Command {
 	HELP(CMD_GROUP.PARAMETER,"-h,-help,--help"),
 	TYPE_BATCH(CMD_GROUP.PARAMETER,"-b,-batch,--type=batch"),
 	TYPE_CLOUD(CMD_GROUP.PARAMETER,"-c,-cloud,--type=cloud"),
+	TYPE_LOADBALACER(CMD_GROUP.PARAMETER,"-lb,-loadblancer,--type=loadbalancer"),
 	LOADED(CMD_GROUP.PARAMETER,"-l,-loaded,--loaded"),
 	
 

@@ -17,8 +17,6 @@ public class MonitoringMan extends Thread {
 		}
 		msgQueue =  new ArrayBlockingQueue <MonMessage>(100);
 		qc = new QStatusChecker(Config.DEFAULT_SLEEP_SEC, msgQueue);
-		
-		vmMan = vmman;
 
 	}
 	
@@ -47,16 +45,6 @@ public class MonitoringMan extends Thread {
 
 	
 	
-	private void wakeUpQStatusChecker() {
-		
-		/* sleep time has to be optimized */
-		synchronized (qc) {
-			/* set time delay to default */
-			qc.setSleepTime(Config.DEFAULT_SLEEP_SEC);
-			qc.wakeUp();
-		}			
-	}
-	
 	public void shutDwon() 
 	{
 		qc.shutDwon();
@@ -75,8 +63,7 @@ public class MonitoringMan extends Thread {
 	
 	private boolean done = false;
 	private QStatusChecker qc = null;
-	private BlockingQueue <MonMessage> msgQueue;	
-	private VmManager vmMan;
+	private BlockingQueue <MonMessage> msgQueue;
 
 
 

@@ -108,31 +108,6 @@ public class QStatusChecker extends Thread {
 	}
 
 	
-	private synchronized void ENGgetQStatus() 
-	{
-
-		double f = 2;
-		
-		MonMessage msg = new MonMessage(MonMsgType.QCHECKER, (int)f);
-		
-		try {
-			
-			
-			System.out.println("QStatus: sending message, "+msg.toString());
-			msgQueue.put(msg);
-			/* sleep until notification message is arrived */
-			System.out.println("QStatus: going to sleep....");
-			this.wait();
-			
-			System.out.println("QStatus: woke up.");
-			
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-			
-	}
-
-	
 	public void wakeUp() {
 		this.notify();
 	}

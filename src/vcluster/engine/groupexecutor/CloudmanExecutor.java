@@ -92,7 +92,7 @@ public class CloudmanExecutor {
 	public static boolean hoston(String cmdLine) {
 		// TODO Auto-generated method stub
 		StringTokenizer st = new StringTokenizer(cmdLine);
-		String cmd = st.nextToken();
+		st.nextToken();
 		if (!st.hasMoreTokens()) {
 			System.out.println("[ERROR : ] Expect a cloud name!");
 			return false;
@@ -113,7 +113,7 @@ public class CloudmanExecutor {
 	public static boolean hostoff(String cmdLine) {
 		// TODO Auto-generated method stub
 		StringTokenizer st = new StringTokenizer(cmdLine);
-		String cmd = st.nextToken();
+		st.nextToken();
 		if (!st.hasMoreTokens()) {
 			System.out.println("[ERROR : ] Expect a cloud name!");
 			return false;

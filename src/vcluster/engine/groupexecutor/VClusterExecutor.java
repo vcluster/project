@@ -1,20 +1,14 @@
 package vcluster.engine.groupexecutor;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.StringTokenizer;
 
 import vcluster.control.cloudman.Cloud;
 import vcluster.control.cloudman.CloudManager;
-import vcluster.control.vmman.VmManager;
 import vcluster.global.Config;
-import vcluster.monitoring.MonitoringMan;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
 import vcluster.util.Util;
@@ -298,17 +292,6 @@ public class VClusterExecutor {
 		return true;
 	}
 	
-	private static void closeStream(BufferedReader in, DataOutputStream out, Socket socket)
-	{
-		try {
-		        if (in != null) in.close();
-		        if (out != null) out.close();
-		        if (socket != null) socket.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-	}
-
 	public static boolean help() {
 		// TODO Auto-generated method stub
 		

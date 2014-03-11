@@ -10,6 +10,7 @@ import java.util.TreeMap;
 
 import vcluster.plugins.BatchInterface;
 import vcluster.plugins.CloudInterface;
+import vcluster.plugins.LoadBalancer;
 import vcluster.ui.Command;
 import vcluster.util.HandleXML;
 
@@ -21,9 +22,11 @@ import vcluster.util.HandleXML;
 public class PluginManager {
 
 	public static BatchInterface current_proxyExecutor;
+	public static LoadBalancer current_loadbalancer;
 	//private static CloudInterface current_cloudExecutor;
 	public static final String CLOUD_PLUGIN_DIR = "plugins"+File.separator+"cloud";
 	public static final String BATCH_PLUGIN_DIR = "plugins"+File.separator+"batch";	
+	public static final String LOADBALANCER_PLUGIN_DIR = "plugins"+File.separator+"balancer";
 	
 	public static TreeMap<String,Plugin> pluginList;
 	//public static Map<String, BatchInterface> loadedBatchPlugins = new HashMap<String, BatchInterface>();
@@ -36,7 +39,8 @@ public class PluginManager {
 		cl = new CustomClassLoader();
 		pluginList = new TreeMap<String,Plugin>();
 		getCloudPluginList();
-		getBatchPluginList();		
+		getBatchPluginList();	
+		getBalancerPluginList();
 	}
 
 	/**
@@ -86,7 +90,22 @@ public class PluginManager {
 							e.printStackTrace();
 						}
 
-			}
+			}else if(Command.TYPE_LOADBALACER.contains(type)){
+				try {						
+					LoadBalancer lbe = (LoadBalancer) plugin.newInstance();
+					current_loadbalancer = lbe;
+					pluginList.get(name).setInstance(lbe);
+					pluginList.get(name).setPluginStatus("loaded");
+					//HandleXML.loadBatchPlugin(name);
+				} catch (InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+	}
 	}
 
 		
@@ -136,7 +155,26 @@ public class PluginManager {
 			}
 		return jars;				
 	}
-	
+	public static List<String> getBalancerPluginList(){
+		File dir = new File(System.getProperty("user.dir") + File.separator
+				+ LOADBALANCER_PLUGIN_DIR);
+		File f = new File(dir.getPath());
+		File[] list = f.listFiles();
+		List<String> jars = new ArrayList<String>();
+			for (File file : list) {				
+					if (file.getPath().endsWith(".jar")) {
+						Plugin pi = new Plugin();
+						String name = file.getName().replace(".jar", "");
+						String status = "unloaded";
+						jars.add(name);
+						pi.setPluginName(name);
+						pi.setPluginStatus(status);
+						pi.setPluginType("balancer");
+						pluginList.put(name, pi);
+				}
+			}
+		return jars;				
+	}
 	public static List<String> getBatchPluginList(){
 
 		File dir = new File(System.getProperty("user.dir") + File.separator

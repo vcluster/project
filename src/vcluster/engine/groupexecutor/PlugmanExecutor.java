@@ -44,15 +44,10 @@ public class PlugmanExecutor {
 		// TODO Auto-generated method stub
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		st.nextToken();
-		boolean cfilter =true;
-		boolean bfilter =true;
-
-	if(st.hasMoreTokens()){
+		if(st.hasMoreTokens()){
 		String para2 = st.nextToken().trim();
 		if(Command.TYPE_BATCH.contains(para2)){
-			cfilter=false;
 		}else if(Command.TYPE_CLOUD.contains(para2)){
-			bfilter=false;
 		}else{
 			System.out.println("[ERROR : ] Wrong parameter!");
 		}	
@@ -95,6 +90,10 @@ public class PlugmanExecutor {
 			File dir = new File(System.getProperty("user.dir") + File.separator
 					+ PluginManager.CLOUD_PLUGIN_DIR);
 			pluginPath = dir.getPath();
+		}else if(Command.TYPE_LOADBALACER.contains(pluginType)){
+			File dir = new File(System.getProperty("user.dir") + File.separator
+					+ PluginManager.LOADBALANCER_PLUGIN_DIR);
+			pluginPath = dir.getPath();
 		}
 
 		List<String> pluginNames = new ArrayList<String>();
@@ -112,8 +111,8 @@ public class PlugmanExecutor {
 			    pluginNames.add(st.nextToken().trim());
 			}
 		
-	    }else if(Command.TYPE_BATCH.contains(pluginType)&st.hasMoreTokens()){
-	    	System.out.println("Only one batch plugin can be loaded at the same time, the rest will be ignored!");
+	    }else if(Command.TYPE_BATCH.contains(pluginType)||Command.TYPE_LOADBALACER.contains(pluginType)&st.hasMoreTokens()){
+	    	System.out.println("Only one batch or balancer plugin can be loaded at the same time, the rest will be ignored!");
 	    }
 			for(String pluginName:pluginNames){
 				//System.out.println(pluginName);

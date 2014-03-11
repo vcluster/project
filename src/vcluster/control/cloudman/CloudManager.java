@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 import vcluster.control.vmman.Vm;
-import vcluster.global.Config;
-import vcluster.util.HandleXML;
 
 public class CloudManager  {
 
@@ -167,41 +165,6 @@ public class CloudManager  {
 		return confList;
 	}
 	
-	private static ArrayList<ArrayList<String>> handlelog(){
-		String logfile = "e:/dataAnalysis/CollectorLog";
-		
-		ArrayList<ArrayList<String>> confList = new  ArrayList<ArrayList<String>>();		
-		BufferedReader br ;
-		try{
-			br = new BufferedReader(new FileReader(logfile));
-			String aLine = "";
-			ArrayList<String> conf = new ArrayList<String>() ;
-			while ((aLine = br.readLine()) != null) {
-				if (aLine.equalsIgnoreCase("[cloudelement]")) {
-					if(!conf.isEmpty()){
-						if(chkConf(conf)){
-							confList.add(conf);
-						}
-						conf = new ArrayList<String>();	
-					}
-				
-				}else{
-					if(!aLine.trim().isEmpty())conf.add(aLine);
-				}				
-			}
-			if(chkConf(conf)){
-				confList.add(conf);
-			}
-			br.close();
-			
-		}catch(Exception e){
-			System.out.println("Configuration file doesn't exist ,please check it!");
-			return confList;
-		}
-		
-		return confList;
-	}
-
 	public static boolean loadCloudElments(String confFile) 
 	{			
 		ArrayList<ArrayList<String>> confList = handleConf(confFile);

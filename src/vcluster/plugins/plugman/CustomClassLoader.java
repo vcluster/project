@@ -10,6 +10,7 @@ import java.util.jar.JarFile;
 
 import vcluster.plugins.BatchInterface;
 import vcluster.plugins.CloudInterface;
+import vcluster.plugins.LoadBalancer;
 
 /**
  * This class extends java.lang.ClassLoader,which is responsible for loading java classes into the JVM dynamically.In this class,we override the method "loadClass" 
@@ -24,6 +25,9 @@ public class CustomClassLoader extends ClassLoader {
 	 * Specifys the directory where the plugin files are located. 
 	 */
 	
+	private JarFile jarFile;
+	private URLClassLoader loader;
+
 	/**
 	 * Invoke the superclass's constructor and initialize the plugins directory.
 	 * @param dir The plugins directory
@@ -45,11 +49,11 @@ public class CustomClassLoader extends ClassLoader {
 		try {  
 			  
 			  File f = new File(jarName);
-			  JarFile jarFile = new JarFile(f);  
+			  jarFile = new JarFile(f);  
 			  URL url = f.toURI().toURL();
 			  //@test
 			  
-			  URLClassLoader loader = new URLClassLoader(new URL[]{url});
+			  loader = new URLClassLoader(new URL[]{url});
 			  Enumeration<JarEntry> es = jarFile.entries();  
 			  while (es.hasMoreElements()) {  
 			   JarEntry jarEntry = (JarEntry) es.nextElement();  
@@ -58,7 +62,7 @@ public class CustomClassLoader extends ClassLoader {
 				   Class<?> c = loader.loadClass(name.replace("/", ".").substring(0,name.length() - 6)); 
 					Class<?>[] intfs = c.getInterfaces();
 					for (Class<?> intf : intfs) {
-						if (intf.getName().equals(BatchInterface.class.getName())||intf.getName().equals(CloudInterface.class.getName())) {
+						if (intf.getName().equals(BatchInterface.class.getName())||intf.getName().equals(CloudInterface.class.getName())||intf.getName().equals(LoadBalancer.class.getName())) {
 							return c;
 						}
 					}
