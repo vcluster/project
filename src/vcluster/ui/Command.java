@@ -3,7 +3,11 @@ package vcluster.ui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-
+/**
+ * @author S.Y. Noh
+ * This is the enum of commands. all the vcluster command is listed here
+ * 
+ */
 public enum Command {
 
 	/* Commands of vclman Category */
@@ -61,11 +65,16 @@ public enum Command {
 
 	NOT_DEFINED (CMD_GROUP.NOT_DEFINED, "not_defined");
 
+	/**
+	 * 
+	 */
 	private String command;
 	private CMD_GROUP cmdGroup;
 	private List<String> cmdList;
 
-	
+	/**
+	 *Constructor of command, specify the command name and group
+	 */
 	Command(CMD_GROUP group, String cmdString) {
 
 		cmdGroup = group;

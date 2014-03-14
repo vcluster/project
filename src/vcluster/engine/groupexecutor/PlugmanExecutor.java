@@ -111,8 +111,6 @@ public class PlugmanExecutor {
 			    pluginNames.add(st.nextToken().trim());
 			}
 		
-	    }else if(Command.TYPE_BATCH.contains(pluginType)||Command.TYPE_LOADBALACER.contains(pluginType)&st.hasMoreTokens()){
-	    	System.out.println("Only one batch or balancer plugin can be loaded at the same time, the rest will be ignored!");
 	    }
 			for(String pluginName:pluginNames){
 				//System.out.println(pluginName);

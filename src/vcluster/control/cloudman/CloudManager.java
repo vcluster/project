@@ -5,30 +5,8 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import vcluster.control.vmman.Vm;
-
 public class CloudManager  {
 
-	/* later it may be a thread */
-
-	public static boolean printArchitecture(){
-		for(Cloud c : cloudList.values()){
-			if(c.isLoaded()){
-			System.out.println("---------------------------------------");
-			System.out.println(c.getCloudName());
-			for(Host h : c.getHostList().values()){
-				System.out.println("      "+h.getId()+"  : "+h.getMaxVmNum()+"/" + h.getVmList().size());
-				System.out.println("        ID       Activity");	
-				for(Vm v : h.getVmList().values()){
-					System.out.println("        "+v.getId()+"   "+v.isIdle());					
-				}				
-			}
-			System.out.println("---------------------------------------");
-		
-			}
-		}
-		return true;
-	}
 	
 	public static void dump(String type)
 	{
@@ -175,7 +153,6 @@ public class CloudManager  {
 			if(cloudList!=null&&!cloudList.isEmpty()){
 				for(Cloud c : getCloudList().values()){
 					if(name.equals(c.getCloudName())){
-						//System.out.println("There is already a cloud named "+name+" exists!");
 						flag = true;
 						break;
 					}
@@ -185,7 +162,6 @@ public class CloudManager  {
 			Cloud cloud = new Cloud(conf);
 			if(cloud.getCloudName()!=null&cloud.getCloudpluginName()!=null&cloud.getCloudType()!=null)
 			cloudList.put(cloud.getCloudName(), cloud);
-			//HandleXML.addCloudElement(conf);
 			tempCL.add(cloud);
 		}
 		String cName = String.format("%-12s", "Name");
@@ -237,10 +213,8 @@ public class CloudManager  {
 			try {
 				flag = cloudList.get(name[i].trim()).load();
 			} catch (NullPointerException e) {
-				// TODO Auto-generated catch block
-				
-				System.out.println(name[i]+" Cloud doesn't exist!");
-				e.printStackTrace();
+				// TODO Auto-generated catch block				
+				System.out.println(name[i]+" doesn't exist!");
 			}
 		}
 		System.out.println("-------------------------------------------------------");
@@ -252,9 +226,7 @@ public class CloudManager  {
 	public static boolean undeploy(String[] name) {
 		// TODO Auto-generated method stub
 		boolean flag = true;
-
-		for(int i = 0;i<name.length;i++){
-			
+		for(int i = 0;i<name.length;i++){			
 			try {
 				Cloud c = cloudList.get(name[i].trim());
 				if(!c.getVmList().isEmpty()){

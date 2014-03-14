@@ -3,8 +3,6 @@ package vcluster.ui;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
-
-import vcluster.control.cloudman.CloudManager;
 import vcluster.control.vmman.VmManager;
 import vcluster.engine.groupexecutor.BatchExecutor;
 import vcluster.engine.groupexecutor.CloudmanExecutor;
@@ -33,10 +31,8 @@ public class CmdExecutor {
 	{
 		String cmd = aCmd.trim();
 		if(Command.QUIT.contains(cmd)) {
-
 			/* shutdown Manager first */
-			if (Config.monMan != null) Config.monMan.shutDwon();
-		
+			if (Config.monMan != null) Config.monMan.shutDwon();	
 			
 			return true;
 		}
@@ -51,8 +47,7 @@ public class CmdExecutor {
 		String cmd = st.nextToken().trim();
 		
 		Command command = getCommand(null,cmd);
-		
-		// if (command == Command.NOT_DEFINED) return false;
+				
 		switch(command.getCmdGroup()){
 		case VCLMAN:return executeVCLMAN(command, cmdLine);
 		default:
@@ -66,8 +61,7 @@ public class CmdExecutor {
 		case NOT_DEFINED: return false;
 		default:
 			break;
-		}
-		
+		}		
 		return true;
 	}
 	
@@ -142,14 +136,8 @@ public class CmdExecutor {
 			return VClusterExecutor.monitor(cmdLine);
 		case CLOUDMAN:
 			return VClusterExecutor.cloudman(cmdLine);
-		//case SHOW:
-		//	return VClusterExecutor.show(cmdLine);
 		case LOADCONF:
 			return VClusterExecutor.load(cmdLine);
-		//case SET:
-		//	return VClusterExecutor.set(cmdLine);
-		case PRINTARC:
-			return CloudManager.printArchitecture();		
 		case CHECK_P: 
 				if(PluginManager.current_proxyExecutor==null){
 					if(yesORno()){
@@ -200,17 +188,12 @@ public class CmdExecutor {
 	
 
 	private static boolean executeVMMAN(String cmdLine)
-	{
-
-
-		
+	{		
 		cmdLine = cmdLine.replace("vmman ", "");
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		String cmd = st.nextToken().trim();
-		//System.out.println(cmdLine);
 		Command command = getCommand(Command.CMD_GROUP.VMMAN.toString(),cmd);
 		
-		//System.out.println(cmdLine);
 		switch (command) {
 		case SHOW: return VmManager.showVM(cmdLine);
 		case CREATE: return VmManager.createVM(cmdLine);
@@ -222,8 +205,6 @@ public class CmdExecutor {
 			return VmManager.migrate(cmdLine);
 		default:System.out.println("command is not defined"); 
 			break;
-		
-
 		}
 		
 		return true;

@@ -5,6 +5,14 @@ import java.io.InputStreamReader;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
 
+
+
+/**
+ * This is the main class of vcluster, the main function is involved in this class.
+ * @author S.Y.Noh
+ * @version 1.0
+ *
+ */
 public class UIMain {
 
 
@@ -16,7 +24,10 @@ public class UIMain {
 	}
 	
 
-	
+	/**
+	 * Judge if the input command line is empty or not.Space character is regarded as empty. 
+	 * @return boolean type.	 
+	 */
 	private boolean isEmpty(String aCmd)
 	{
 		if (aCmd == null) return true;
@@ -26,7 +37,7 @@ public class UIMain {
 	}
 
 	/**
-	 * generate "vcluster" prompt
+	 * Generate "vcluster" prompt, get the input command line and send it to the executor.
 	 * 
 	 * @return true if it has to be continue; otherwise false
 	 */
@@ -76,6 +87,11 @@ public class UIMain {
 	    
 	}
 
+	
+	/**
+	 *This is the main function, loops the promptGen function, keep staying at the "vcluster " prompt line, wait for inputing the command. 
+	 * 
+	 */
 	public static void main(String[] args) throws Exception {
 		UIMain uimain = new UIMain();
 
