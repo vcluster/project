@@ -14,15 +14,8 @@ public class PoolStatus {
 		if (!st.hasMoreTokens()) {
 			System.out.println("[Error] : no more token");
 			return false;
-		}
+		}		
 		
-		/*
-		 * 
-		 *         Total Owner Claimed Unclaimed Matched Preempting Backfill
-		 *
-		 *   Total    16     2       0        14       0          0        0
-		 */
-
 		/* skip token Total */
 		token = st.nextToken();
 		// System.out.println("token = "+token);

@@ -10,7 +10,10 @@ import java.util.StringTokenizer;
  */
 public enum Command {
 
-	/* Commands of vclman Category */
+	/* Commands of vclman Category
+	 *  
+	 *   
+	 */
 	VHELP(CMD_GROUP.VCLMAN,"-h,--help,help"),
 	QUIT (CMD_GROUP.VCLMAN, "quit, exit, done, stop"),
 	DEBUG_MODE (CMD_GROUP.VCLMAN, "debug"),
@@ -74,6 +77,9 @@ public enum Command {
 
 	/**
 	 *Constructor of command, specify the command name and group
+	 *@param group specify the command group
+	 *@param cmdString is the command line
+	 *
 	 */
 	Command(CMD_GROUP group, String cmdString) {
 
@@ -111,11 +117,16 @@ public enum Command {
 		return cmdList.contains(aCmd); 
 	}
 	
+	
 	public String getCommand()
 	{
 		return command;
 	}
-
+	
+	/**
+	 *This is enum of CMD_GROUP,all the command groups are defined here.  
+	 *
+	 */
 	public enum CMD_GROUP {
 		VCLMAN,
 		VMMAN,

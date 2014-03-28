@@ -12,7 +12,8 @@ import vcluster.global.Config;
 import vcluster.plugins.plugman.PluginManager;
 
 /**
- * @author huangdada
+ * @author Seo-Young Noh, Modified by Dada Huang
+ * This class 
  * 
  */
 public class CmdExecutor {
@@ -71,7 +72,6 @@ public class CmdExecutor {
 		String cmdg= st.nextToken().trim();		
 		String cmd = st.nextToken().trim();
 		Command command = getCommand(Command.CMD_GROUP.CLOUDMAN.toString(),cmd);
-		//cmdLine = cmdLine.replace(cmd, "").trim();
 		cmdLine = cmdLine.replace(cmdg, "").trim();
 		switch (command) {
 		case REGISTER:
