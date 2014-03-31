@@ -5,9 +5,17 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+
+/**
+ * A class that presents functions to manage the clouds. Since vcluster only has one cloudmanager, 
+ * all it's functions are static.
+ */
 public class CloudManager  {
 
-	
+	/**
+	 * List up all the clouds of given type that registered in vcluster.
+	 * @param type, the type of cloud, private or public.
+	 */
 	public static void dump(String type)
 	{
 		String cName = String.format("%-12s", "Name");
@@ -38,6 +46,10 @@ public class CloudManager  {
 		System.out.println("-----------------------------------------------");
 
 	}
+	
+	/**
+	 * List up all the clouds that registered in vcluster.
+	 */
 	public static void dump()
 	{
 		String cName = String.format("%-12s", "Name");
@@ -66,24 +78,27 @@ public class CloudManager  {
 		System.out.println("-------------------------------------------------------");
 	}
 	
-	/*
-	 * things to consider
-	 * 
-	 * 1. find a cloud system which there is a room for requested vms
-	 *    -  a single cloud system or multiple cloud system?
-	 *  
-	 */	
 
+
+	/**
+	 * Set the current activity cloud, all the operations should be performed on the current cloud.
+	 * @param instance of cloud.
+	 */
 	public static void setCurrentCloud(Cloud cloud)
 	{
 		currentCloud = cloud;
 	}
 
+	/**
+	 * Get the current activity cloud.
+	 * @return An instance of a cloud. 
+	 */
 	public static Cloud getCurrentCloud() 
 	{
 		return currentCloud;
 	}
 
+	
 	private static boolean chkConf(ArrayList<String> conf){
 		boolean flag = true;
 		if(conf.size()<3){
@@ -143,6 +158,10 @@ public class CloudManager  {
 		return confList;
 	}
 	
+	/**
+	 * Register a cloud on vcluster use the given configurations
+	 * @param confFile, the configuration file path.
+	 */
 	public static boolean loadCloudElments(String confFile) 
 	{			
 		ArrayList<ArrayList<String>> confList = handleConf(confFile);
@@ -192,13 +211,19 @@ public class CloudManager  {
 		return true;
 	}
 	
+	/**
+	 *Get the registered clouds list  
+	 */
 	public static TreeMap<String, Cloud> getCloudList(){
 		//Config.vmMan.listVM("vmman list -refresh");
 		return cloudList;		
 	}
 	
 
-	
+	/**
+	 * Load the given clouds in vcluster. vlcusetr would communicate with the real clouds system and get the virtual machines information.
+	 * @param An array of the given clouds' names
+	 */
 	public static boolean deploy(String[] name) {
 		// TODO Auto-generated method stub
 		boolean flag = true;
@@ -223,6 +248,11 @@ public class CloudManager  {
 
 
 
+	/**
+	 * Unload the given clouds from vcluster. the status of the unloaded clouds would be switched to "unloaded"
+	 * the virtual machines that belongs to those clouds would be removed from data structure.
+	 * @param  An array of the given clouds' names
+	 */
 	public static boolean undeploy(String[] name) {
 		// TODO Auto-generated method stub
 		boolean flag = true;

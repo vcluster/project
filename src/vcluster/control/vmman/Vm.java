@@ -1,7 +1,9 @@
 package vcluster.control.vmman;
 
 import vcluster.global.Config.VMState;
-
+/**
+ * A class representing a virtual machine 
+ */
 public class Vm {
 	private Integer uId;
 	private String id;
@@ -17,6 +19,10 @@ public class Vm {
 	private String privateIP;
 	private String pubicIP;
 	private int isIdle;
+	
+	/**
+	 *Constructor, initial a virtual machine as the default members' value. 
+	 */
 	public Vm() {
 		this.uId = new Integer(0);
 		this.id = "";

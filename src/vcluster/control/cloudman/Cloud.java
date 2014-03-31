@@ -15,11 +15,25 @@ import vcluster.plugins.plugman.PluginManager;
 import vcluster.util.PrintMsg;
 import vcluster.util.PrintMsg.DMsgType;
 
+
+/**
+ *A class representing a cloud 
+ * 
+ */
 public class Cloud{
 	
+	/**
+	 *The constructor without any member initiation.
+	 * 
+	 */
 	public Cloud() {
 		// TODO Auto-generated constructor stub
 	}
+	/**
+	 *The constructor, by using this constructor some of the member value will be initiated.
+	 *@param conf, a List of the cloud configuration value. Such as the cloud name, interface name, etc.
+	 * 
+	 */
 	public Cloud(List<String> conf) {
 		this.conf = conf;
 		for(String aLine : conf){
@@ -67,7 +81,11 @@ public class Cloud{
 		//HandleXML.addCloudElement(conf);
 	}
 		
-		
+	/**
+	 *This function is for loading a cloud into vcluster. 
+	 *Inovke this function the vcluster would connect the corresponding cloud and get the vms'
+	 *information.  
+	 */
 	public boolean load(){	
 		if(cloudName==null||cloudType==null||cloudpluginName==null){
 			return false;
@@ -103,10 +121,18 @@ public class Cloud{
 		currentVMs += vms;
 	}
 		
+	/**
+	 *Get the configurations of the cloud
+	 *@return A list of configurations, such as cloud name, interface name connection configurations. 
+	 */
 	public List<String> getConf() {
 		return conf;
 	}
 
+	/**
+	 *Set the configurations of the cloud
+	 *@param conf, a list a the configurations. 
+	 */
 	public void setConf(List<String> conf) {
 		this.conf = conf;
 	}
@@ -117,6 +143,12 @@ public class Cloud{
 		}
 	}
 
+	/**
+	 * To create a virtual machine.
+	 * Through the fucntion creates specified number of virtual machines on the specific host of the cloud.
+	 * @param maxCount, the number of virtual machines that you want to create.
+	 * @param hostId, the host ID where you want to create vms on.
+	 */
 	public boolean createVM(int maxCount,String hostId) {
 		// TODO Auto-generated method stub
 		if(!hostId.equalsIgnoreCase("host1")){
@@ -152,6 +184,10 @@ public class Cloud{
 		return true;
 	}
 
+	/**
+	 *List up the virtual machine that is running on the cloud.
+	 * 
+	 */
 	public boolean listVMs() {
 		// TODO Auto-generated method stub
 		cp.RegisterCloud(conf);
@@ -172,6 +208,10 @@ public class Cloud{
 		return true;
 	}
 		
+	/**
+	 * Terminate the given virtual machine on the cloud.
+	 * @param id, the given virtual machine's id.
+	 */
 	public boolean destroyVM(String id) {
 		// TODO Auto-generated method stub
 		cp.RegisterCloud(conf);
@@ -181,6 +221,11 @@ public class Cloud{
 		 return true;
 	}
 
+	/**
+	 *Resume a given virtual machine form suspend.
+	 *@param id, the given virtual machine's id.
+	 *@return boolean. 
+	 */
 	public boolean startVM(String id) {
 		// TODO Auto-generated method stub
 		cp.RegisterCloud(conf);
@@ -196,7 +241,13 @@ public class Cloud{
 		}
 		return true;
 	}
-
+	
+	/**
+	 * Suspend a given virtual machine from running.
+	 * @param id, the virtual machine's id.
+	 * 
+	 */
+	
 	public boolean suspendVM(String id) {
 		// TODO Auto-generated method stub
 		cp.RegisterCloud(conf);
@@ -211,11 +262,21 @@ public class Cloud{
 		}
 		 return true;
 	}
+	
+	/**
+	 *Get the type of the cloud :private or public.
+	 *@return cloudType.
+	 */
 	public CloudType getCloudType() {
 		
 		return cloudType;
 	}
 	
+	/**
+	 * Set the type of a cloud
+	 * @see class CloudType.
+	 * @param cloudType,private or public.
+	 */
 	public void setCloudType(CloudType type) {
 		cloudType = type;
 	}
@@ -242,61 +303,115 @@ public class Cloud{
 		return "NOT_DEFINED";
 	}
 
+	/**
+	 *Get the cloud name .
+	 *@return cloudName. 
+	 */
 	public String getCloudName() {
 		return cloudName;
 	}
 
+	/**
+	 *Set the cloud name.
+	 *@param cloudName , the name of the cloud. 
+	 */
 	public void setCloudName(String cloudName) {
 		this.cloudName = cloudName;
 	}
 
 	
-	
+	/**
+	 * Get the name of cloud plugin
+	 * @return cloudpluginName, a string of the cloud plugin name.
+	 */
 	public String getCloudpluginName() {
 		return cloudpluginName;
 	}
 
+	/**
+	 * Set the name of cloud plugin
+	 * @param cloudpluginName, The name of cloud plugin
+	 */
 	public void setCloudpluginName(String cloudpluginName) {
 		this.cloudpluginName = cloudpluginName;
 	}
 
 
 
+	/**
+	 * Get the virtual machines list
+	 * @return the instances collection of virtual machines
+	 *
+	 */
 	public TreeMap<String,Vm> getVmList() {
 		return vmList;
 	}
 
+	/**
+	 * Set the virtual machines list
+	 * @param vmList, a TreeMap collection of virtual machine's instances,the key set is virtual machines' id 
+	 */
 	public void setVmList(TreeMap<String, Vm> vmList) {
 		this.vmList = vmList;
 	}
 
 
 
+	/**
+	 * Judge the cloud is loaded or not.
+	 * @return isLoaded, the load status of the cloud.
+	 */
 	public boolean isLoaded() {
 		return isLoaded;
 	}
 
 
+	/**
+	 * Set the load status of the cloud
+	 * @param isLoaded, boolean type.
+	 */
 	public void setIsLoaded(boolean isLoaded) {
 		this.isLoaded = isLoaded;
 	}
 
+	/**
+	 * Get the host list of the cloud
+	 * @return a TreeMap of host instance list, as key set is the host's id.
+	 */
 	public TreeMap<String, Host> getHostList() {
 		return hostList;
 	}
+	
+	/**
+	 * Set the host list
+	 * @param hostList. a TreeMap of host instances' list
+	 */
 	public void setHostList(TreeMap<String, Host> hostList) {
 		this.hostList = hostList;
 	}
 	
+	/**
+	 * Set the usage priority of the cloud, the smaller number is higher priority.
+	 * @param int i, is the value of the priority.
+	 */
 	public void setPriority(int i) {
 		// TODO Auto-generated method stub
 		this.priority = i;
 	}
 
+	/**
+	 * Get the priority of the cloud
+	 * @return a number of priotiry.
+	 * 
+	 */
 	public int getPriority() {
 		return priority;
 	}
 
+	/**
+	 * Migrate a given virtual machine to a specific host.
+	 * @param vmId , hostid, The virtual machine's id and the target host id.
+	 */
 	public boolean migrate(String vmID,String hostid) {
 		// TODO Auto-generated method stub
 	/*	if(!vmList.keySet().contains(vmID)||!hostList.keySet().contains(hostid)){
@@ -309,6 +424,11 @@ public class Cloud{
 		
 		return true;
 	}
+	
+	/**
+	 * Physically turn off the given host.
+	 * @param hostID, The given host's id.
+	 */
 	public boolean hostoff(String hostID) {
 		// TODO Auto-generated method stub
 		Host host = hostList.get(hostID);
@@ -325,6 +445,11 @@ public class Cloud{
 		host.setPowerStat(0);		
 		return true;
 	}
+	
+	/**
+	 * Physically turn on the given host.
+	 * @param the given host's id.
+	 */
 	public boolean hoston(String hostID) {
 		// TODO Auto-generated method stub
 		Host host = hostList.get(hostID);
@@ -336,6 +461,10 @@ public class Cloud{
 		host.setPowerStat(3);		
 		return true;
 	}
+	
+	/**
+	 * 
+	 */
 	public String slotNameToVMId(String slotName){
 		String vmId="";
 		if(cloudName.equals("Gcloud")){

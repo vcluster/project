@@ -1,0 +1,10 @@
+vcluster.control.batchsysman
+vcluster.control.cloudman
+vcluster.control.vmman
+vcluster.engine.groupexecutor
+vcluster.global
+vcluster.monitoring
+vcluster.plugins
+vcluster.plugins.plugman
+vcluster.ui
+vcluster.util
