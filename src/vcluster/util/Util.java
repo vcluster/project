@@ -11,8 +11,7 @@ import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
-import vcluster.global.Config;
-import vcluster.util.PrintMsg.DMsgType;
+import vcluster.configs.Config;
 
 public class Util {
 	public static TreeMap<String, Boolean> listVSlist(ArrayList<String> arr1,ArrayList<String> arr2){
@@ -52,7 +51,7 @@ public class Util {
 			}
 			br.close();
 	    } catch (Exception e) {
-	    	PrintMsg.print(DMsgType.ERROR, "while loading, "+Config.configFile+" file!");
+	    	//PrintMsg.print(DMsgType.ERROR, "while loading, "+Config.configFile+" file!");
 	    	return false;
 	    } 
 	    
@@ -75,20 +74,8 @@ public class Util {
 
 		if (aKey.equalsIgnoreCase("condor"))
 			Config.CONDOR_IPADDR = aValue;
-		else if (aKey.equalsIgnoreCase("one"))
-			Config.ONE_IPADDR = aValue;
 	}
 	
-	public static void printConfig()
-	{
-		System.out.println("---------------------------------------");
-		System.out.println("             Configuration             ");
-		System.out.println("---------------------------------------");
-		
-		System.out.println("Condor: "+Config.CONDOR_IPADDR);
-		System.out.println("One: "+Config.ONE_IPADDR);
-		System.out.println("---------------------------------------");
-	}
 	
 	public static byte[] intToBytes(int i)
 	{
@@ -116,11 +103,4 @@ public class Util {
 				cal.get(Calendar.DST_OFFSET));
 		return df.format(cal.getTime());
 	}
-
-
-
-
-	
-	
-
 }

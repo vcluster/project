@@ -2,8 +2,6 @@ package vcluster.ui;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import vcluster.util.PrintMsg;
-import vcluster.util.PrintMsg.DMsgType;
 
 
 
@@ -66,7 +64,6 @@ public class UIMain {
 
 	    /* if quit, then forcedly quit */
 	    if (command == Command.QUIT) {
-	    	CmdExecutor.quit();
 	    	
 	    	/* forcedly exit */
 	    	System.exit(0);
@@ -76,7 +73,7 @@ public class UIMain {
 	     * if command is not defined, no more action
 	     */
 	    if (command == Command.NOT_DEFINED) {
-	    	PrintMsg.print(DMsgType.ERROR, "command is not supported!");
+	    	System.out.println("command is not supported!");
 	    	return true;
 	    }
 	    

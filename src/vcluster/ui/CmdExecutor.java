@@ -3,13 +3,12 @@ package vcluster.ui;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
-import vcluster.control.vmman.VmManager;
-import vcluster.engine.groupexecutor.BatchExecutor;
-import vcluster.engine.groupexecutor.CloudmanExecutor;
-import vcluster.engine.groupexecutor.PlugmanExecutor;
-import vcluster.engine.groupexecutor.VClusterExecutor;
-import vcluster.global.Config;
-import vcluster.plugins.plugman.PluginManager;
+
+import vcluster.executors.BatchExecutor;
+import vcluster.executors.CloudmanExecutor;
+import vcluster.executors.PlugmanExecutor;
+import vcluster.managers.PluginManager;
+import vcluster.managers.VmManager;
 
 /**
  * @author Seo-Young Noh, Modified by Dada Huang
@@ -18,30 +17,8 @@ import vcluster.plugins.plugman.PluginManager;
  */
 public class CmdExecutor {
 
-	/**
-	 * if quit, it checks if monitoring process and vm manager process are still running
-	 */
-	public static void quit()
-	{
-		/* shutdown Manager first */
-		if (Config.monMan != null) Config.monMan.shutDwon();
 	
-	}
-
-	public static boolean isQuit(String aCmd)
-	{
-		String cmd = aCmd.trim();
-		if(Command.QUIT.contains(cmd)) {
-			/* shutdown Manager first */
-			if (Config.monMan != null) Config.monMan.shutDwon();	
-			
-			return true;
-		}
-
-		return false;
-	}
-	
-	public static boolean execute(String cmdLine)
+	public static Object execute(String cmdLine)
 	{
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		
@@ -59,14 +36,14 @@ public class CmdExecutor {
 		case VMMAN: return executeVMMAN(cmdLine);
 		case CLOUDMAN:return executeCLOUDMAN(cmdLine);
 		case PLUGMAN: return executePLUGMAN(cmdLine);		
-		case NOT_DEFINED: return false;
+		case NOT_DEFINED: return null;
 		default:
 			break;
 		}		
-		return true;
+		return "";
 	}
 	
-	private static boolean executeCLOUDMAN(String cmdLine) {
+	private static Object executeCLOUDMAN(String cmdLine) {
 		// TODO Auto-generated method stub
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		String cmdg= st.nextToken().trim();		
@@ -79,7 +56,7 @@ public class CmdExecutor {
 		case LOADCLOUD:
 			return CloudmanExecutor.load(cmdLine);
 		case LISTCLOUD:
-			return CloudmanExecutor.list(cmdLine);
+			return CloudmanExecutor.getCloudList();
 		case UNLOADCLOUD:
 			return CloudmanExecutor.unload(cmdLine);	
 		case HOSTON:
@@ -113,37 +90,17 @@ public class CmdExecutor {
 
 	}
 
-	private static boolean executeVCLMAN(Command command, String cmdLine)
+	private static String executeVCLMAN(Command command, String cmdLine)
 	{
 		
 		switch (command) {
-		case TESTDEMO:
-			 PluginManager.current_loadbalancer.activate();	
-			 return true;		
-		case TESTALGO:
-			return vcluster.plugins.PriorityBased.algo();			
-		case TESTCHKQ:
-			String time = cmdLine.split(" ")[1].trim();
-			int t = Integer.parseInt(time);
-			return vcluster.plugins.PriorityBased.chkq(t);	
-		case VHELP:
-			return VClusterExecutor.help();
-		case DEBUG_MODE:
-			return VClusterExecutor.debug_mode(cmdLine);
-		case VMMAN:
-			return VClusterExecutor.vmman(cmdLine);
-		case MONITOR:
-			return VClusterExecutor.monitor(cmdLine);
-		case CLOUDMAN:
-			return VClusterExecutor.cloudman(cmdLine);
-		case LOADCONF:
-			return VClusterExecutor.load(cmdLine);
+		
 		case CHECK_P: 
 				if(PluginManager.current_proxyExecutor==null){
 					if(yesORno()){
 						PlugmanExecutor.load("load -b proxy-HTCondor");	
 					}else{					
-						return false;
+						return null;
 						}
 
 				}
@@ -151,7 +108,7 @@ public class CmdExecutor {
 				return BatchExecutor.getPoolStatus().printPoolStatus();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				return false;
+				return null;
 			}
 			
 	    case CHECK_Q: 
@@ -159,7 +116,7 @@ public class CmdExecutor {
 				if(yesORno()){
 					PlugmanExecutor.load("load -b proxy-HTCondor");				
 				}else{
-					return false;
+					return null;
 				}
 			}
 	    	return PluginManager.current_proxyExecutor.getQStatus().printQStatus();
@@ -168,7 +125,7 @@ public class CmdExecutor {
 			
 		}
 		
-		return true;
+		return null;
 	}
 	
 	private static boolean yesORno(){
@@ -187,7 +144,7 @@ public class CmdExecutor {
 	}
 	
 
-	private static boolean executeVMMAN(String cmdLine)
+	private static String executeVMMAN(String cmdLine)
 	{		
 		cmdLine = cmdLine.replace("vmman ", "");
 		StringTokenizer st = new StringTokenizer(cmdLine);
@@ -207,7 +164,7 @@ public class CmdExecutor {
 			break;
 		}
 		
-		return true;
+		return null;
 	}
 	
 	public static Command getCommand(String cmdGroup, String aCmdLine) 

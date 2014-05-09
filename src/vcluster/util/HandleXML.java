@@ -22,9 +22,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import vcluster.control.cloudman.Cloud;
-import vcluster.control.cloudman.CloudManager;
-import vcluster.engine.groupexecutor.PlugmanExecutor;
+import vcluster.executors.PlugmanExecutor;
+import vcluster.managers.CloudManager;
+import vcluster.simulators.Cloud;
 
 public class HandleXML {
 	private static DocumentBuilderFactory factory;
