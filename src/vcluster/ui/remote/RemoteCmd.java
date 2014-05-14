@@ -3,7 +3,7 @@ package vcluster.ui.remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-import vcluster.ui.CmdExecutor;
+import vcluster.executors.CmdExecutor;
 
 public class RemoteCmd extends UnicastRemoteObject implements RemoteInterface{
 
