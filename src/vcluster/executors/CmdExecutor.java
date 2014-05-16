@@ -1,19 +1,16 @@
 package vcluster.executors;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.StringTokenizer;
-
 import vcluster.managers.PluginManager;
 import vcluster.managers.VmManager;
 import vcluster.ui.Command;
-import vcluster.ui.Command.CMD_GROUP;
 
 /**
  * @author Seo-Young Noh, Modified by Dada Huang
  * This class 
  * 
  */
+
 public class CmdExecutor {
 
 	
@@ -33,7 +30,7 @@ public class CmdExecutor {
 
 		switch (command) {
 		case VMMAN: return executeVMMAN(cmdLine);
-		case CLOUDMAN:return executeCLOUDMAN(cmdLine);
+		case CLOUDMAN: return executeCLOUDMAN(cmdLine);
 		case PLUGMAN: return executePLUGMAN(cmdLine);		
 		case NOT_DEFINED: return null;
 		default:
@@ -94,30 +91,9 @@ public class CmdExecutor {
 		
 		switch (command) {
 		
-		case CHECK_P: 
-				if(PluginManager.current_proxyExecutor==null){
-					if(yesORno()){
-						PlugmanExecutor.load("load -b proxy-HTCondor");	
-					}else{					
-						return null;
-						}
-
-				}
-			try {
-				return BatchExecutor.getPoolStatus().printPoolStatus();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				return null;
-			}
-			
-	    case CHECK_Q: 
-			if(PluginManager.current_proxyExecutor==null){
-				if(yesORno()){
-					PlugmanExecutor.load("load -b proxy-HTCondor");				
-				}else{
-					return null;
-				}
-			}
+		case CHECK_P: 			
+			return BatchExecutor.getPoolStatus().printPoolStatus();		
+		case CHECK_Q: 			
 	    	return PluginManager.current_proxyExecutor.getQStatus().printQStatus();
 		default:
 			break;		
@@ -127,22 +103,6 @@ public class CmdExecutor {
 		return null;
 	}
 	
-	private static boolean yesORno(){
-		System.out.println("No batch system,do you want to load proxy-HTCondor plugin?(y/n)");
-	    String yn = "";
-	    InputStreamReader input = new InputStreamReader(System.in);
-	    BufferedReader reader = new BufferedReader(input);
-	    
-	    try {
-		    /* get a command string */
-	    	yn = reader.readLine(); 
-	    	if(yn.equalsIgnoreCase("y")){return true;}else if(yn.equalsIgnoreCase("n")){return false;}
-	    	else{System.out.println("has to be y or n!");return false;}
-	    }
-	    catch(Exception e){return false;}
-	}
-	
-
 	private static String executeVMMAN(String cmdLine)
 	{		
 		cmdLine = cmdLine.replace("vmman ", "");

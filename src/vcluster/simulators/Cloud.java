@@ -75,7 +75,7 @@ public class Cloud{
 			}
 		}
 		isLoaded = false;
-		//HandleXML.addCloudElement(conf);
+		
 	}
 		
 	/**
@@ -96,6 +96,7 @@ public class Cloud{
 			Integer id = new Integer(VmManager.getcurrId());
 			VmManager.getVmList().put(id, vm);
 		}
+		
 		CloudManager.setCurrentCloud(this);		
 		isLoaded = true;
 		String fName = String.format("%-12s", getCloudName());
@@ -513,6 +514,5 @@ public class Cloud{
 	private boolean isLoaded;
 	private TreeMap<String,Host> hostList;
 	private int priority;
-
 	
 }

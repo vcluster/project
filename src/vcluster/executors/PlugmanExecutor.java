@@ -29,7 +29,7 @@ public class PlugmanExecutor {
 		/* get a token to set */
 		String para = st.nextToken().trim();
 		
-		if(Command.HELP.contains(para)){
+		if(para.equalsIgnoreCase("-h")){
 			System.out.println(getUsage());
 			return false;			
 		}		

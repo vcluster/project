@@ -10,18 +10,11 @@ import java.util.StringTokenizer;
  */
 public enum Command {
 
-	/* Commands of vclman Category
-	 *  
-	 *   
-	 */
+	/* Commands of vclman Category*/
+	
 	VHELP(CMD_GROUP.VCLMAN,"-h,--help,help"),
 	QUIT (CMD_GROUP.VCLMAN, "quit, exit, done, stop"),
-	DEBUG_MODE (CMD_GROUP.VCLMAN, "debug"),
-	MONITOR (CMD_GROUP.VCLMAN, "monitor, mon"),
-	//SHOW (CMD_GROUP.VCLMAN, "show, sh"),
 	LOADCONF (CMD_GROUP.VCLMAN, "loadf"),
-	//SET (CMD_GROUP.VCLMAN, "set"),
-	ENGMODE (CMD_GROUP.VCLMAN, "engmode"),	
 	CHECK_P (CMD_GROUP.VCLMAN, "chkp,check_p"),
 	CHECK_Q (CMD_GROUP.VCLMAN, "chkq,check_q"),
 	PRINTARC (CMD_GROUP.VCLMAN, "print,prac"),
@@ -57,14 +50,7 @@ public enum Command {
 	LIST (CMD_GROUP.PLUGMAN, "list,ls"),
 	INFO (CMD_GROUP.PLUGMAN, "info,ifo"),
 	
-	
-	/*parameters*/	
-	HELP(CMD_GROUP.PARAMETER,"-h,-help,--help"),
-	TYPE_BATCH(CMD_GROUP.PARAMETER,"-b,-batch,--type=batch"),
-	TYPE_CLOUD(CMD_GROUP.PARAMETER,"-c,-cloud,--type=cloud"),
-	TYPE_LOADBALACER(CMD_GROUP.PARAMETER,"-lb,-loadblancer,--type=loadbalancer"),
-	LOADED(CMD_GROUP.PARAMETER,"-l,-loaded,--loaded"),
-	
+		
 
 	NOT_DEFINED (CMD_GROUP.NOT_DEFINED, "not_defined");
 
@@ -124,7 +110,7 @@ public enum Command {
 	}
 	
 	/**
-	 *This is enum of CMD_GROUP,all the command groups are defined here.  
+	 *This is enum of CMD_GROUP, all the command groups are defined here.  
 	 *
 	 */
 	public enum CMD_GROUP {
@@ -133,7 +119,6 @@ public enum Command {
 		CLOUDMAN,
 		PLUGMAN,		
 		NOT_DEFINED, 
-		PARAMETER
 	}
 	
 }

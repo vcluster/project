@@ -54,6 +54,7 @@ public class UIMain {
 	    try {
 		    /* get a command string */
 	    	userCmd = reader.readLine(); 
+	    	userCmd+=" --cmdLine";
 	    }
 	    catch(Exception e){return true;}
 
