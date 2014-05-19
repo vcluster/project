@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import vcluster.configs.Config;
 
 public class Util {
+	
 	public static TreeMap<String, Boolean> listVSlist(ArrayList<String> arr1,ArrayList<String> arr2){
 		TreeMap<String,Boolean> hsm = new TreeMap<String,Boolean>();
 		ArrayList<String> temp = new ArrayList<String>();
@@ -102,5 +103,17 @@ public class Util {
 		cal.setTimeInMillis(cal.getTimeInMillis() - cal.get(Calendar.ZONE_OFFSET) -
 				cal.get(Calendar.DST_OFFSET));
 		return df.format(cal.getTime());
+	}
+	public static void print(StringBuffer arg){		
+		print(arg.toString());
+	}
+	public static void print(String arg){
+		switch(Config.currUI) {
+		case CMDLINE: 
+			vcluster.util.Util.print(arg);
+			break;
+		default:
+			break;
+		}
 	}
 }

@@ -36,7 +36,7 @@ public class CloudManager  {
 	private static boolean chkConf(ArrayList<String> conf){
 		boolean flag = true;
 		if(conf.size()<3){
-			System.out.println("[ERROR : ] Configuration file format is incorrect,please check the format! ==> "+conf.get(0));
+			vcluster.util.Util.print("[ERROR : ] Configuration file format is incorrect,please check the format! ==> "+conf.get(0));
 			flag = false;
 			return false;
 		}
@@ -44,12 +44,12 @@ public class CloudManager  {
 		String[] l2 = conf.get(1).split("=");
 		String[] l3 = conf.get(2).split("=");
 		if(l1.length<2||l2.length<2||l3.length<2){
-			System.out.println("[ERROR : ] Configuration file format is incorrect,please check the format! ==> "+conf.get(0));
+			vcluster.util.Util.print("[ERROR : ] Configuration file format is incorrect,please check the format! ==> "+conf.get(0));
 			flag = false;
 			return flag;
 		}
 		if(!l1[0].trim().equalsIgnoreCase("name")||!l2[0].trim().equalsIgnoreCase("interface")||!l3[0].trim().equalsIgnoreCase("type")){
-			System.out.println("[ERROR : ] Configuration file format is incorrect,please check the format! ==> "+conf.get(0));
+			vcluster.util.Util.print("[ERROR : ] Configuration file format is incorrect,please check the format! ==> "+conf.get(0));
 			flag = false;
 			return flag;
 		}
@@ -76,7 +76,7 @@ public class CloudManager  {
 				
 				}else{
 					if(!aLine.trim().isEmpty())conf.add(aLine);
-					//System.out.println(aLine);
+					//vcluster.util.Util.print(aLine);
 				}				
 			}
 			if(chkConf(conf)){
@@ -85,7 +85,7 @@ public class CloudManager  {
 			br.close();
 			
 		}catch(Exception e){
-			System.out.println("Configuration file doesn't exist ,please check it!");
+			vcluster.util.Util.print("Configuration file doesn't exist ,please check it!");
 			return confList;
 		}
 		
@@ -195,14 +195,14 @@ public class CloudManager  {
 			try {
 				Cloud c = cloudList.get(name[i].trim());
 				if(!c.getVmList().isEmpty()){
-					System.out.println(name[i]+" still have vms are running!");
+					vcluster.util.Util.print(name[i]+" still have vms are running!");
 					return false;
 				}
 				CloudManager.cloudList.remove(name[i]);
 			} catch (NullPointerException e) {
 				// TODO Auto-generated catch block
 				
-				System.out.println(name[i]+" Cloud doesn't exist!");
+				vcluster.util.Util.print(name[i]+" Cloud doesn't exist!");
 				e.printStackTrace();
 			}
 		}

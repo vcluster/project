@@ -107,7 +107,7 @@ public class Host {
 		vmList = new TreeMap<String,Vm> ();
 		for(Vm vm : CloudManager.getCloudList().get(cloudName).getVmList().values()){
 			if(vm.getHostname().equalsIgnoreCase(id)){
-				//System.out.println(vm.getHostname()+" : "+ id + "   mark");
+				//vcluster.util.Util.print(vm.getHostname()+" : "+ id + "   mark");
 				vmList.put(vm.getId(), vm);
 			}
 		} 

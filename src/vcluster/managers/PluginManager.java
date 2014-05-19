@@ -52,13 +52,13 @@ public class PluginManager {
 	public static void LoadPlugin(String path,String type) throws ClassNotFoundException {
 		File f = new File(path);
 		String name = f.getName().replace(".jar", "");		
-		//System.out.println(path);
+		//vcluster.util.Util.print(path);
 		if (isLoaded(name)) {
-				System.out.println(name + " : has already been loaded!");
+				vcluster.util.Util.print(name + " : has already been loaded!");
 				return;
 			}
 			Class<?> plugin = cl.loadClass(path);
-			if(Command.TYPE_CLOUD.contains(type)){
+			if(type.equalsIgnoreCase("-c")){
 				try {							
 					CloudInterface ce = (CloudInterface) plugin.newInstance();
 					pluginList.get(name).setInstance(ce);
@@ -71,7 +71,7 @@ public class PluginManager {
 					e.printStackTrace();
 				}				
 				
-			}else if(Command.TYPE_BATCH.contains(type)){
+			}else if(type.equalsIgnoreCase("-b")){
 						try {						
 							for(Plugin pli : pluginList.values()){
 								if(pli.getPluginType().equals("batch")&&pli.getPluginStatus().equals("loaded")){
@@ -91,7 +91,7 @@ public class PluginManager {
 							e.printStackTrace();
 						}
 
-			}else if(Command.TYPE_LOADBALACER.contains(type)){
+			}else if(type.equalsIgnoreCase("-l")){
 				try {						
 					LoadBalancer lbe = (LoadBalancer) plugin.newInstance();
 					current_loadbalancer = lbe;
@@ -230,13 +230,13 @@ public class PluginManager {
 			BufferedReader br = new BufferedReader(new FileReader(new File(path+File.separator+pluginName+"Readme.txt")));
 			String aLine = "";
 			while ((aLine = br.readLine()) != null) {				
-				System.out.println(aLine);
+				vcluster.util.Util.print(aLine);
 			}
 			br.close();
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("Readme file doesn't exist ,please check it on the plugin directory!");
+			vcluster.util.Util.print("Readme file doesn't exist ,please check it on the plugin directory!");
 		}
 		
 		return info.toString();

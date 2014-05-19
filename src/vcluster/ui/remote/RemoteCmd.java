@@ -25,7 +25,7 @@ public class RemoteCmd extends UnicastRemoteObject implements RemoteInterface{
 	public String getRemoteCommand(String command) {
 		// TODO Auto-generated method stub
 		CmdExecutor.execute(command);
-		System.out.println(command);
+		vcluster.util.Util.print(command);
 		return command;
 	}
 

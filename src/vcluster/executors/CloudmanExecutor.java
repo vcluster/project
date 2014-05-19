@@ -27,11 +27,11 @@ public class CloudmanExecutor {
 		String token = null;
 		if (!st.hasMoreTokens()) {
 			str.append("[USAGE] : cloudman register <cloudelement conf file>");
-			System.out.println(str);
+			vcluster.util.Util.print(str);
 			return str.toString();
 		}
 		token = st.nextToken().trim();
-		//System.out.println(token);
+		//vcluster.util.Util.print(token);
 		return CloudManager.registerCloud(token);
 
 	}
@@ -45,7 +45,7 @@ public class CloudmanExecutor {
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		String cmd = st.nextToken();
 		if (!st.hasMoreTokens()) {
-			System.out.println("[ERROR : ] Expect a cloud name!");
+			vcluster.util.Util.print("[ERROR : ] Expect a cloud name!");
 			return "[ERROR : ] Expect a cloud name!";
 		}
 		else{			
@@ -70,9 +70,9 @@ public class CloudmanExecutor {
 		st.nextToken();
 
 		if (!st.hasMoreTokens()) {
-			System.out.println("[USAGE] : cloudman dump [<private | public>>]");
-			System.out.println("        : cloudman register <cloudelement conf file>");
-			System.out.println("        : cloudman set <private | public> <cloud num>");			
+			vcluster.util.Util.print("[USAGE] : cloudman dump [<private | public>>]");
+			vcluster.util.Util.print("        : cloudman register <cloudelement conf file>");
+			vcluster.util.Util.print("        : cloudman set <private | public> <cloud num>");			
 			return false;
 		}		
 		return true;
@@ -87,7 +87,7 @@ public class CloudmanExecutor {
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		String cmd = st.nextToken();
 		if (!st.hasMoreTokens()) {
-			System.out.println("[ERROR : ] Expect a cloud name!");
+			vcluster.util.Util.print("[ERROR : ] Expect a cloud name!");
 			return false;
 		}else{			
 			String [] arg = cmdLine.replace(cmd, "").trim().split(" ");	
@@ -105,12 +105,12 @@ public class CloudmanExecutor {
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		st.nextToken();
 		if (!st.hasMoreTokens()) {
-			System.out.println("[ERROR : ] Expect a cloud name!");
+			vcluster.util.Util.print("[ERROR : ] Expect a cloud name!");
 			return false;
 		}
 		String cloudname = st.nextToken().trim();
 		if (!st.hasMoreTokens()) {
-			System.out.println("[ERROR : ] Expect a host id!");
+			vcluster.util.Util.print("[ERROR : ] Expect a host id!");
 			return false;
 		}
 		String hostID = st.nextToken().trim();
@@ -129,12 +129,12 @@ public class CloudmanExecutor {
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		st.nextToken();
 		if (!st.hasMoreTokens()) {
-			System.out.println("[ERROR : ] Expect a cloud name!");
+			vcluster.util.Util.print("[ERROR : ] Expect a cloud name!");
 			return false;
 		}
 		String cloudname = st.nextToken().trim();
 		if (!st.hasMoreTokens()) {
-			System.out.println("[ERROR : ] Expect a host id!");
+			vcluster.util.Util.print("[ERROR : ] Expect a host id!");
 			return false;
 		}
 		String hostID = st.nextToken().trim();

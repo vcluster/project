@@ -93,9 +93,9 @@ public enum Command {
 	
 	public void toPrint()
 	{
-		System.out.println("Key = " + command);
+		vcluster.util.Util.print("Key = " + command);
 		for(int i = 0; i < cmdList.size(); i++)
-			System.out.println("\t cmd: " + cmdList.get(i));
+			vcluster.util.Util.print("\t cmd: " + cmdList.get(i));
 	}
 	
 	public boolean contains(String aCmd)

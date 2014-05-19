@@ -3,6 +3,7 @@ package vcluster.ui;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import vcluster.configs.Config;
 import vcluster.executors.CmdExecutor;
 
 
@@ -21,6 +22,7 @@ public class UIMain {
 		//VCluster.init();
 		//if(!Config.configFile.isEmpty())
 		//	Util.loadConfig(Config.configFile);
+		Config.currUI = Config.uiType.CMDLINE;
 	}
 	
 
@@ -54,7 +56,7 @@ public class UIMain {
 	    try {
 		    /* get a command string */
 	    	userCmd = reader.readLine(); 
-	    	userCmd+=" --cmdLine";
+	    	//userCmd+=" --cmdLine";
 	    }
 	    catch(Exception e){return true;}
 
@@ -76,7 +78,7 @@ public class UIMain {
 	     * if command is not defined, no more action
 	     */
 	    if (command == Command.NOT_DEFINED) {
-	    	System.out.println("command is not supported!");
+	    	vcluster.util.Util.print("command is not supported!");
 	    	return true;
 	    }
 	    

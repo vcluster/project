@@ -16,7 +16,7 @@ public class CmdServer {
 			LocateRegistry.createRegistry(1099); 
 			RemoteCmd rcmd = new RemoteCmd("command");
 			Naming.rebind("command", rcmd);
-			System.out.println("Command server is ready.");
+			vcluster.util.Util.print("Command server is ready.");
 		
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block

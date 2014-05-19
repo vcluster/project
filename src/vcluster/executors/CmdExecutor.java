@@ -68,7 +68,7 @@ public class CmdExecutor {
 		cmdLine = cmdLine.replace("plugman ", "");
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		String cmd = st.nextToken().trim();
-		//System.out.println(cmdLine);
+		//vcluster.util.Util.print(cmdLine);
 		Command command = getCommand(Command.CMD_GROUP.PLUGMAN.toString(),cmd);
 		
 		switch (command) {
@@ -119,7 +119,7 @@ public class CmdExecutor {
 		case START: return VmManager.startVM(cmdLine);
 		case MIGRATE:
 			return VmManager.migrate(cmdLine);
-		default:System.out.println("command is not defined"); 
+		default:vcluster.util.Util.print("command is not defined"); 
 			break;
 		}
 		

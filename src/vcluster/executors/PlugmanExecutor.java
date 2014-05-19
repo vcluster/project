@@ -21,7 +21,7 @@ public class PlugmanExecutor {
 		st.nextToken();
 
 		if (!st.hasMoreTokens()) {
-			System.out.println(getUsage());
+			vcluster.util.Util.print(getUsage());
 	
 			return false;
 		}
@@ -30,7 +30,7 @@ public class PlugmanExecutor {
 		String para = st.nextToken().trim();
 		
 		if(para.equalsIgnoreCase("-h")){
-			System.out.println(getUsage());
+			vcluster.util.Util.print(getUsage());
 			return false;			
 		}		
 		return false;			
@@ -45,27 +45,27 @@ public class PlugmanExecutor {
 		st.nextToken();
 		if(st.hasMoreTokens()){
 		String para2 = st.nextToken().trim();
-		if(Command.TYPE_BATCH.contains(para2)){
-		}else if(Command.TYPE_CLOUD.contains(para2)){
+		if(para2.equals("-b")){
+		}else if(para2.equalsIgnoreCase("-c")){
 		}else{
-			System.out.println("[ERROR : ] Wrong parameter!");
+			vcluster.util.Util.print("[ERROR : ] Wrong parameter!");
 		}	
 	}
 		String cName = String.format("%-20s", "Name");
 		String cStat =String.format("%-12s", "Status");
 		String cType = String.format("%-12s", "Type");
-		System.out.println("List the plugins in plugin directory :");		
-		System.out.println("----------------------------------------");
-		System.out.println(cName+cStat+cType);
-		System.out.println("----------------------------------------");		
+		vcluster.util.Util.print("List the plugins in plugin directory :");		
+		vcluster.util.Util.print("----------------------------------------");
+		vcluster.util.Util.print(cName+cStat+cType);
+		vcluster.util.Util.print("----------------------------------------");		
 
 		for(Plugin plugin : PluginManager.pluginList.values()){
 			String name = String.format("%-20s", plugin.getPluginName());
 			String stat=String.format("%-12s", plugin.getPluginStatus());
 			String type=String.format("%-12s", plugin.getPluginType());
-			System.out.println(name+stat+type);
+			vcluster.util.Util.print(name+stat+type);
 		}
-		System.out.println("----------------------------------------");
+		vcluster.util.Util.print("----------------------------------------");
 		return true;
 	}
 
@@ -80,20 +80,20 @@ public class PlugmanExecutor {
 		
 		String pluginPath = "";
 		if(!st.hasMoreTokens()){
-			System.out.println( "expected a plugin type!");
-			System.out.println("[USAGE] : plugman <load -pluginType pluginName>");
+			vcluster.util.Util.print( "expected a plugin type!");
+			vcluster.util.Util.print("[USAGE] : plugman <load -pluginType pluginName>");
 			return false;
 		}
 		String pluginType = st.nextToken().trim();
-		if(Command.TYPE_BATCH.contains(pluginType)){
+		if(pluginType.equalsIgnoreCase("-b")){
 			File dir = new File(System.getProperty("user.dir") + File.separator
 					+ PluginManager.BATCH_PLUGIN_DIR);
 			pluginPath = dir.getPath();
-		}else if(Command.TYPE_CLOUD.contains(pluginType)){
+		}else if(pluginType.equalsIgnoreCase("-c")){
 			File dir = new File(System.getProperty("user.dir") + File.separator
 					+ PluginManager.CLOUD_PLUGIN_DIR);
 			pluginPath = dir.getPath();
-		}else if(Command.TYPE_LOADBALACER.contains(pluginType)){
+		}else if(pluginType.equalsIgnoreCase("-l")){
 			File dir = new File(System.getProperty("user.dir") + File.separator
 					+ PluginManager.LOADBALANCER_PLUGIN_DIR);
 			pluginPath = dir.getPath();
@@ -104,11 +104,11 @@ public class PlugmanExecutor {
 			    pluginNames.add(st.nextToken().trim());
 
 		}else{
-			System.out.println( "expected a plugin name!");
-			System.out.println("[USAGE] : plugin <register plugin_name | list>");
+			vcluster.util.Util.print( "expected a plugin name!");
+			vcluster.util.Util.print("[USAGE] : plugin <register plugin_name | list>");
 			return false;
 		}
-	    if(Command.TYPE_CLOUD.contains(pluginType)){		    	
+	    if(pluginType.equalsIgnoreCase("-c")){		    	
 	    
 			while(st.hasMoreTokens()){
 			    pluginNames.add(st.nextToken().trim());
@@ -116,26 +116,26 @@ public class PlugmanExecutor {
 		
 	    }
 			for(String pluginName:pluginNames){
-				//System.out.println(pluginName);
+				//vcluster.util.Util.print(pluginName);
 				if(PluginManager.pluginList.keySet().contains(pluginName)){
 
 					try {
-						//System.out.println(pluginPath + File.separator + pluginName);
+						//vcluster.util.Util.print(pluginPath + File.separator + pluginName);
 						PluginManager.LoadPlugin(pluginPath + File.separator + pluginName+".jar",pluginType);
 
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
-						System.out.println("[ERROR:] No such a plugin,please check your input!");
+						vcluster.util.Util.print("[ERROR:] No such a plugin,please check your input!");
 						return false;
 					}
 					
 				}else{
-					System.out.println("[ERROR:] No such a plugin,please check your input!");
+					vcluster.util.Util.print("[ERROR:] No such a plugin,please check your input!");
 				}
 			}
 			
 			if(st.hasMoreTokens()) {
-				System.out.println( "unexpected token \""+st.nextToken()+"\" found!");
+				vcluster.util.Util.print( "unexpected token \""+st.nextToken()+"\" found!");
 				return false;
 			}
 			return true;
@@ -151,8 +151,8 @@ public class PlugmanExecutor {
 		st.nextToken();
 		
 		if(!st.hasMoreTokens()){
-			System.out.println( "expected a plugin name!");
-			System.out.println("[USAGE] : plugman <unload pluginName>");
+			vcluster.util.Util.print( "expected a plugin name!");
+			vcluster.util.Util.print("[USAGE] : plugman <unload pluginName>");
 			return false;
 		}
 		while(st.hasMoreTokens()){
@@ -160,12 +160,12 @@ public class PlugmanExecutor {
 				PluginManager.UnloadPlugin(st.nextToken());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				System.out.println(e.getMessage());
+				vcluster.util.Util.print(e.getMessage());
 				return false;
 			}
 		}
 		if(st.hasMoreTokens()) {
-			System.out.println( "unexpected token \""+st.nextToken()+"\" found!");
+			vcluster.util.Util.print( "unexpected token \""+st.nextToken()+"\" found!");
 			return false;
 		}
 		return false;			
@@ -181,23 +181,23 @@ public class PlugmanExecutor {
 		st.nextToken();
 		
 		if(!st.hasMoreTokens()){
-			System.out.println( "expected a plugin name!");
-			System.out.println("[USAGE] : plugman <unload pluginName>");
+			vcluster.util.Util.print( "expected a plugin name!");
+			vcluster.util.Util.print("[USAGE] : plugman <unload pluginName>");
 			return false;
 		}
 		String pluginName = st.nextToken();
 		
-		System.out.println(PluginManager.getInfo(pluginName));		
+		vcluster.util.Util.print(PluginManager.getInfo(pluginName));		
 		if(st.hasMoreTokens()) {
-			System.out.println( "unexpected token \""+st.nextToken()+"\" found!");
+			vcluster.util.Util.print( "unexpected token \""+st.nextToken()+"\" found!");
 			return false;
 		}
 		return false;
 	}
 	
 	public static boolean undefined(String cmdLine){
-		System.out.println( "no such a parameter like \""+cmdLine+"\" !");
-		System.out.println(getUsage());
+		vcluster.util.Util.print( "no such a parameter like \""+cmdLine+"\" !");
+		vcluster.util.Util.print(getUsage());
 		return false;
 		
 		
