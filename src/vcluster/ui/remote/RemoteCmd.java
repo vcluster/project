@@ -3,7 +3,7 @@ package vcluster.ui.remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-import vcluster.executors.CmdExecutor;
+import vcluster.executors.CmdCataloger;
 
 public class RemoteCmd extends UnicastRemoteObject implements RemoteInterface{
 
@@ -24,7 +24,7 @@ public class RemoteCmd extends UnicastRemoteObject implements RemoteInterface{
 
 	public String getRemoteCommand(String command) {
 		// TODO Auto-generated method stub
-		CmdExecutor.execute(command);
+		CmdCataloger.execute(command);
 		vcluster.util.Util.print(command);
 		return command;
 	}

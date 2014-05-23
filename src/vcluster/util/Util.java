@@ -11,7 +11,7 @@ import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
-import vcluster.configs.Config;
+import vcluster.Vcluster;
 
 public class Util {
 	
@@ -41,10 +41,10 @@ public class Util {
 	public static boolean loadConfig(String configFile)
 	{
 		/* set config file */
-		Config.configFile = configFile;
+		Vcluster.configFile = configFile;
 		
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(Config.configFile));
+			BufferedReader br = new BufferedReader(new FileReader(Vcluster.configFile));
 			
 			String aLine = "";
 			while ((aLine = br.readLine()) != null) {
@@ -74,7 +74,7 @@ public class Util {
 		String aValue = st.nextToken().trim();
 
 		if (aKey.equalsIgnoreCase("condor"))
-			Config.CONDOR_IPADDR = aValue;
+			Vcluster.CONDOR_IPADDR = aValue;
 	}
 	
 	
@@ -108,9 +108,9 @@ public class Util {
 		print(arg.toString());
 	}
 	public static void print(String arg){
-		switch(Config.currUI) {
+		switch(Vcluster.currUI) {
 		case CMDLINE: 
-			vcluster.util.Util.print(arg);
+			System.out.println(arg);
 			break;
 		default:
 			break;

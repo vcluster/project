@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import vcluster.elements.Plugin;
 import vcluster.managers.PluginManager;
-import vcluster.simulators.Plugin;
-import vcluster.ui.Command;
+import vcluster.ui.CmdList;
 /**
  * A class representing a plug-in manager executor.In this class involves the functions which are charge of manage the plug-ins.
  */

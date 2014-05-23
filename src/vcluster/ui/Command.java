@@ -1,124 +1,104 @@
 package vcluster.ui;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.StringTokenizer;
-/**
- * @author S.Y. Noh
- * This is the enum of commands. all the vcluster command is listed here
- * 
- */
-public enum Command {
 
-	/* Commands of vclman Category*/
+import vcluster.Vcluster.uiType;
+import vcluster.ui.CmdList.CMD_GROUP;
+
+public class Command {
 	
-	VHELP(CMD_GROUP.VCLMAN,"-h,--help,help"),
-	QUIT (CMD_GROUP.VCLMAN, "quit, exit, done, stop"),
-	LOADCONF (CMD_GROUP.VCLMAN, "loadf"),
-	CHECK_P (CMD_GROUP.VCLMAN, "chkp,check_p"),
-	CHECK_Q (CMD_GROUP.VCLMAN, "chkq,check_q"),
-	PRINTARC (CMD_GROUP.VCLMAN, "print,prac"),
-	TESTALGO(CMD_GROUP.VCLMAN, "algo"),
-	TESTCHKQ(CMD_GROUP.VCLMAN, "tchkq"),
-	TESTDEMO(CMD_GROUP.VCLMAN,"start blancer"),
-	
-	
-	/*Commands of cloudman Category*/
-	CLOUDMAN(CMD_GROUP.CLOUDMAN,"cloudman,cm"),
-	REGISTER(CMD_GROUP.CLOUDMAN,"register,rgst"),
-	LISTCLOUD(CMD_GROUP.CLOUDMAN,"list,ls"),
-	LOADCLOUD(CMD_GROUP.CLOUDMAN,"load,ld"),
-	UNLOADCLOUD(CMD_GROUP.CLOUDMAN,"unload,unld"),	
-	HOSTON(CMD_GROUP.CLOUDMAN,"hoston"),
-	HOSTOFF(CMD_GROUP.CLOUDMAN,"hostoff"),
-	
-	/*Commands of vmman Category*/
-	VMMAN (CMD_GROUP.VMMAN, "vmman, vm"),
-	SHOW(CMD_GROUP.VMMAN,"show,sh"),
-	CREATE (CMD_GROUP.VMMAN, "create,crt"),
-	START (CMD_GROUP.VMMAN, "start,st"),
-	SUSPEND (CMD_GROUP.VMMAN, "suspend,ssp"),
-	LISTVM (CMD_GROUP.VMMAN, "list,ls"),
-	DESTROY (CMD_GROUP.VMMAN, "destroy,dt"),
-	MIGRATE(CMD_GROUP.VMMAN,"migrate,mig"),
-	
-	
-	/*Commands of plugman Category*/
-	PLUGMAN(CMD_GROUP.PLUGMAN,"plugman,pm"),
-	LOAD (CMD_GROUP.PLUGMAN, "load,ld"),
-	UNLOAD (CMD_GROUP.PLUGMAN, "unload,uld"),
-	LIST (CMD_GROUP.PLUGMAN, "list,ls"),
-	INFO (CMD_GROUP.PLUGMAN, "info,ifo"),
-	
+	public Command(String cmdLine){
+		this.cmdLine = cmdLine;
 		
-
-	NOT_DEFINED (CMD_GROUP.NOT_DEFINED, "not_defined");
-
-	/**
-	 * 
-	 */
-	private String command;
-	private CMD_GROUP cmdGroup;
-	private List<String> cmdList;
-
-	/**
-	 *Constructor of command, specify the command name and group
-	 *@param group specify the command group
-	 *@param cmdString is the command line
-	 *
-	 */
-	Command(CMD_GROUP group, String cmdString) {
-
-		cmdGroup = group;
-		this.cmdList = new ArrayList<String>();
-		StringTokenizer st = new StringTokenizer(cmdString, ", ");
 		
-		boolean firstToken = true;
-		String token = null;
-		
-		while(st.hasMoreTokens()) {
-			token = st.nextToken();
-			if (firstToken) {
-				command = token;
-				firstToken = false;
-			}
-			cmdList.add(token);
+	}
+
+	private void cmdParser(String cmdLine){
+		StringTokenizer st = new StringTokenizer(cmdLine);
+		String strGroup = null;
+		if(st.hasMoreTokens()){
+			strGroup = st.nextToken().trim();
+		}else{
+			
 		}
+		switch (strGroup){
+			case "plugman":
+				cmdGroup = CMD_GROUP.PLUGMAN;
+				break;
+			
+			case "cloudman":
+				cmdGroup = CMD_GROUP.CLOUDMAN;
+				break;
+			case "vmman":
+				cmdGroup = CMD_GROUP.VMMAN;
+				break;
+			default:
+				cmdGroup = CMD_GROUP.VCLMAN;
+				break;
+		}
+		if(st.hasMoreTokens()){
+			String cmdStr = st.nextToken();
+			cmd = CmdList.getCommand(cmdGroup, cmdStr);
+		}
+		
+		
+		
 	}
 	
-	public CMD_GROUP getCmdGroup() 
-	{
+	public String getCmdLine() {
+		return cmdLine;
+	}
+	public void setCmdLine(String cmdLine) {
+		this.cmdLine = cmdLine;
+	}
+	public HashMap<String, String> getParas() {
+		return paras;
+	}
+	public void setParas(HashMap<String, String> paras) {
+		this.paras = paras;
+	}
+	public long getLaunchTime() {
+		return launchTime;
+	}
+	public void setLaunchTime(long launchTime) {
+		this.launchTime = launchTime;
+	}
+	public CMD_GROUP getCmdGroup() {
 		return cmdGroup;
 	}
-	
-	public void toPrint()
-	{
-		vcluster.util.Util.print("Key = " + command);
-		for(int i = 0; i < cmdList.size(); i++)
-			vcluster.util.Util.print("\t cmd: " + cmdList.get(i));
+	public void setCmdGroup(CMD_GROUP cmdGroup) {
+		this.cmdGroup = cmdGroup;
 	}
-	
-	public boolean contains(String aCmd)
-	{
-		return cmdList.contains(aCmd); 
+	public CmdList getCmd() {
+		return cmd;
 	}
-	
-	
-	public String getCommand()
-	{
-		return command;
+	public void setCmd(CmdList cmd) {
+		this.cmd = cmd;
 	}
-	
-	/**
-	 *This is enum of CMD_GROUP, all the command groups are defined here.  
-	 *
-	 */
-	public enum CMD_GROUP {
-		VCLMAN,
-		VMMAN,
-		CLOUDMAN,
-		PLUGMAN,		
-		NOT_DEFINED, 
+	public String getSourceIp() {
+		return sourceIp;
 	}
+	public void setSourceIp(String sourceIp) {
+		this.sourceIp = sourceIp;
+	}
+	public uiType getUi() {
+		return ui;
+	}
+	public void setUi(uiType ui) {
+		this.ui = ui;
+	}
+
+
+
+	private String cmdLine;
+	private HashMap<String,String> paras;
+	private long launchTime;
+	private CMD_GROUP cmdGroup;
+	private CmdList cmd;
+	private String sourceIp;
+	private uiType ui;
+	
+	
 	
 }

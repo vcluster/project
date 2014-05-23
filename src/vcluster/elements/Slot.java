@@ -1,4 +1,4 @@
-package vcluster.simulators;
+package vcluster.elements;
 /**
  * A class representing a slot of the batch system.
  *

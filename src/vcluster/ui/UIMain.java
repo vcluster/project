@@ -3,8 +3,8 @@ package vcluster.ui;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import vcluster.configs.Config;
-import vcluster.executors.CmdExecutor;
+import vcluster.Vcluster;
+import vcluster.executors.CmdCataloger;
 
 
 
@@ -22,7 +22,7 @@ public class UIMain {
 		//VCluster.init();
 		//if(!Config.configFile.isEmpty())
 		//	Util.loadConfig(Config.configFile);
-		Config.currUI = Config.uiType.CMDLINE;
+		Vcluster.currUI = Vcluster.uiType.CMDLINE;
 	}
 	
 
@@ -65,10 +65,10 @@ public class UIMain {
 	    	return true;
 
 	    /* extract the command from the command string */
-	    Command command = CmdExecutor.getCommand(null,userCmd);
+	    CmdList cmdList = CmdCataloger.getCommand(null,userCmd);
 
 	    /* if quit, then forcedly quit */
-	    if (command == Command.QUIT) {
+	    if (cmdList == CmdList.QUIT) {
 	    	
 	    	/* forcedly exit */
 	    	System.exit(0);
@@ -77,13 +77,13 @@ public class UIMain {
 	    /*
 	     * if command is not defined, no more action
 	     */
-	    if (command == Command.NOT_DEFINED) {
+	    if (cmdList == CmdList.NOT_DEFINED) {
 	    	vcluster.util.Util.print("command is not supported!");
 	    	return true;
 	    }
 	    
 	    /* execution here */
-	    CmdExecutor.execute(userCmd);
+	    CmdCataloger.execute(userCmd);
 
 	    return true;
 	    

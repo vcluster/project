@@ -3,7 +3,7 @@ package vcluster.plugInterfaces;
 import java.util.ArrayList;
 import java.util.List;
 
-import vcluster.simulators.Vm;
+import vcluster.elements.Vm;
 
 /**
  *An interface for cloud plug-in, all the cloud plugins implement this interface. 

@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
+import vcluster.elements.Plugin;
 import vcluster.plugInterfaces.BatchInterface;
 import vcluster.plugInterfaces.CloudInterface;
 import vcluster.plugInterfaces.LoadBalancer;
-import vcluster.simulators.Plugin;
-import vcluster.ui.Command;
+import vcluster.ui.CmdList;
 import vcluster.util.HandleXML;
 
 /**

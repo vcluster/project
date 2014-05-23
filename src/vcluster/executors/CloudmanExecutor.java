@@ -3,8 +3,8 @@ package vcluster.executors;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
+import vcluster.elements.Cloud;
 import vcluster.managers.CloudManager;
-import vcluster.simulators.Cloud;
 /**
  *A class representing Cloud manager executor. Cloud-related commands would be sent to this class and the commands will be analyzed,
  *then corresponding functions will be invoked according the commands.

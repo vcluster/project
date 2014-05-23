@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import vcluster.simulators.Cloud;
+import vcluster.elements.Cloud;
 
 
 /**

@@ -3,7 +3,7 @@ package vcluster.executors;
 import java.util.StringTokenizer;
 import vcluster.managers.PluginManager;
 import vcluster.managers.VmManager;
-import vcluster.ui.Command;
+import vcluster.ui.CmdList;
 
 /**
  * @author Seo-Young Noh, Modified by Dada Huang
@@ -11,7 +11,7 @@ import vcluster.ui.Command;
  * 
  */
 
-public class CmdExecutor {
+public class CmdCataloger {
 
 	
 	public static Object execute(String cmdLine)
@@ -20,15 +20,15 @@ public class CmdExecutor {
 		
 		String cmd = st.nextToken().trim();
 		
-		Command command = getCommand(null,cmd);
+		CmdList cmdList = getCommand(null,cmd);
 				
-		switch(command.getCmdGroup()){
-		case VCLMAN:return executeVCLMAN(command, cmdLine);
+		switch(cmdList.getCmdGroup()){
+		case VCLMAN:return executeVCLMAN(cmdList, cmdLine);
 		default:
 			break;
 		}
 
-		switch (command) {
+		switch (cmdList) {
 		case VMMAN: return executeVMMAN(cmdLine);
 		case CLOUDMAN: return executeCLOUDMAN(cmdLine);
 		case PLUGMAN: return executePLUGMAN(cmdLine);		
@@ -44,9 +44,9 @@ public class CmdExecutor {
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		String cmdg= st.nextToken().trim();		
 		String cmd = st.nextToken().trim();
-		Command command = getCommand(Command.CMD_GROUP.CLOUDMAN.toString(),cmd);
+		CmdList cmdList = getCommand(CmdList.CMD_GROUP.CLOUDMAN.toString(),cmd);
 		cmdLine = cmdLine.replace(cmdg, "").trim();
-		switch (command) {
+		switch (cmdList) {
 		case REGISTER:
 			return CloudmanExecutor.register(cmdLine); 
 		case LOADCLOUD:
@@ -69,9 +69,9 @@ public class CmdExecutor {
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		String cmd = st.nextToken().trim();
 		//vcluster.util.Util.print(cmdLine);
-		Command command = getCommand(Command.CMD_GROUP.PLUGMAN.toString(),cmd);
+		CmdList cmdList = getCommand(CmdList.CMD_GROUP.PLUGMAN.toString(),cmd);
 		
-		switch (command) {
+		switch (cmdList) {
 		case LOAD:
 			return PlugmanExecutor.load(cmdLine); 
 		case UNLOAD:
@@ -86,15 +86,15 @@ public class CmdExecutor {
 
 	}
 
-	private static String executeVCLMAN(Command command, String cmdLine)
+	private static Object executeVCLMAN(CmdList cmdList, String cmdLine)
 	{
 		
-		switch (command) {
+		switch (cmdList) {
 		
 		case CHECK_P: 			
-			return BatchExecutor.getPoolStatus().printPoolStatus();		
+			return BatchExecutor.getPoolStatus();		
 		case CHECK_Q: 			
-	    	return PluginManager.current_proxyExecutor.getQStatus().printQStatus();
+	    	return PluginManager.current_proxyExecutor.getQStatus();
 		default:
 			break;		
 			
@@ -108,9 +108,9 @@ public class CmdExecutor {
 		cmdLine = cmdLine.replace("vmman ", "");
 		StringTokenizer st = new StringTokenizer(cmdLine);
 		String cmd = st.nextToken().trim();
-		Command command = getCommand(Command.CMD_GROUP.VMMAN.toString(),cmd);
+		CmdList cmdList = getCommand(CmdList.CMD_GROUP.VMMAN.toString(),cmd);
 		
-		switch (command) {
+		switch (cmdList) {
 		case SHOW: return VmManager.showVM(cmdLine);
 		case CREATE: return VmManager.createVM(cmdLine);
 		case LISTVM: return VmManager.listVM(cmdLine);
@@ -126,18 +126,5 @@ public class CmdExecutor {
 		return null;
 	}
 	
-	public static Command getCommand(String cmdGroup, String aCmdLine) 
-	{
-		StringTokenizer st = new StringTokenizer(aCmdLine);
-		String aCmd = st.nextToken().trim();
-    	if (cmdGroup==null){
-            for (Command cmd : Command.values()){
-            	if (cmd.contains(aCmd)) return cmd;
-            }
-    	}
-        for (Command cmd : Command.values()){
-        	if (cmd.getCmdGroup().toString().equalsIgnoreCase(cmdGroup)&cmd.contains(aCmd)) return cmd;
-        }
-        return Command.NOT_DEFINED;
- 	}
+	
 }

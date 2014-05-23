@@ -3,13 +3,13 @@ package vcluster.executors;
 import java.io.File;
 import java.util.ArrayList;
 
+import vcluster.elements.Cloud;
+import vcluster.elements.PoolStatus;
+import vcluster.elements.QStatus;
+import vcluster.elements.Slot;
+import vcluster.elements.Vm;
 import vcluster.managers.CloudManager;
 import vcluster.managers.PluginManager;
-import vcluster.simulators.Cloud;
-import vcluster.simulators.PoolStatus;
-import vcluster.simulators.QStatus;
-import vcluster.simulators.Slot;
-import vcluster.simulators.Vm;
 /**
  * A class representing a batch system executor, which involves the functions to operate on batch system, such as get the pool status and get queue status.
  */

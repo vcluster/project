@@ -2,8 +2,8 @@ package vcluster.plugInterfaces;
 
 import java.io.File;
 
-import vcluster.simulators.PoolStatus;
-import vcluster.simulators.QStatus;
+import vcluster.elements.PoolStatus;
+import vcluster.elements.QStatus;
 
 /**
  * All the batch system plug-ins should implement this interface.

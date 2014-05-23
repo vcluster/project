@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
-import vcluster.configs.Config;
-import vcluster.simulators.Cloud;
-import vcluster.simulators.Vm;
-import vcluster.ui.Command;
+import vcluster.Vcluster;
+import vcluster.elements.Cloud;
+import vcluster.elements.Vm;
+import vcluster.ui.CmdList;
 
 /**
  *A class representing the virtual machine manager. 
@@ -44,7 +44,7 @@ public class VmManager extends Thread {
 	/**
 	 * Create certain number of virtual machines on specific cloud by following the command line
 	 * @param cmdLine, the string of command line,
-	 * @see Command
+	 * @see CmdList
 	 * 
 	 */
 	public static String createVM(String cmdLine) {
@@ -103,7 +103,7 @@ public class VmManager extends Thread {
 	/**
 	 * List up the virtual machines by following the command line
 	 * @param cmdLine, the string of command line
-	 * @see Command
+	 * @see CmdList
 	 */
 	public static String listVM(String cmdLine) {
 		// TODO Auto-generated method stu
@@ -268,7 +268,7 @@ public class VmManager extends Thread {
 	/**
 	 * Show the virtual machine's information in detail,such as ID, public IP, private IP, launch time, etc.
 	 * @param cmdLine, the command line string.
-	 * @see Command
+	 * @see CmdList
 	 */
 	public static String showVM(String cmdLine) {
 		// TODO Auto-generated method stub
@@ -354,7 +354,7 @@ public class VmManager extends Thread {
 	/**
 	 * Terminate the given virtual machine by following the command line.
 	 * @param cmdLine, the string of command line
-	 * @see Command
+	 * @see CmdList
 	 */
 	public static String destroyVM(String cmdLine) {
 		// TODO Auto-generated method stub
@@ -409,7 +409,7 @@ public class VmManager extends Thread {
 	/**
 	 * Suspend the given virtual machine by following the command line.the virtual machine's original status must be running.
 	 * @param cmdLine, the string of command line
-	 * @see Command
+	 * @see CmdList
 	 */
 	public static String suspendVM(String cmdLine) {
 		// TODO Auto-generated method stub
@@ -465,7 +465,7 @@ public class VmManager extends Thread {
 	/**
 	 * Start the given suspended virtual machine.
 	 * @param cmdLine, the string of command line.
-	 * @see Command
+	 * @see CmdList
 	 */
 	public static String startVM(String cmdLine) {
 		// TODO Auto-generated method stub
