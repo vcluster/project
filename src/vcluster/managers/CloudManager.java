@@ -36,7 +36,7 @@ public class CloudManager  {
 	private static boolean chkConf(ArrayList<String> conf){
 		boolean flag = true;
 		if(conf.size()<3){
-			vcluster.util.Util.print("[ERROR : ] Configuration file format is incorrect,please check the format! ==> "+conf.get(0));
+			System.out.println("[ERROR : ] Configuration file format is incorrect,please check the format! ==> "+conf.get(0));
 			flag = false;
 			return false;
 		}
@@ -44,12 +44,12 @@ public class CloudManager  {
 		String[] l2 = conf.get(1).split("=");
 		String[] l3 = conf.get(2).split("=");
 		if(l1.length<2||l2.length<2||l3.length<2){
-			vcluster.util.Util.print("[ERROR : ] Configuration file format is incorrect,please check the format! ==> "+conf.get(0));
+			System.out.println("[ERROR : ] Configuration file format is incorrect,please check the format! ==> "+conf.get(0));
 			flag = false;
 			return flag;
 		}
 		if(!l1[0].trim().equalsIgnoreCase("name")||!l2[0].trim().equalsIgnoreCase("interface")||!l3[0].trim().equalsIgnoreCase("type")){
-			vcluster.util.Util.print("[ERROR : ] Configuration file format is incorrect,please check the format! ==> "+conf.get(0));
+			System.out.println("[ERROR : ] Configuration file format is incorrect,please check the format! ==> "+conf.get(0));
 			flag = false;
 			return flag;
 		}
@@ -76,7 +76,7 @@ public class CloudManager  {
 				
 				}else{
 					if(!aLine.trim().isEmpty())conf.add(aLine);
-					//vcluster.util.Util.print(aLine);
+					//System.out.println(aLine);
 				}				
 			}
 			if(chkConf(conf)){
@@ -85,7 +85,7 @@ public class CloudManager  {
 			br.close();
 			
 		}catch(Exception e){
-			vcluster.util.Util.print("Configuration file doesn't exist ,please check it!");
+			System.out.println("Configuration file doesn't exist ,please check it!");
 			return confList;
 		}
 		
@@ -151,6 +151,33 @@ public class CloudManager  {
 	 */
 	public static TreeMap<String, Cloud> getCloudList(){
 		//Config.vmMan.listVM("vmman list -refresh");
+		
+		StringBuffer str = new StringBuffer();
+		String cName = String.format("%-12s", "Name");
+		String cInterface =String.format("%-20s", "Interface");
+		String cType = String.format("%-12s", "Type");
+		String cVMs = String.format("%-16s", "VMs");
+		str.append("-------------------------------------------------------"+System.getProperty("line.separator"));
+		str.append(cName+cInterface+cType+cVMs+System.getProperty("line.separator"));
+		str.append("-------------------------------------------------------"+System.getProperty("line.separator"));
+
+		for(Cloud cloud:cloudList.values()){
+			String vmnum = "";
+			if(cloud.isLoaded()){
+				vmnum = cloud.getVmList().size()+"";
+			}else{
+				vmnum = "undeployed";
+			}
+			String fName = String.format("%-12s", cloud.getCloudName());
+			String fInterface =String.format("%-20s", cloud.getCloudpluginName());
+			String fType = String.format("%-12s", cloud.getCloudType());
+			String fVMs = String.format("%-16s", vmnum);
+			str.append(fName+fInterface+fType+fVMs+System.getProperty("line.separator"));
+			
+		}
+
+		str.append("-------------------------------------------------------"+System.getProperty("line.separator"));
+		System.out.println(str);
 		return cloudList;		
 	}
 	
@@ -173,7 +200,8 @@ public class CloudManager  {
 			try {
 				flag.append(cloudList.get(name[i].trim()).load()+System.getProperty("line.separator"));
 			} catch (NullPointerException e) {
-				// TODO Auto-generated catch block				
+				// TODO Auto-generated catch block	
+				e.printStackTrace();
 				flag.append(name[i]+" doesn't exist!"+System.getProperty("line.separator"));
 			}
 		}
@@ -195,14 +223,14 @@ public class CloudManager  {
 			try {
 				Cloud c = cloudList.get(name[i].trim());
 				if(!c.getVmList().isEmpty()){
-					vcluster.util.Util.print(name[i]+" still have vms are running!");
+					System.out.println(name[i]+" still have vms are running!");
 					return false;
 				}
 				CloudManager.cloudList.remove(name[i]);
 			} catch (NullPointerException e) {
 				// TODO Auto-generated catch block
 				
-				vcluster.util.Util.print(name[i]+" Cloud doesn't exist!");
+				System.out.println(name[i]+" Cloud doesn't exist!");
 				e.printStackTrace();
 			}
 		}

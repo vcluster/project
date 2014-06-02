@@ -191,7 +191,7 @@ public class PoolStatus {
 		str.append("    Backfill : " + getBackfillSlot()+System.getProperty("line.separator"));
 		str.append("----------------------------------------"+System.getProperty("line.separator"));
 		
-		vcluster.util.Util.print(str);
+		System.out.println(str);
 		return str.toString();
 	}
 

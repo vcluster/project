@@ -14,16 +14,7 @@ import vcluster.managers.PluginManager;
  * A class representing a batch system executor, which involves the functions to operate on batch system, such as get the pool status and get queue status.
  */
 
-public class BatchExecutor {
-	
-	
-	static{
-		String batPlug = PluginManager.getBatchPluginList().get(0);
-		if(PluginManager.current_proxyExecutor==null){
-			PlugmanExecutor.load("load -b "+batPlug);	
-		}
-	}
-	
+public class BatchExecutor {	
 	/**
 	 * Mapping between virtual machines and slots. This function pushes the slots' activity status to the corresponding virtual machines.
 	 */

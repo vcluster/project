@@ -1,104 +1,138 @@
 package vcluster.ui;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
+/**
+ * @author S.Y. Noh
+ * This is the enum of commands. all the vcluster command is listed here
+ * 
+ */
+public enum Command {
 
-import vcluster.Vcluster.uiType;
-import vcluster.ui.CmdList.CMD_GROUP;
-
-public class Command {
+	/* Commands of vclman Category*/
 	
-	public Command(String cmdLine){
-		this.cmdLine = cmdLine;
+	VHELP(CMD_GROUP.VCLMAN,"-h,--help,help"),
+	QUIT (CMD_GROUP.VCLMAN, "quit, exit, done, stop"),
+	LOADCONF (CMD_GROUP.VCLMAN, "loadf"),
+	CHECK_P (CMD_GROUP.VCLMAN, "chkp,check_p"),
+	CHECK_Q (CMD_GROUP.VCLMAN, "chkq,check_q"),
+	PRINTARC (CMD_GROUP.VCLMAN, "print,prac"),
+	TESTALGO(CMD_GROUP.VCLMAN, "algo"),
+	TESTCHKQ(CMD_GROUP.VCLMAN, "tchkq"),
+	TESTDEMO(CMD_GROUP.VCLMAN,"start blancer"),
+	
+	
+	/*Commands of cloudman Category*/
+	REGISTER(CMD_GROUP.CLOUDMAN,"register,rgst"),
+	LISTCLOUD(CMD_GROUP.CLOUDMAN,"list,ls"),
+	LOADCLOUD(CMD_GROUP.CLOUDMAN,"load,ld"),
+	UNLOADCLOUD(CMD_GROUP.CLOUDMAN,"unload,unld"),	
+	HOSTON(CMD_GROUP.CLOUDMAN,"hoston"),
+	HOSTOFF(CMD_GROUP.CLOUDMAN,"hostoff"),
+	
+	/*Commands of vmman Category*/
+	SHOW(CMD_GROUP.VMMAN,"show,sh"),
+	CREATE (CMD_GROUP.VMMAN, "create,crt"),
+	START (CMD_GROUP.VMMAN, "start,st"),
+	SUSPEND (CMD_GROUP.VMMAN, "suspend,ssp"),
+	LISTVM (CMD_GROUP.VMMAN, "list,ls"),
+	DESTROY (CMD_GROUP.VMMAN, "destroy,dt"),
+	MIGRATE(CMD_GROUP.VMMAN,"migrate,mig"),
+	
+	
+	/*Commands of plugman Category*/
+	LOAD (CMD_GROUP.PLUGMAN, "load,ld"),
+	UNLOAD (CMD_GROUP.PLUGMAN, "unload,uld"),
+	LIST (CMD_GROUP.PLUGMAN, "list,ls"),
+	INFO (CMD_GROUP.PLUGMAN, "info,ifo"),
+	
 		
-		
-	}
 
-	private void cmdParser(String cmdLine){
-		StringTokenizer st = new StringTokenizer(cmdLine);
-		String strGroup = null;
-		if(st.hasMoreTokens()){
-			strGroup = st.nextToken().trim();
-		}else{
-			
-		}
-		switch (strGroup){
-			case "plugman":
-				cmdGroup = CMD_GROUP.PLUGMAN;
-				break;
-			
-			case "cloudman":
-				cmdGroup = CMD_GROUP.CLOUDMAN;
-				break;
-			case "vmman":
-				cmdGroup = CMD_GROUP.VMMAN;
-				break;
-			default:
-				cmdGroup = CMD_GROUP.VCLMAN;
-				break;
-		}
-		if(st.hasMoreTokens()){
-			String cmdStr = st.nextToken();
-			cmd = CmdList.getCommand(cmdGroup, cmdStr);
-		}
+	NOT_DEFINED (CMD_GROUP.NOT_DEFINED, "not_defined");
+
+	/**
+	 * 
+	 */
+	private String command;
+	private CMD_GROUP cmdGroup;
+	private List<String> cmdList;
+
+	/**
+	 *Constructor of command, specify the command name and group
+	 *@param group specify the command group
+	 *@param cmdString is the command line
+	 *
+	 */
+	Command(CMD_GROUP group, String cmdString) {
+
+		cmdGroup = group;
+		this.cmdList = new ArrayList<String>();
+		StringTokenizer st = new StringTokenizer(cmdString, ", ");
 		
+		boolean firstToken = true;
+		String token = null;
 		
-		
+		while(st.hasMoreTokens()) {
+			token = st.nextToken();
+			if (firstToken) {
+				command = token;
+				firstToken = false;
+			}
+			cmdList.add(token);
+		}
 	}
 	
-	public String getCmdLine() {
-		return cmdLine;
-	}
-	public void setCmdLine(String cmdLine) {
-		this.cmdLine = cmdLine;
-	}
-	public HashMap<String, String> getParas() {
-		return paras;
-	}
-	public void setParas(HashMap<String, String> paras) {
-		this.paras = paras;
-	}
-	public long getLaunchTime() {
-		return launchTime;
-	}
-	public void setLaunchTime(long launchTime) {
-		this.launchTime = launchTime;
-	}
-	public CMD_GROUP getCmdGroup() {
+	public CMD_GROUP getCmdGroup() 
+	{
 		return cmdGroup;
 	}
-	public void setCmdGroup(CMD_GROUP cmdGroup) {
-		this.cmdGroup = cmdGroup;
+	
+	public void toPrint()
+	{
+		System.out.println("Key = " + command);
+		for(int i = 0; i < cmdList.size(); i++)
+			System.out.println("\t cmd: " + cmdList.get(i));
 	}
-	public CmdList getCmd() {
-		return cmd;
+	
+	public boolean contains(String aCmd)
+	{
+		return cmdList.contains(aCmd); 
 	}
-	public void setCmd(CmdList cmd) {
-		this.cmd = cmd;
-	}
-	public String getSourceIp() {
-		return sourceIp;
-	}
-	public void setSourceIp(String sourceIp) {
-		this.sourceIp = sourceIp;
-	}
-	public uiType getUi() {
-		return ui;
-	}
-	public void setUi(uiType ui) {
-		this.ui = ui;
-	}
-
-
-
-	private String cmdLine;
-	private HashMap<String,String> paras;
-	private long launchTime;
-	private CMD_GROUP cmdGroup;
-	private CmdList cmd;
-	private String sourceIp;
-	private uiType ui;
 	
 	
+	public String getCommand()
+	{
+		return command;
+	}
+	
+	public static Command getCommand(CMD_GROUP cmdGroup, String aCmdLine) 
+	{
+		StringTokenizer st = new StringTokenizer(aCmdLine);
+		String aCmd = st.nextToken().trim();
+    	if (cmdGroup==null){
+            for (Command cmd : Command.values()){
+            	if (cmd.contains(aCmd)) return cmd;
+            }
+    	}
+        for (Command cmd : Command.values()){
+        	if (cmd.getCmdGroup().equals(cmdGroup)&cmd.contains(aCmd)) return cmd;
+        }
+        return Command.NOT_DEFINED;
+ 	}
+	
+	/**
+	 *This is enum of CMD_GROUP, all the command groups are defined here.  
+	 *
+	 */
+	public enum CMD_GROUP {
+		VCLMAN,
+		VMMAN,
+		CLOUDMAN,
+		PLUGMAN,		
+		NOT_DEFINED;
+		
+		
+	}
 	
 }

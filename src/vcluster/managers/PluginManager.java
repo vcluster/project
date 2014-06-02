@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.TreeMap;
 
 import vcluster.elements.Plugin;
+import vcluster.executors.CmdCataloger;
 import vcluster.plugInterfaces.BatchInterface;
 import vcluster.plugInterfaces.CloudInterface;
 import vcluster.plugInterfaces.LoadBalancer;
-import vcluster.ui.CmdList;
+import vcluster.ui.CmdSet;
+import vcluster.ui.Command;
 import vcluster.util.HandleXML;
 
 /**
@@ -40,8 +42,11 @@ public class PluginManager {
 		cl = new CustomClassLoader();
 		pluginList = new TreeMap<String,Plugin>();
 		getCloudPluginList();
-		getBatchPluginList();	
+		List<String> btl = getBatchPluginList();	
 		getBalancerPluginList();
+		String batchplugin = btl.get(0);
+		CmdSet cmd = new CmdSet("plugman load -b "+batchplugin);
+		CmdCataloger.execute(cmd);
 	}
 
 	/**
@@ -52,9 +57,9 @@ public class PluginManager {
 	public static void LoadPlugin(String path,String type) throws ClassNotFoundException {
 		File f = new File(path);
 		String name = f.getName().replace(".jar", "");		
-		//vcluster.util.Util.print(path);
+		//System.out.println(path);
 		if (isLoaded(name)) {
-				vcluster.util.Util.print(name + " : has already been loaded!");
+				System.out.println(name + " : has already been loaded!");
 				return;
 			}
 			Class<?> plugin = cl.loadClass(path);
@@ -230,13 +235,13 @@ public class PluginManager {
 			BufferedReader br = new BufferedReader(new FileReader(new File(path+File.separator+pluginName+"Readme.txt")));
 			String aLine = "";
 			while ((aLine = br.readLine()) != null) {				
-				vcluster.util.Util.print(aLine);
+				System.out.println(aLine);
 			}
 			br.close();
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			vcluster.util.Util.print("Readme file doesn't exist ,please check it on the plugin directory!");
+			System.out.println("Readme file doesn't exist ,please check it on the plugin directory!");
 		}
 		
 		return info.toString();

@@ -11,6 +11,7 @@ import vcluster.managers.CloudManager;
 import vcluster.managers.PluginManager;
 import vcluster.managers.VmManager;
 import vcluster.plugInterfaces.CloudInterface;
+import vcluster.ui.CmdSet;
 
 
 /**
@@ -54,14 +55,14 @@ public class Cloud{
 				setCloudpluginName(aValue);
 				cp = (CloudInterface)PluginManager.pluginList.get(cloudpluginName).getInstance();
 			}else if((aKey.equalsIgnoreCase("Name"))){
-				//vcluster.util.Util.print("name");
+				//System.out.println("name");
 				setCloudName(aValue);
-			//	vcluster.util.Util.print(aValue);
+			//	System.out.println(aValue);
 			}else if(aKey.equalsIgnoreCase("hosts")){
-			//	vcluster.util.Util.print(aValue);
+			//	System.out.println(aValue);
 				hostList = new TreeMap<String,Host> ();
 				String [] hostlist = aValue.split(",");
-				//vcluster.util.Util.print("host");
+				//System.out.println("host");
 				for(int i = 0 ; i<hostlist.length;i++){
 					String [] hostStr = hostlist[i].split("/");
 					String hostname = hostStr[0];
@@ -69,7 +70,7 @@ public class Cloud{
 					String ipmiID = hostStr[2];
 					Host host = new Host(Integer.parseInt(MaxVMNum),hostname,this.cloudName);
 					host.setIpmiID(ipmiID);
-					//vcluster.util.Util.print(host.getId()+ i + "");
+					//System.out.println(host.getId()+ i + "");
 					hostList.put(hostname,host);
 				}
 			}
@@ -88,7 +89,7 @@ public class Cloud{
 		if(cloudName==null||cloudType==null||cloudpluginName==null){
 			return null;
 		}
-		if(!PluginManager.isLoaded(cloudpluginName))PlugmanExecutor.load("load -c "+cloudpluginName);		
+		if(!PluginManager.isLoaded(cloudpluginName))PlugmanExecutor.load(new CmdSet("plugman load -c "+cloudpluginName));		
 		cp = (CloudInterface)PluginManager.pluginList.get(cloudpluginName).getInstance();
 		this.listVMs();
 		if(getVmList()==null)return null;
@@ -105,7 +106,7 @@ public class Cloud{
 		String fVMs = String.format("%-16s", vmList.size());
 		str.append(fName+fInterface+fType+fVMs);
 		//HandleXML.setCloudAttribute(cloudName,"isLoaded", "true");
-		vcluster.util.Util.print(str);
+		System.out.println(str);
 		return str.toString();
 	}
 	
@@ -139,7 +140,7 @@ public class Cloud{
 
 	public void dump(){
 		for(String aLine : conf){
-			vcluster.util.Util.print(aLine);
+			System.out.println(aLine);
 		}
 	}
 
@@ -182,7 +183,7 @@ public class Cloud{
 		}else{
 			str.append(maxCount +" virture machines have been created successfully"+System.getProperty("line.separator"));
 		}
-		vcluster.util.Util.print(str);
+		System.out.println(str);
 		return str.toString();
 	}
 
@@ -234,12 +235,12 @@ public class Cloud{
 		ArrayList<Vm> vmlist = cp.startVM(id);
 		
 		if(vmlist==null || vmlist.isEmpty()){
-			vcluster.util.Util.print("Operation failed!");
+			System.out.println("Operation failed!");
 			return false;
 		}
 		for(Vm vm : vmlist){
 			vmList.get(vm.getId()).setState(vm.getState());
-			vcluster.util.Util.print(cloudName+"   "+vm.getId()+"   "+vm.getState());
+			System.out.println(cloudName+"   "+vm.getId()+"   "+vm.getState());
 		}
 		return true;
 	}
@@ -255,12 +256,12 @@ public class Cloud{
 		cp.RegisterCloud(conf);
 		ArrayList<Vm> vmlist = cp.suspendVM(id);
 		if(vmlist==null || vmlist.isEmpty()){
-			vcluster.util.Util.print("Operation failed!");
+			System.out.println("Operation failed!");
 			return false;
 		}
 		for(Vm vm : vmlist){
 			vmList.get(vm.getId()).setState(vm.getState());
-			vcluster.util.Util.print(cloudName+"   "+vm.getId()+"   "+vm.getState());
+			System.out.println(cloudName+"   "+vm.getId()+"   "+vm.getState());
 		}
 		 return true;
 	}
@@ -289,7 +290,7 @@ public class Cloud{
 		else if (type.equalsIgnoreCase("public")) 
 			cloudType = CloudType.PUBLIC;
 		else {
-			vcluster.util.Util.print("undefined type, "+type+", found");
+			System.out.println("undefined type, "+type+", found");
 			cloudType = CloudType.NOT_DEFINED;
 		}
 		
@@ -417,7 +418,7 @@ public class Cloud{
 	public String migrate(String vmID,String hostid) {
 		// TODO Auto-generated method stub
 	/*	if(!vmList.keySet().contains(vmID)||!hostList.keySet().contains(hostid)){
-			vcluster.util.Util.print("This virtual machine or host does not exist!");
+			System.out.println("This virtual machine or host does not exist!");
 			return false;
 		}*/
 		String str="";
@@ -436,11 +437,11 @@ public class Cloud{
 		// TODO Auto-generated method stub
 		Host host = hostList.get(hostID);
 		if(host.getPowerStat()==0){
-			vcluster.util.Util.print("Host current status is power off!!");
+			System.out.println("Host current status is power off!!");
 			return false;
 		}
 		if(!host.getVmList().isEmpty()){
-			vcluster.util.Util.print("Host still has vms is running,cannot be shutted down!");
+			System.out.println("Host still has vms is running,cannot be shutted down!");
 			return false;
 		}
 		cp.RegisterCloud(conf);
@@ -457,7 +458,7 @@ public class Cloud{
 		// TODO Auto-generated method stub
 		Host host = hostList.get(hostID);
 		if(host.getPowerStat()==1){
-			vcluster.util.Util.print("Host current status is power on!!");
+			System.out.println("Host current status is power on!!");
 			return false;
 		}
 		
@@ -482,7 +483,7 @@ public class Cloud{
 		}else if(cloudName.equalsIgnoreCase("amazon")){
 			
 			String ip = slotName.replace(".amaz", "").replaceAll("-", ".");
-			vcluster.util.Util.print(ip);
+			System.out.println(ip);
 			for(Vm vm : vmList.values()){
 				if(vm.getPrivateIP().equalsIgnoreCase(ip)){
 					vmId = vm.getId();

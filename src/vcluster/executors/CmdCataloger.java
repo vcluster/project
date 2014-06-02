@@ -1,9 +1,14 @@
 package vcluster.executors;
 
 import java.util.StringTokenizer;
+
+import vcluster.Vcluster.uiType;
+import vcluster.elements.PoolStatus;
+import vcluster.elements.QStatus;
 import vcluster.managers.PluginManager;
 import vcluster.managers.VmManager;
-import vcluster.ui.CmdList;
+import vcluster.ui.CmdSet;
+import vcluster.ui.Command;
 
 /**
  * @author Seo-Young Noh, Modified by Dada Huang
@@ -14,87 +19,69 @@ import vcluster.ui.CmdList;
 public class CmdCataloger {
 
 	
-	public static Object execute(String cmdLine)
+	public static Object execute(CmdSet cmd)
 	{
-		StringTokenizer st = new StringTokenizer(cmdLine);
-		
-		String cmd = st.nextToken().trim();
-		
-		CmdList cmdList = getCommand(null,cmd);
-				
-		switch(cmdList.getCmdGroup()){
-		case VCLMAN:return executeVCLMAN(cmdList, cmdLine);
-		default:
-			break;
-		}
-
-		switch (cmdList) {
-		case VMMAN: return executeVMMAN(cmdLine);
-		case CLOUDMAN: return executeCLOUDMAN(cmdLine);
-		case PLUGMAN: return executePLUGMAN(cmdLine);		
-		case NOT_DEFINED: return null;
+		switch (cmd.getCmdGroup()) {
+		case VMMAN: return executeVMMAN(cmd);
+		case CLOUDMAN: return executeCLOUDMAN(cmd);
+		case PLUGMAN: return executePLUGMAN(cmd);
+		case VCLMAN: return executeVCLMAN(cmd);
 		default:
 			break;
 		}		
 		return "";
 	}
 	
-	private static Object executeCLOUDMAN(String cmdLine) {
+	private static Object executeCLOUDMAN(CmdSet cmd) {
 		// TODO Auto-generated method stub
-		StringTokenizer st = new StringTokenizer(cmdLine);
-		String cmdg= st.nextToken().trim();		
-		String cmd = st.nextToken().trim();
-		CmdList cmdList = getCommand(CmdList.CMD_GROUP.CLOUDMAN.toString(),cmd);
-		cmdLine = cmdLine.replace(cmdg, "").trim();
-		switch (cmdList) {
+	switch (cmd.getCmd()) {
 		case REGISTER:
-			return CloudmanExecutor.register(cmdLine); 
+			return CloudmanExecutor.register(cmd); 
 		case LOADCLOUD:
-			return CloudmanExecutor.load(cmdLine);
+			return CloudmanExecutor.load(cmd);
 		case LISTCLOUD:
 			return CloudmanExecutor.getCloudList();
 		case UNLOADCLOUD:
-			return CloudmanExecutor.unload(cmdLine);	
+			return CloudmanExecutor.unload(cmd);	
 		case HOSTON:
-			return CloudmanExecutor.hoston(cmdLine);
+			return CloudmanExecutor.hoston(cmd);
 		case HOSTOFF:
-			return CloudmanExecutor.hostoff(cmdLine);	
+			return CloudmanExecutor.hostoff(cmd);	
 		default:
-			return CloudmanExecutor.undefined(cmdLine);					
+			return CloudmanExecutor.undefined(cmd);					
 		}		
 	}
 
-	private static boolean executePLUGMAN(String cmdLine) {
-		cmdLine = cmdLine.replace("plugman ", "");
-		StringTokenizer st = new StringTokenizer(cmdLine);
-		String cmd = st.nextToken().trim();
-		//vcluster.util.Util.print(cmdLine);
-		CmdList cmdList = getCommand(CmdList.CMD_GROUP.PLUGMAN.toString(),cmd);
+	private static boolean executePLUGMAN(CmdSet cmd) {
 		
-		switch (cmdList) {
+		switch (cmd.getCmd()) {
 		case LOAD:
-			return PlugmanExecutor.load(cmdLine); 
+			return PlugmanExecutor.load(cmd); 
 		case UNLOAD:
-			return PlugmanExecutor.unload(cmdLine);
+			return PlugmanExecutor.unload(cmd);
 		case INFO:
-			return PlugmanExecutor.getInfo(cmdLine);
+			return PlugmanExecutor.getInfo(cmd);
 		case LIST:
-			return PlugmanExecutor.list(cmdLine);
+			return PlugmanExecutor.list(cmd);
 		default:
-			return PlugmanExecutor.undefined(cmdLine);					
+			return PlugmanExecutor.undefined(cmd);					
 		}
 
 	}
 
-	private static Object executeVCLMAN(CmdList cmdList, String cmdLine)
+	private static Object executeVCLMAN(CmdSet cmd)
 	{
 		
-		switch (cmdList) {
+		switch (cmd.getCmd()) {
 		
 		case CHECK_P: 			
-			return BatchExecutor.getPoolStatus();		
+			PoolStatus pstat =  BatchExecutor.getPoolStatus();	
+			if(cmd.getUi().equals(uiType.CMDLINE))pstat.printPoolStatus();
+			return pstat;
 		case CHECK_Q: 			
-	    	return PluginManager.current_proxyExecutor.getQStatus();
+	    	QStatus qstat =  PluginManager.current_proxyExecutor.getQStatus();
+	    	if(cmd.getUi().equals(uiType.CMDLINE))qstat.printQStatus();
+	    	return qstat;
 		default:
 			break;		
 			
@@ -103,23 +90,19 @@ public class CmdCataloger {
 		return null;
 	}
 	
-	private static String executeVMMAN(String cmdLine)
+	private static String executeVMMAN(CmdSet cmd)
 	{		
-		cmdLine = cmdLine.replace("vmman ", "");
-		StringTokenizer st = new StringTokenizer(cmdLine);
-		String cmd = st.nextToken().trim();
-		CmdList cmdList = getCommand(CmdList.CMD_GROUP.VMMAN.toString(),cmd);
 		
-		switch (cmdList) {
-		case SHOW: return VmManager.showVM(cmdLine);
-		case CREATE: return VmManager.createVM(cmdLine);
-		case LISTVM: return VmManager.listVM(cmdLine);
-		case DESTROY: return VmManager.destroyVM(cmdLine);
-		case SUSPEND: return VmManager.suspendVM(cmdLine);
-		case START: return VmManager.startVM(cmdLine);
+		switch (cmd.getCmd()) {
+		case SHOW: return VmManager.showVM(cmd);
+		case CREATE: return VmManager.createVM(cmd);
+		case LISTVM: return VmManager.listVM(cmd);
+		case DESTROY: return VmManager.destroyVM(cmd);
+		case SUSPEND: return VmManager.suspendVM(cmd);
+		case START: return VmManager.startVM(cmd);
 		case MIGRATE:
-			return VmManager.migrate(cmdLine);
-		default:vcluster.util.Util.print("command is not defined"); 
+			return VmManager.migrate(cmd);
+		default:System.out.println("command is not defined"); 
 			break;
 		}
 		

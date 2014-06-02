@@ -5,9 +5,11 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import vcluster.Vcluster;
+import vcluster.Vcluster.uiType;
 import vcluster.elements.Cloud;
 import vcluster.elements.Vm;
-import vcluster.ui.CmdList;
+import vcluster.ui.CmdSet;
+import vcluster.ui.Command;
 
 /**
  *A class representing the virtual machine manager. 
@@ -44,85 +46,80 @@ public class VmManager extends Thread {
 	/**
 	 * Create certain number of virtual machines on specific cloud by following the command line
 	 * @param cmdLine, the string of command line,
-	 * @see CmdList
+	 * @see Command
 	 * 
 	 */
-	public static String createVM(String cmdLine) {
+	public static String createVM(CmdSet cmd) {
 		// TODO Auto-generated method stub
 		StringBuffer strBuff = new StringBuffer();
 		Cloud currCloud = CloudManager.getCurrentCloud();
 		int vms = 1;
-		String [] str = cmdLine.split(" ");
-		ArrayList<String> cmdList = new ArrayList<String>();
-		for(String s : str){
-			cmdList.add(s);
-			//vcluster.util.Util.print(s);
-		}
-		if(cmdList.size()>1&&cmdList.get(1).equalsIgnoreCase("--help")){
+		ArrayList<String> cmdList = cmd.getParaset();
+
+		if(cmd.getParaset().contains("-h")){
 			strBuff.append("[USAGE : ]"+System.getProperty("line.separator"));
 			strBuff.append("vmman"+System.getProperty("line.separator"));
 			strBuff.append("    create"+System.getProperty("line.separator"));
 			strBuff.append("        [ --help] | "+System.getProperty("line.separator"));
 			strBuff.append("        [ -n NUM_VMS | --num=NUM_VMS ] | "+System.getProperty("line.separator"));
 			strBuff.append("        [ -c CLOUDNAME | --name=CLOUDNAME]"+System.getProperty("line.separator"));	
-			vcluster.util.Util.print(strBuff);
+			if(cmd.getUi().equals(uiType.CMDLINE))System.out.println(strBuff);
 			return strBuff.toString();
 		}
-		if(cmdList.size()==1){
+		if(cmdList.size()==0){
 			cmdList.add("-c");
 			cmdList.add(currCloud.getCloudName());
 			cmdList.add("-n");
 			cmdList.add("1");
 		}
-		if(!cmdList.get(1).equals("-c")){
-			cmdList.add(1,"-c");
-			cmdList.add(2,currCloud.getCloudName());
+		if(!cmdList.get(0).equals("-c")){
+			cmdList.add(0,"-c");
+			cmdList.add(1,currCloud.getCloudName());
 		}
 
-		if(cmdList.size()<4||!cmdList.get(3).equalsIgnoreCase("-n")){
-			cmdList.add(3, "-n");
-			cmdList.add(4, "1");
+		if(cmdList.size()<4||!cmdList.get(2).equalsIgnoreCase("-n")){
+			cmdList.add(2, "-n");
+			cmdList.add(3, "1");
 		}
-		if(cmdList.size()<6 || !cmdList.get(5).equalsIgnoreCase("-h")){
-			cmdList.add(5, "-h");
-			cmdList.add(6, "host1");
+		if(cmdList.size()<6 || !cmdList.get(4).equalsIgnoreCase("-h")){
+			cmdList.add(4, "-h");
+			cmdList.add(5, "host1");
 		}
 		
-		vcluster.util.Util.print("");
-		currCloud = CloudManager.getCloudList().get(cmdList.get(2));
+		System.out.println("");
+		currCloud = CloudManager.getCloudList().get(cmdList.get(1));
 		if(currCloud==null){
 			strBuff.append("[ERROR : ] Cloud doesn't exist! please check the cloud name..."+System.getProperty("line.separator"));
-			vcluster.util.Util.print(strBuff);
+			if(cmd.getUi().equals(uiType.CMDLINE))System.out.println(strBuff);
 			return strBuff.toString();
 		}
-		vms = Integer.parseInt(cmdList.get(4));
-			return currCloud.createVM(vms,cmdList.get(6));
+		vms = Integer.parseInt(cmdList.get(3));
+		String result = currCloud.createVM(vms,cmdList.get(5));
+		if(cmd.getUi().equals(uiType.CMDLINE))System.out.println(result);
+			return result;
 
 	}
 
 	/**
 	 * List up the virtual machines by following the command line
 	 * @param cmdLine, the string of command line
-	 * @see CmdList
+	 * @see Command
 	 */
-	public static String listVM(String cmdLine) {
-		// TODO Auto-generated method stu
+	public static String listVM(CmdSet cmd) {
+		// TODO Auto-generated method
 		StringBuffer str = new StringBuffer();
 		String filter ="";
 		String cloudFilter="";
-		StringTokenizer st = new StringTokenizer(cmdLine);		
-		st.nextToken();
-//		if(!st.hasMoreTokens()){vcluster.util.Util.print("[ERROR : ] Expected a VM ID");			return false;}
-		if( st.hasMoreTokens()){
-			String tmp = st.nextToken();
+		if( cmd.getParaset().size()>0){
+			String tmp = cmd.getParaset().get(0);
 			TreeMap<String,Cloud> cc = new TreeMap<String,Cloud>();			
 			if(tmp.equalsIgnoreCase("-refresh")){
 				String name="";
-				if(st.hasMoreTokens()){
-					name = st.nextToken();
+				if(cmd.getParaset().size()>1){
+					name = cmd.getParaset().get(1);
 					if(!CloudManager.getCloudList().keySet().contains(name)){
 						str.append("[ERROR : ] "+ name+ " has not been loaded!"+System.getProperty("line.separator"));
-						vcluster.util.Util.print(str);
+						System.out.println(str);
 						return str.toString();						
 					}
 					cc.put(name, CloudManager.getCloudList().get(name));
@@ -190,11 +187,11 @@ public class VmManager extends Thread {
 			}else if(tmp.equalsIgnoreCase("-s")||tmp.equalsIgnoreCase("--type=suspended")){
 				filter="SUSPEND";
 			}else if(tmp.equalsIgnoreCase("-n")){
-				if(st.hasMoreTokens()){
-					cloudFilter = st.nextToken();
+				if(cmd.getParaset().size()>1){
+					cloudFilter = cmd.getParaset().get(1);
 				}else{
 					str.append("[ERROR : ] Expected a cloud name!"+System.getProperty("line.separator"));
-					vcluster.util.Util.print(str);
+					System.out.println(str);
 					return str.toString();
 				}
 			}
@@ -261,44 +258,36 @@ public class VmManager extends Thread {
 			str.append(line+System.getProperty("line.separator"));
 			str.append("      Running VMs :  "+runNum+"/"+totalNum+System.getProperty("line.separator"));
 			str.append(line+System.getProperty("line.separator"));
-			vcluster.util.Util.print(str);
+			if(cmd.getUi().equals(uiType.CMDLINE))System.out.println(str);
 		return str.toString();
 	}
 
 	/**
 	 * Show the virtual machine's information in detail,such as ID, public IP, private IP, launch time, etc.
 	 * @param cmdLine, the command line string.
-	 * @see CmdList
+	 * @see Command
 	 */
-	public static String showVM(String cmdLine) {
+	public static String showVM(CmdSet cmd) {
 		// TODO Auto-generated method stub
-		StringBuffer str = new StringBuffer();
-		StringTokenizer st = new StringTokenizer(cmdLine);		
+			
 		String vmID = "";
 		Integer vID;
-		st.nextToken();
-		if(!st.hasMoreTokens()){
-			str.append("[USAGE : ]"+System.getProperty("line.separator"));
-			str.append("vmman"+System.getProperty("line.separator"));
-			str.append("    show VM_ID"+System.getProperty("line.separator"));
-			str.append("        [ --help] |-h "+System.getProperty("line.separator"));
-			vcluster.util.Util.print(str);
-			return str.toString();
-		}
-
-		if(!st.hasMoreTokens()){
+		ArrayList<String> paras = cmd.getParaset();
+		StringBuffer str = new StringBuffer();
+		
+		if(paras.size()==0){
 				str.append("[ERROR : ] Expected a VM ID");
-				vcluster.util.Util.print(str);
+				System.out.println(str);
 				return str.toString();
 			}
-		String tmp = st.nextToken();
+		String tmp = paras.get(0);
 		
 		if(tmp.equalsIgnoreCase("-h")||tmp.equalsIgnoreCase("--help")){
 			str.append("[USAGE : ]");
 			str.append("vmman");
 			str.append("    show VM_ID");
 			str.append("        [ --help] |-h ");
-			vcluster.util.Util.print(str);
+			System.out.println(str);
 			return str.toString();
 		}else{
 			vmID = tmp;
@@ -306,13 +295,13 @@ public class VmManager extends Thread {
 				vID =new Integer(vmID);
 			}catch (NumberFormatException e){
 				str.append("[ERROR : ] VM ID has to be a number!");
-				vcluster.util.Util.print(str);
+				System.out.println(str);
 				return str.toString();
 			}
 			if(!vmList.keySet().contains(vID)){
 				
 				str.append("[ERROR : ] VM ID doesn't exist!");
-				vcluster.util.Util.print(str);
+				System.out.println(str);
 				return str.toString();
 			}
 
@@ -347,40 +336,39 @@ public class VmManager extends Thread {
 		str.append(tlauTime+" : "+flauTime+System.getProperty("line.separator"));
 		str.append("---------------------------------------"+System.getProperty("line.separator"));
 		
-		vcluster.util.Util.print(str);
+		if(cmd.getUi().equals(uiType.CMDLINE))System.out.println(str);
 		return str.toString();
 	}
 
 	/**
 	 * Terminate the given virtual machine by following the command line.
 	 * @param cmdLine, the string of command line
-	 * @see CmdList
+	 * @see Command
 	 */
-	public static String destroyVM(String cmdLine) {
+	public static String destroyVM(CmdSet cmd) {
 		// TODO Auto-generated method stub
 		StringBuffer str = new StringBuffer();
-		StringTokenizer st = new StringTokenizer(cmdLine);		
-		String cloudName = "";
+		
 		String vmID = "";
 		Integer vID;
-		st.nextToken();
-		if(!st.hasMoreTokens()){
+		
+		if(cmd.getParaset().size()==0){
 			str.append("[USAGE : ]");
 			str.append("vmman");
 			str.append("    destroy VM_ID");
 			str.append("        [ --help] |-h ");
-			vcluster.util.Util.print(str);
+			if(cmd.getUi().equals(uiType.CMDLINE))System.out.println(str);
 			return str.toString();
 		}
-		if(!st.hasMoreTokens()){str.append("[ERROR : ] Expected a VM ID");	vcluster.util.Util.print(str);		return str.toString();}
-		String tmp = st.nextToken();
+		
+		String tmp = cmd.getParaset().get(0);
 		
 		if(tmp.equalsIgnoreCase("-h")||tmp.equalsIgnoreCase("--help")){
 			str.append("[USAGE : ]");
 			str.append("vmman");
 			str.append("    destroy VM_ID");
 			str.append("        [ --help] |-h ");
-			vcluster.util.Util.print(str);
+			System.out.println(str);
 			return str.toString();
 		}else{
 			vmID = tmp;
@@ -392,12 +380,12 @@ public class VmManager extends Thread {
 			}
 			if(!vmList.keySet().contains(vID)){
 				str.append("[ERROR : ] VM ID doesn't exist!");
-				vcluster.util.Util.print(str);
+				System.out.println(str);
 				return str.toString();
 			}
 
 		}
-		cloudName = vmList.get(vID).getCloudName();
+		String cloudName = vmList.get(vID).getCloudName();
 		String inId = vmList.get(vID).getId();
 		Cloud cloud = CloudManager.getCloudList().get(cloudName);
 		cloud.destroyVM(inId);
@@ -409,33 +397,31 @@ public class VmManager extends Thread {
 	/**
 	 * Suspend the given virtual machine by following the command line.the virtual machine's original status must be running.
 	 * @param cmdLine, the string of command line
-	 * @see CmdList
+	 * @see Command
 	 */
-	public static String suspendVM(String cmdLine) {
+	public static String suspendVM(CmdSet cmd) {
 		// TODO Auto-generated method stub
-		StringBuffer str = new StringBuffer();
-		StringTokenizer st = new StringTokenizer(cmdLine);		
+		StringBuffer str = new StringBuffer();	
 		String cloudName = "";
 		String vmID = "";
-		st.nextToken();
-		if(!st.hasMoreTokens()){
+		if(cmd.getParaset().size()==0){
 			str.append("[USAGE : ]"+System.getProperty("line.separator"));
 			str.append("vmman"+System.getProperty("line.separator"));
 			str.append("    suspend VM_ID"+System.getProperty("line.separator"));
 			str.append("        [ --help] |-h "+System.getProperty("line.separator"));
-			vcluster.util.Util.print(str);
+			System.out.println(str);
 			return str.toString();
 		}
 		Integer vID;
-		if(!st.hasMoreTokens()){str.append("[ERROR : ] Expected a VM ID");	vcluster.util.Util.print(str);		return str.toString();}
-		String tmp = st.nextToken();
+		
+		String tmp = cmd.getParaset().get(0);
 		
 		if(tmp.equalsIgnoreCase("-h")||tmp.equalsIgnoreCase("--help")){
 			str.append("[USAGE : ]"+System.getProperty("line.separator"));
 			str.append("vmman"+System.getProperty("line.separator"));
 			str.append("    suspend VM_ID"+System.getProperty("line.separator"));
 			str.append("        [ --help] |-h "+System.getProperty("line.separator"));
-			vcluster.util.Util.print(str);
+			System.out.println(str);
 			return str.toString();
 		}else{
 			vmID = tmp;
@@ -443,12 +429,12 @@ public class VmManager extends Thread {
 				vID =new Integer(vmID);
 			}catch (NumberFormatException e){
 				str.append("[ERROR : ] VM ID has to be a number!");
-				vcluster.util.Util.print(str);
+				System.out.println(str);
 				return str.toString();
 			}
 			if(!vmList.keySet().contains(vID)){
 				str.append("[ERROR : ] VM ID doesn't exist!");
-				vcluster.util.Util.print(str);
+				System.out.println(str);
 				return str.toString();
 			}
 
@@ -457,7 +443,7 @@ public class VmManager extends Thread {
 		String inId = vmList.get(vID).getId();
 		Cloud cloud = CloudManager.getCloudList().get(cloudName);
 		cloud.suspendVM(inId);
-		
+		if(cmd.getUi().equals(uiType.CMDLINE))System.out.println(str);
 		return str.toString();
 	}
 
@@ -465,33 +451,32 @@ public class VmManager extends Thread {
 	/**
 	 * Start the given suspended virtual machine.
 	 * @param cmdLine, the string of command line.
-	 * @see CmdList
+	 * @see Command
 	 */
-	public static String startVM(String cmdLine) {
+	public static String startVM(CmdSet cmd) {
 		// TODO Auto-generated method stub
-		StringBuffer str = new StringBuffer();
-		StringTokenizer st = new StringTokenizer(cmdLine);		
+		StringBuffer str = new StringBuffer();	
 		String cloudName = "";
 		String vmID = "";
-		st.nextToken();
-		if(!st.hasMoreTokens()){
+	
+		if(cmd.getParaset().size()==0){
 			str.append("[USAGE : ]"+System.getProperty("line.separator"));
 			str.append("vmman"+System.getProperty("line.separator"));
 			str.append("    start VM_ID"+System.getProperty("line.separator"));
 			str.append("        [ --help] |-h "+System.getProperty("line.separator"));
-			vcluster.util.Util.print(str);
+			System.out.println(str);
 			return str.toString();
 		}
 		Integer vID;
-		if(!st.hasMoreTokens()){str.append("[ERROR : ] Expected a VM ID");vcluster.util.Util.print(str);			return str.toString();}
-		String tmp = st.nextToken();
+		
+		String tmp = cmd.getParaset().get(0);
 		
 		if(tmp.equalsIgnoreCase("-h")||tmp.equalsIgnoreCase("--help")){
 			str.append("[USAGE : ]"+System.getProperty("line.separator"));
 			str.append("vmman"+System.getProperty("line.separator"));
 			str.append("    start VM_ID"+System.getProperty("line.separator"));
 			str.append("        [ --help] |-h "+System.getProperty("line.separator"));
-			vcluster.util.Util.print(str);
+			System.out.println(str);
 			return str.toString();
 		}else{
 			vmID = tmp;
@@ -499,12 +484,12 @@ public class VmManager extends Thread {
 				vID =new Integer(vmID);
 			}catch (NumberFormatException e){
 				str.append("[ERROR : ] VM ID has to be a number!");
-				vcluster.util.Util.print(str);
+				System.out.println(str);
 				return str.toString();
 			}
 			if(!vmList.keySet().contains(vID)){
 				str.append("[ERROR : ] VM ID doesn't exist!");
-				vcluster.util.Util.print(str);
+				System.out.println(str);
 				return str.toString();
 			}
 
@@ -539,29 +524,27 @@ public class VmManager extends Thread {
 	 *Migrate a given virtual machine to a specific host by following the command line
 	 *@param cmdLine, the string of command line. 
 	 */
-	public static String migrate(String cmdLine) {
+	public static String migrate(CmdSet cmd) {
 		// TODO Auto-generated method stub
 		StringBuffer  str = new StringBuffer();
-		StringTokenizer st = new StringTokenizer(cmdLine);
-		st.nextToken();
-		if (!st.hasMoreTokens()) {
+		if (cmd.getParaset().size()==0) {
 			str.append("[ERROR : ] Expect a cloud name!");
-			vcluster.util.Util.print(str);
+			System.out.println(str);
 			return str.toString();
 		}
-		String cloudname = st.nextToken().trim();
-		if (!st.hasMoreTokens()) {
+		String cloudname = cmd.getParaset().get(0).trim();
+		if (cmd.getParaset().size()<2) {
 			str.append("[ERROR : ] Expect the source VM id!");
-			vcluster.util.Util.print(str);
+			System.out.println(str);
 			return str.toString();
 		}
-		String vmID = st.nextToken().trim();
-		if (!st.hasMoreTokens()) {
+		String vmID = cmd.getParaset().get(1);
+		if (cmd.getParaset().size()<3) {
 			str.append("[ERROR : ] Expect a target host id!");
-			vcluster.util.Util.print(str);
+			System.out.println(str);
 			return str.toString();
 		}
-		String hostID = st.nextToken().trim();
+		String hostID =cmd.getParaset().get(2);
 		
 		
 		Cloud cloud = CloudManager.getCloudList().get(cloudname);
@@ -572,19 +555,20 @@ public class VmManager extends Thread {
 			vID =new Integer(vmID);
 		}catch (NumberFormatException e){
 			str.append("[ERROR : ] VM ID has to be a number!");
-			vcluster.util.Util.print(str);
+			System.out.println(str);
 			return str.toString();
 		}
 		if(!vmList.keySet().contains(vID)){
 			str.append("[ERROR : ] VM ID doesn't exist!");
-			vcluster.util.Util.print(str);
+			System.out.println(str);
 			return str.toString();
 		}
 
 	String inId = vmList.get(vID).getId();
 		
-		
-		return cloud.migrate(inId,hostID);
+		String result = cloud.migrate(inId, hostID);
+		if(cmd.getUi().equals(uiType.CMDLINE))System.out.println(result);
+		return result;
 	}	
 
 	public enum VMState {STOP, PENDING, RUNNING, SUSPEND, PROLOG, NOT_DEFINED, FAILED }; 

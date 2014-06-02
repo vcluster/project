@@ -6,5 +6,6 @@ public class Vcluster {
 	public static final int PORTNUM = 9734;
 	public static enum uiType {CMDLINE, REMOTECLIENT, WEBUI,LOADBALANCER};	
 	public static uiType currUI;
+	public static String xmlFile;
 	
 }

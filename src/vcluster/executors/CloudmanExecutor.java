@@ -1,10 +1,13 @@
 package vcluster.executors;
 
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
+import vcluster.Vcluster.uiType;
 import vcluster.elements.Cloud;
 import vcluster.managers.CloudManager;
+import vcluster.ui.CmdSet;
 /**
  *A class representing Cloud manager executor. Cloud-related commands would be sent to this class and the commands will be analyzed,
  *then corresponding functions will be invoked according the commands.
@@ -19,39 +22,39 @@ public class CloudmanExecutor {
 	 *step 2. invoke the corresponding function in cloud manager class and send the parameters.
 	 *@param cmdLine, the command line of register cloud from a conf file.
 	 */
-	public static String register(String cmdLine) {
+	public static String register(CmdSet cmd) {
 		// TODO Auto-generated method stub
 		StringBuffer str = new StringBuffer();
-		StringTokenizer st = new StringTokenizer(cmdLine);
-		st.nextToken();
-		String token = null;
-		if (!st.hasMoreTokens()) {
+		if (cmd.getParaset().size()==0) {
 			str.append("[USAGE] : cloudman register <cloudelement conf file>");
-			vcluster.util.Util.print(str);
+			System.out.println(str);
 			return str.toString();
 		}
-		token = st.nextToken().trim();
-		//vcluster.util.Util.print(token);
-		return CloudManager.registerCloud(token);
-
+		String confFile = cmd.getParaset().get(0);
+		//System.out.println(token);
+		String result =  CloudManager.registerCloud(confFile);
+		if(cmd.getUi().equals(uiType.CMDLINE))System.out.println(result);
+		return result;
 	}
 
 	
 	/**
 	 * Load a cloud into vcluster. command line would be analyzed and the corresponding function in cloud manager would be invoked.
 	 */
-	public static String load(String cmdLine) {
+	public static String load(CmdSet cmd) {
 		// TODO Auto-generated method stub
-		StringTokenizer st = new StringTokenizer(cmdLine);
-		String cmd = st.nextToken();
-		if (!st.hasMoreTokens()) {
-			vcluster.util.Util.print("[ERROR : ] Expect a cloud name!");
+		if (cmd.getParaset().size()==0) {
+			System.out.println("[ERROR : ] Expect a cloud name!");
 			return "[ERROR : ] Expect a cloud name!";
 		}
-		else{			
-			String [] arg = cmdLine.replace(cmd, "").trim().split(" ");	
+		else{	
+			ArrayList<String> para = cmd.getParaset();
+			int size = para.size();
+			String [] arg =(String [])para.toArray(new String[size]);	
 			
-			return CloudManager.loadCloud(arg);
+			String result =  CloudManager.loadCloud(arg);
+			if(cmd.getUi().equals(uiType.CMDLINE))System.out.println(result);
+			return result;
 		}
 	}
 
@@ -63,16 +66,14 @@ public class CloudmanExecutor {
 		return CloudManager.getCloudList();
 	}
 
-	public static boolean undefined(String cmdLine) {
+	public static boolean undefined(CmdSet cmd) {
 		// TODO Auto-generated method stub
-		StringTokenizer st = new StringTokenizer(cmdLine);
 		/* skip the command */
-		st.nextToken();
-
-		if (!st.hasMoreTokens()) {
-			vcluster.util.Util.print("[USAGE] : cloudman dump [<private | public>>]");
-			vcluster.util.Util.print("        : cloudman register <cloudelement conf file>");
-			vcluster.util.Util.print("        : cloudman set <private | public> <cloud num>");			
+		
+		if (cmd.getParaset().size()==0) {
+			System.out.println("[USAGE] : cloudman dump [<private | public>>]");
+			System.out.println("        : cloudman register <cloudelement conf file>");
+			System.out.println("        : cloudman set <private | public> <cloud num>");			
 			return false;
 		}		
 		return true;
@@ -82,17 +83,17 @@ public class CloudmanExecutor {
 	 *unload a cloud from vcluster. the cloud status would be change to "unloaded", 
 	 *and the connection between vcluster and related real cloud system would be cut off.
 	 */
-	public static boolean unload(String cmdLine) {
+	public static boolean unload(CmdSet cmd) {
 		// TODO Auto-generated method stub
-		StringTokenizer st = new StringTokenizer(cmdLine);
-		String cmd = st.nextToken();
-		if (!st.hasMoreTokens()) {
-			vcluster.util.Util.print("[ERROR : ] Expect a cloud name!");
+		
+		if (cmd.getParaset().size()==0) {
+			System.out.println("[ERROR : ] Expect a cloud name!");
 			return false;
 		}else{			
-			String [] arg = cmdLine.replace(cmd, "").trim().split(" ");	
+			String [] arg = (String[])cmd.getParaset().toArray();	
 			
-			return CloudManager.unLoadCloud(arg);
+			boolean result =  CloudManager.unLoadCloud(arg);
+			return result;
 		}
 		
 	}
@@ -100,20 +101,19 @@ public class CloudmanExecutor {
 	/**
 	 *Turn on a physical host 
 	 */
-	public static boolean hoston(String cmdLine) {
+	public static boolean hoston(CmdSet cmd) {
 		// TODO Auto-generated method stub
-		StringTokenizer st = new StringTokenizer(cmdLine);
-		st.nextToken();
-		if (!st.hasMoreTokens()) {
-			vcluster.util.Util.print("[ERROR : ] Expect a cloud name!");
+		
+		if (cmd.getParaset().size()==0) {
+			System.out.println("[ERROR : ] Expect a cloud name!");
 			return false;
 		}
-		String cloudname = st.nextToken().trim();
-		if (!st.hasMoreTokens()) {
-			vcluster.util.Util.print("[ERROR : ] Expect a host id!");
+		String cloudname = cmd.getParaset().get(0);
+		if (cmd.getParaset().size()<2) {
+			System.out.println("[ERROR : ] Expect a host id!");
 			return false;
 		}
-		String hostID = st.nextToken().trim();
+		String hostID = cmd.getParaset().get(1).trim();
 		Cloud cloud = CloudManager.getCloudList().get(cloudname);
 		
 		
@@ -124,20 +124,18 @@ public class CloudmanExecutor {
 	/**
 	 * Shut down a physical host.
 	 */
-	public static boolean hostoff(String cmdLine) {
+	public static boolean hostoff(CmdSet cmd) {
 		// TODO Auto-generated method stub
-		StringTokenizer st = new StringTokenizer(cmdLine);
-		st.nextToken();
-		if (!st.hasMoreTokens()) {
-			vcluster.util.Util.print("[ERROR : ] Expect a cloud name!");
+		if (cmd.getParaset().size()==0) {
+			System.out.println("[ERROR : ] Expect a cloud name!");
 			return false;
 		}
-		String cloudname = st.nextToken().trim();
-		if (!st.hasMoreTokens()) {
-			vcluster.util.Util.print("[ERROR : ] Expect a host id!");
+		String cloudname = cmd.getParaset().get(0).trim();
+		if (cmd.getParaset().size()<2) {
+			System.out.println("[ERROR : ] Expect a host id!");
 			return false;
 		}
-		String hostID = st.nextToken().trim();
+		String hostID = cmd.getParaset().get(1).trim();
 		
 		Cloud cloud = CloudManager.getCloudList().get(cloudname);
 		
