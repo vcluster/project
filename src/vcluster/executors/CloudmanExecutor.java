@@ -1,13 +1,12 @@
 package vcluster.executors;
 
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import vcluster.Vcluster.uiType;
 import vcluster.elements.Cloud;
 import vcluster.managers.CloudManager;
-import vcluster.ui.CmdSet;
+import vcluster.ui.CmdComb;
 /**
  *A class representing Cloud manager executor. Cloud-related commands would be sent to this class and the commands will be analyzed,
  *then corresponding functions will be invoked according the commands.
@@ -22,7 +21,7 @@ public class CloudmanExecutor {
 	 *step 2. invoke the corresponding function in cloud manager class and send the parameters.
 	 *@param cmdLine, the command line of register cloud from a conf file.
 	 */
-	public static String register(CmdSet cmd) {
+	public static String register(CmdComb cmd) {
 		// TODO Auto-generated method stub
 		StringBuffer str = new StringBuffer();
 		if (cmd.getParaset().size()==0) {
@@ -41,7 +40,7 @@ public class CloudmanExecutor {
 	/**
 	 * Load a cloud into vcluster. command line would be analyzed and the corresponding function in cloud manager would be invoked.
 	 */
-	public static String load(CmdSet cmd) {
+	public static String load(CmdComb cmd) {
 		// TODO Auto-generated method stub
 		if (cmd.getParaset().size()==0) {
 			System.out.println("[ERROR : ] Expect a cloud name!");
@@ -66,7 +65,7 @@ public class CloudmanExecutor {
 		return CloudManager.getCloudList();
 	}
 
-	public static boolean undefined(CmdSet cmd) {
+	public static boolean undefined(CmdComb cmd) {
 		// TODO Auto-generated method stub
 		/* skip the command */
 		
@@ -83,7 +82,7 @@ public class CloudmanExecutor {
 	 *unload a cloud from vcluster. the cloud status would be change to "unloaded", 
 	 *and the connection between vcluster and related real cloud system would be cut off.
 	 */
-	public static boolean unload(CmdSet cmd) {
+	public static boolean unload(CmdComb cmd) {
 		// TODO Auto-generated method stub
 		
 		if (cmd.getParaset().size()==0) {
@@ -101,7 +100,7 @@ public class CloudmanExecutor {
 	/**
 	 *Turn on a physical host 
 	 */
-	public static boolean hoston(CmdSet cmd) {
+	public static boolean hoston(CmdComb cmd) {
 		// TODO Auto-generated method stub
 		
 		if (cmd.getParaset().size()==0) {
@@ -124,7 +123,7 @@ public class CloudmanExecutor {
 	/**
 	 * Shut down a physical host.
 	 */
-	public static boolean hostoff(CmdSet cmd) {
+	public static boolean hostoff(CmdComb cmd) {
 		// TODO Auto-generated method stub
 		if (cmd.getParaset().size()==0) {
 			System.out.println("[ERROR : ] Expect a cloud name!");

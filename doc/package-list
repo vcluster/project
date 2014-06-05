@@ -1,10 +1,8 @@
-vcluster.control.batchsysman
-vcluster.control.cloudman
-vcluster.control.vmman
-vcluster.engine.groupexecutor
-vcluster.global
-vcluster.monitoring
-vcluster.plugins
-vcluster.plugins.plugman
+vcluster
+vcluster.elements
+vcluster.executors
+vcluster.managers
+vcluster.plugInterfaces
 vcluster.ui
+vcluster.ui.remote
 vcluster.util

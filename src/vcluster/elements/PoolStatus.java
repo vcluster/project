@@ -190,8 +190,7 @@ public class PoolStatus {
 		str.append("  Preempting : " + getPreemptingSlot()+System.getProperty("line.separator"));
 		str.append("    Backfill : " + getBackfillSlot()+System.getProperty("line.separator"));
 		str.append("----------------------------------------"+System.getProperty("line.separator"));
-		
-		System.out.println(str);
+	
 		return str.toString();
 	}
 

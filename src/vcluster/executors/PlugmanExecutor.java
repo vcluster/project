@@ -5,81 +5,62 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import vcluster.Vcluster.uiType;
 import vcluster.elements.Plugin;
 import vcluster.managers.PluginManager;
-import vcluster.ui.CmdSet;
-import vcluster.ui.Command;
+import vcluster.ui.CmdComb;
 /**
  * A class representing a plug-in manager executor.In this class involves the functions which are charge of manage the plug-ins.
  */
 public class PlugmanExecutor {
 
 	
-	public static boolean plugman(String cmdLine){
-		StringTokenizer st = new StringTokenizer(cmdLine);
-
-		/* skip the command */
-		st.nextToken();
-
-		if (!st.hasMoreTokens()) {
-			System.out.println(getUsage());
-	
-			return false;
-		}
-		
-		/* get a token to set */
-		String para = st.nextToken().trim();
-		
-		if(para.equalsIgnoreCase("-h")){
-			System.out.println(getUsage());
-			return false;			
-		}		
-		return false;			
-	}
 	
 	/**
 	 *List up all the plug-ins located in plug-in folder 
 	 */
-	public static boolean list(CmdSet cmd) {
+	public static String list(CmdComb cmd) {
 		// TODO Auto-generated method stub
+		StringBuffer str = new StringBuffer();
 		if(cmd.getParaset().size()>0){
 		String para2 = cmd.getParaset().get(0);
 		if(para2.equals("-b")){
 		}else if(para2.equalsIgnoreCase("-c")){
 		}else{
-			System.out.println("[ERROR : ] Wrong parameter!");
+			str.append("[ERROR : ] Wrong parameter!"+System.getProperty("line.separator"));
 		}	
 	}
 		String cName = String.format("%-20s", "Name");
 		String cStat =String.format("%-12s", "Status");
 		String cType = String.format("%-12s", "Type");
-		System.out.println("List the plugins in plugin directory :");		
-		System.out.println("----------------------------------------");
-		System.out.println(cName+cStat+cType);
-		System.out.println("----------------------------------------");		
+		str.append("List the plugins in plugin directory :"+System.getProperty("line.separator"));		
+		str.append("----------------------------------------"+System.getProperty("line.separator"));
+		str.append(cName+cStat+cType+System.getProperty("line.separator"));
+		str.append("----------------------------------------"+System.getProperty("line.separator"));		
 
 		for(Plugin plugin : PluginManager.pluginList.values()){
 			String name = String.format("%-20s", plugin.getPluginName());
 			String stat=String.format("%-12s", plugin.getPluginStatus());
 			String type=String.format("%-12s", plugin.getPluginType());
-			System.out.println(name+stat+type);
+			str.append(name+stat+type+System.getProperty("line.separator"));
 		}
-		System.out.println("----------------------------------------");
-		return true;
+		str.append("----------------------------------------"+System.getProperty("line.separator"));
+		if(cmd.getUi()==uiType.CMDLINE)System.out.println(str);
+		return str.toString();
 	}
 
 	
 	/**
 	 *Load a plug-in into vcluster runtime, the plug-in package would stay in the memory. 
 	 */
-	public static boolean load(CmdSet cmd) {
+	public static String load(CmdComb cmd) {
 		// TODO Auto-generated method stub
-		
+		StringBuffer str = new StringBuffer();
 		String pluginPath = "";
 		if(cmd.getParaset().size()==0){
-			System.out.println( "expected a plugin type!");
-			System.out.println("[USAGE] : plugman <load -pluginType pluginName>");
-			return false;
+			str.append( "expected a plugin type!"+System.getProperty("line.separator"));
+			str.append("[USAGE] : plugman <load -pluginType pluginName>"+System.getProperty("line.separator"));
+			return str.toString();
 		}
 		String pluginType = cmd.getParaset().get(0);
 		if(pluginType.equalsIgnoreCase("-b")){
@@ -101,9 +82,9 @@ public class PlugmanExecutor {
 			    pluginNames.add(cmd.getParaset().get(1));
 
 		}else{
-			System.out.println( "expected a plugin name!");
-			System.out.println("[USAGE] : plugin <register plugin_name | list>");
-			return false;
+			str.append( "expected a plugin name!"+System.getProperty("line.separator"));
+			str.append("[USAGE] : plugin <register plugin_name | list>"+System.getProperty("line.separator"));
+			return str.toString();
 		}
 	    if(pluginType.equalsIgnoreCase("-c")){		    	
 	    
@@ -115,39 +96,39 @@ public class PlugmanExecutor {
 		
 	    }
 			for(String pluginName:pluginNames){
-				//System.out.println(pluginName);
+				//str.append(pluginName);
 				if(PluginManager.pluginList.keySet().contains(pluginName)){
 
 					try {
-						//System.out.println(pluginPath + File.separator + pluginName);
+						//str.append(pluginPath + File.separator + pluginName);
 						PluginManager.LoadPlugin(pluginPath + File.separator + pluginName+".jar",pluginType);
 
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
-						System.out.println("[ERROR:] No such a plugin,please check your input!");
-						return false;
+						str.append("[ERROR:] No such a plugin,please check your input!"+System.getProperty("line.separator"));
+						return str.toString();
 					}
 					
 				}else{
-					System.out.println("[ERROR:] No such a plugin,please check your input!");
+					str.append("[ERROR:] No such a plugin,please check your input!"+System.getProperty("line.separator"));
 				}
 			}
 			
-			
-			return true;
+			if(cmd.getUi()==uiType.CMDLINE)System.out.println(str);
+			return str.toString();
 	}
 
 	/**
 	 *Unload a plug-in from vcluster, all the references to the instance of plug-in would be removed, 
 	 *the plug-in would be removed from memory by garbage collection  
 	 */
-	public static boolean unload(CmdSet cmd) {
+	public static String unload(CmdComb cmd) {
 		// TODO Auto-generated method stub
-		
+		StringBuffer str = new StringBuffer();
 		if(cmd.getParaset().size()==0){
-			System.out.println( "expected a plugin name!");
-			System.out.println("[USAGE] : plugman <unload pluginName>");
-			return false;
+			str.append( "expected a plugin name!"+System.getProperty("line.separator"));
+			str.append("[USAGE] : plugman <unload pluginName>"+System.getProperty("line.separator"));
+			return str.toString();
 		}
 		int i = 0;
 		while(i<cmd.getParaset().size()){
@@ -155,36 +136,39 @@ public class PlugmanExecutor {
 				PluginManager.UnloadPlugin(cmd.getParaset().get(i));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				System.out.println(e.getMessage());
-				return false;
+				str.append(e.getMessage()+System.getProperty("line.separator"));
+				return str.toString();
 			}
 		}
-		return true;			
+		if(cmd.getUi()==uiType.CMDLINE)System.out.println(str);
+		return str.toString();			
 	}
 
 	/**
 	 *Get the introduction of the plug-in
 	 * 
 	 */
-	public static boolean getInfo(CmdSet cmd) {
+	public static String getInfo(CmdComb cmd) {
 		// TODO Auto-generated method stub
-		
+		StringBuffer str = new StringBuffer();
 		if(cmd.getParaset().size()==0){
-			System.out.println( "expected a plugin name!");
-			System.out.println("[USAGE] : plugman <unload pluginName>");
-			return false;
+			str.append( "expected a plugin name!"+System.getProperty("line.separator"));
+			str.append("[USAGE] : plugman <unload pluginName>"+System.getProperty("line.separator"));
+			return str.toString();
 		}
 		String pluginName = cmd.getParaset().get(0);
 		
-		System.out.println(PluginManager.getInfo(pluginName));		
+		str.append(PluginManager.getInfo(pluginName)+System.getProperty("line.separator"));		
 		
-		return true;
+		return str.toString();
 	}
 	
-	public static boolean undefined(CmdSet cmd){
-		System.out.println( "no such a parameter like \""+cmd.getParaset().get(0)+"\" !");
-		System.out.println(getUsage());
-		return false;
+	public static String undefined(CmdComb cmd){
+		StringBuffer str = new StringBuffer();
+		str.append( "no such a parameter like \""+cmd.getParaset().get(0)+"\" !"+System.getProperty("line.separator"));
+		str.append(getUsage()+System.getProperty("line.separator"));
+		if(cmd.getUi()==uiType.CMDLINE)System.out.println(str);
+		return str.toString();
 		
 		
 	}

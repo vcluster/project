@@ -1,25 +1,27 @@
 package vcluster.executors;
 
-import java.util.StringTokenizer;
-
 import vcluster.Vcluster.uiType;
 import vcluster.elements.PoolStatus;
 import vcluster.elements.QStatus;
+import vcluster.managers.CloudManager;
 import vcluster.managers.PluginManager;
 import vcluster.managers.VmManager;
-import vcluster.ui.CmdSet;
-import vcluster.ui.Command;
+import vcluster.ui.CmdComb;
+import vcluster.ui.remote.CmdServer;
 
 /**
  * @author Seo-Young Noh, Modified by Dada Huang
- * This class 
+ * This class resolves the command and invoke the right function.
  * 
  */
 
 public class CmdCataloger {
 
-	
-	public static Object execute(CmdSet cmd)
+	/**
+	 * 
+	 *Deliver the command the different group executor according the group of the command. 
+	 */
+	public static Object execute(CmdComb cmd)
 	{
 		switch (cmd.getCmdGroup()) {
 		case VMMAN: return executeVMMAN(cmd);
@@ -32,7 +34,10 @@ public class CmdCataloger {
 		return "";
 	}
 	
-	private static Object executeCLOUDMAN(CmdSet cmd) {
+	/**
+	 *Invoke the corresponding function according the command. 
+	 */
+	private static Object executeCLOUDMAN(CmdComb cmd) {
 		// TODO Auto-generated method stub
 	switch (cmd.getCmd()) {
 		case REGISTER:
@@ -40,7 +45,9 @@ public class CmdCataloger {
 		case LOADCLOUD:
 			return CloudmanExecutor.load(cmd);
 		case LISTCLOUD:
-			return CloudmanExecutor.getCloudList();
+			String str = CloudManager.dump();
+			if(cmd.getUi()==uiType.CMDLINE)System.out.println(str);
+			return str;
 		case UNLOADCLOUD:
 			return CloudmanExecutor.unload(cmd);	
 		case HOSTON:
@@ -51,8 +58,11 @@ public class CmdCataloger {
 			return CloudmanExecutor.undefined(cmd);					
 		}		
 	}
-
-	private static boolean executePLUGMAN(CmdSet cmd) {
+	
+	/**
+	 *Invoke the corresponding function according the command. 
+	 */
+	private static String executePLUGMAN(CmdComb cmd) {
 		
 		switch (cmd.getCmd()) {
 		case LOAD:
@@ -68,20 +78,26 @@ public class CmdCataloger {
 		}
 
 	}
-
-	private static Object executeVCLMAN(CmdSet cmd)
+	
+	/**
+	 *Invoke the corresponding function according the command. 
+	 */
+	private static Object executeVCLMAN(CmdComb cmd)
 	{
 		
 		switch (cmd.getCmd()) {
+		case SERVER_MODE:
+			CmdServer.initiate();
+			break;
 		
 		case CHECK_P: 			
 			PoolStatus pstat =  BatchExecutor.getPoolStatus();	
-			if(cmd.getUi().equals(uiType.CMDLINE))pstat.printPoolStatus();
-			return pstat;
+			if(cmd.getUi().equals(uiType.CMDLINE))System.out.println(pstat.printPoolStatus());
+			return pstat.printPoolStatus();
 		case CHECK_Q: 			
 	    	QStatus qstat =  PluginManager.current_proxyExecutor.getQStatus();
-	    	if(cmd.getUi().equals(uiType.CMDLINE))qstat.printQStatus();
-	    	return qstat;
+	    	if(cmd.getUi().equals(uiType.CMDLINE))System.out.println(qstat.printQStatus());
+	    	return qstat.printQStatus();
 		default:
 			break;		
 			
@@ -90,7 +106,10 @@ public class CmdCataloger {
 		return null;
 	}
 	
-	private static String executeVMMAN(CmdSet cmd)
+	/**
+	 *Invoke the corresponding function according the command. 
+	 */
+	private static String executeVMMAN(CmdComb cmd)
 	{		
 		
 		switch (cmd.getCmd()) {

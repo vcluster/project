@@ -7,16 +7,22 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.RMISocketFactory;
 
+import vcluster.Vcluster;
+/**
+ *This class starts the vcluster as the server mode
+ */
 public class CmdServer {
-	
-	public static void main(String[] arg){
+	/**
+	 *This function initiates vcluster server
+	 */
+	public static void initiate(){
 		try {
-			System.setProperty("java.rmi.server.hostname","150.183.233.59");
+			System.setProperty("java.rmi.server.hostname",Vcluster.SERVER_ADDR);
 			RMISocketFactory.setSocketFactory (new MyRMISocket()); 
-			LocateRegistry.createRegistry(1099); 
+			LocateRegistry.createRegistry(Vcluster.SERVER_PORT1); 
 			RemoteCmd rcmd = new RemoteCmd("command");
 			Naming.rebind("command", rcmd);
-			System.out.println("Command server is ready.");
+			System.out.println("Vcluster server is running... ...");
 		
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block

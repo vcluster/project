@@ -150,7 +150,7 @@ public class QStatus {
 		str.append("       Held : " + getHeldJob()+System.getProperty("line.separator"));
 		str.append("  Suspended : " + suspendedJob+System.getProperty("line.separator"));
 		str.append("----------------------------------------"+System.getProperty("line.separator"));
-		System.out.println(str);
+		//System.out.println(str);
 		return str.toString();
 	}
 	

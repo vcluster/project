@@ -12,7 +12,9 @@ import java.util.TimeZone;
 import java.util.TreeMap;
 
 import vcluster.Vcluster;
-
+/**
+ * This class involves the global utilizable functions.
+ */
 public class Util {
 	
 	public static TreeMap<String, Boolean> listVSlist(ArrayList<String> arr1,ArrayList<String> arr2){

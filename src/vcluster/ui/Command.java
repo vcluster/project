@@ -10,17 +10,15 @@ import java.util.StringTokenizer;
  */
 public enum Command {
 
-	/* Commands of vclman Category*/
+	/** Commands of vclman Category*/
 	
 	VHELP(CMD_GROUP.VCLMAN,"-h,--help,help"),
-	QUIT (CMD_GROUP.VCLMAN, "quit, exit, done, stop"),
-	LOADCONF (CMD_GROUP.VCLMAN, "loadf"),
+	QUIT (CMD_GROUP.VCLMAN, "quit, exit"),
 	CHECK_P (CMD_GROUP.VCLMAN, "chkp,check_p"),
 	CHECK_Q (CMD_GROUP.VCLMAN, "chkq,check_q"),
-	PRINTARC (CMD_GROUP.VCLMAN, "print,prac"),
-	TESTALGO(CMD_GROUP.VCLMAN, "algo"),
-	TESTCHKQ(CMD_GROUP.VCLMAN, "tchkq"),
-	TESTDEMO(CMD_GROUP.VCLMAN,"start blancer"),
+	SERVER_MODE(CMD_GROUP.VCLMAN,"servermode"),
+	LOADBALANCERSTART(CMD_GROUP.VCLMAN,"loadbalancer"),
+	
 	
 	
 	/*Commands of cloudman Category*/
@@ -51,9 +49,7 @@ public enum Command {
 
 	NOT_DEFINED (CMD_GROUP.NOT_DEFINED, "not_defined");
 
-	/**
-	 * 
-	 */
+
 	private String command;
 	private CMD_GROUP cmdGroup;
 	private List<String> cmdList;

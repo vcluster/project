@@ -25,7 +25,7 @@ import org.xml.sax.SAXException;
 import vcluster.elements.Cloud;
 import vcluster.executors.PlugmanExecutor;
 import vcluster.managers.CloudManager;
-import vcluster.ui.CmdSet;
+import vcluster.ui.CmdComb;
 
 public class HandleXML {
 	private static DocumentBuilderFactory factory;
@@ -84,7 +84,7 @@ public class HandleXML {
 		/*restore batchPlugin status */	
 		String name = batchPlugin.getAttribute("name");
 		if(!name.equals("")&&name!=null){
-			PlugmanExecutor.load(new CmdSet("plugman load -b "+name));	
+			PlugmanExecutor.load(new CmdComb("plugman load -b "+name));	
 		}
 		
 		

@@ -20,10 +20,7 @@ public class UIMain {
 
 	public UIMain()
 	{
-		//VCluster.init();
-		//if(!Config.configFile.isEmpty())
-		//	Util.loadConfig(Config.configFile);
-		Vcluster.currUI = Vcluster.uiType.CMDLINE;
+		Vcluster.init();
 	}
 	
 
@@ -66,7 +63,7 @@ public class UIMain {
 	    	return true;
 
 	    /* extract the command from the command string */
-	    CmdSet command = new CmdSet(userCmd);
+	    CmdComb command = new CmdComb(userCmd);
 	    command.setUi(uiType.CMDLINE);
 	    /* if quit, then forcedly quit */
 	    if (command.getCmd() == Command.QUIT) {

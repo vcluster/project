@@ -14,11 +14,24 @@ public class Host {
 	private int currVmNum;
 	private int remainingVmNum;
 	private String id;
+	private String name;
 	private String ipmiID;
 	private int powerStat;
 	
 	
 	
+	
+	
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
 	/**
 	 * Get the status of power,on or off
 	 * @return power Status
@@ -92,11 +105,12 @@ public class Host {
 	 * Constructor that specify the id,cloud name and the max capability of virtual machine creation. 
 	 */
 
-	public Host(int maxVmNum, String id,String cloudName) {
+	public Host(int maxVmNum, String id,String name, String cloudName) {
 		this.maxVmNum = maxVmNum;
 		this.id = id;
 		this.cloudName = cloudName;
 		vmList = new TreeMap<String,Vm>();
+		this.name = name;
 	}
 	
 	/**

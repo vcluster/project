@@ -29,7 +29,7 @@ public interface CloudInterface  {
 	 *@param id, the id that's suppose to be terminated.
 	 * 
 	 */
-	public ArrayList<Vm> destroyVM(String id);
+	public ArrayList<Vm> destroyVM(Vm vm);
 	/**
 	 *Start a given virtual machine from suspend status.
 	 *@param id, the id of the virtual machine that is suppose to start. 

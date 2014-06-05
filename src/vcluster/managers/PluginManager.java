@@ -13,7 +13,7 @@ import vcluster.executors.CmdCataloger;
 import vcluster.plugInterfaces.BatchInterface;
 import vcluster.plugInterfaces.CloudInterface;
 import vcluster.plugInterfaces.LoadBalancer;
-import vcluster.ui.CmdSet;
+import vcluster.ui.CmdComb;
 import vcluster.ui.Command;
 import vcluster.util.HandleXML;
 
@@ -26,15 +26,12 @@ public class PluginManager {
 
 	public static BatchInterface current_proxyExecutor;
 	public static LoadBalancer current_loadbalancer;
-	//private static CloudInterface current_cloudExecutor;
 	public static final String CLOUD_PLUGIN_DIR = "plugins"+File.separator+"cloud";
 	public static final String BATCH_PLUGIN_DIR = "plugins"+File.separator+"batch";	
 	public static final String LOADBALANCER_PLUGIN_DIR = "plugins"+File.separator+"balancer";
 	
 	public static TreeMap<String,Plugin> pluginList;
-	//public static Map<String, BatchInterface> loadedBatchPlugins = new HashMap<String, BatchInterface>();
-	//public static Map<String, CloudInterface> loadedCloudPlugins = new HashMap<String, CloudInterface>();
-	private static CustomClassLoader cl;//An instance of CustomClassLoader,it is responsible for loading classes form jar files.
+	private static CustomClassLoader cl;
 
 	
 	static {
@@ -45,7 +42,7 @@ public class PluginManager {
 		List<String> btl = getBatchPluginList();	
 		getBalancerPluginList();
 		String batchplugin = btl.get(0);
-		CmdSet cmd = new CmdSet("plugman load -b "+batchplugin);
+		CmdComb cmd = new CmdComb("plugman load -b "+batchplugin);
 		CmdCataloger.execute(cmd);
 	}
 
@@ -59,7 +56,7 @@ public class PluginManager {
 		String name = f.getName().replace(".jar", "");		
 		//System.out.println(path);
 		if (isLoaded(name)) {
-				System.out.println(name + " : has already been loaded!");
+				//System.out.println(name + " : has already been loaded!");
 				return;
 			}
 			Class<?> plugin = cl.loadClass(path);
@@ -137,7 +134,7 @@ public class PluginManager {
 
 	
 	/**
-	 * Scan the plugins directiory get all the paths of JAR file
+	 * Scan the cloud plugins directiory get all the paths of JAR file
 	 * @see #LoadAllPlugins() 
 	 * @return a list of paths.
 	 */
@@ -162,6 +159,12 @@ public class PluginManager {
 		return jars;				
 	}
 	
+	
+	/**
+	 * Scan the load balancer plugins directiory get all the paths of JAR file
+	 * @see #LoadAllPlugins() 
+	 * @return a list of paths.
+	 */
 	public static List<String> getBalancerPluginList(){
 		File dir = new File(System.getProperty("user.dir") + File.separator
 				+ LOADBALANCER_PLUGIN_DIR);
@@ -183,6 +186,11 @@ public class PluginManager {
 		return jars;				
 	}
 	
+	/**
+	 * Scan the batch plugins directiory get all the paths of JAR file
+	 * @see #LoadAllPlugins() 
+	 * @return a list of paths.
+	 */
 	public static List<String> getBatchPluginList(){
 
 		File dir = new File(System.getProperty("user.dir") + File.separator
@@ -224,7 +232,9 @@ public class PluginManager {
 		}
 	}
 
-	
+	/**
+	 *Get the introduction information about a plugin 
+	 */
 	public static String getInfo(String pluginName) {
 		// TODO Auto-generated method stub
 		StringBuffer info =new StringBuffer("");
@@ -247,6 +257,10 @@ public class PluginManager {
 		return info.toString();
 	}
 	
+	/**
+	 *Get the plugin status, loaded or not
+	 *@return boolean 
+	 */
 	public static boolean isLoaded(String name){
 		
 		if (pluginList.get(name).getPluginStatus().equals("loaded")) {

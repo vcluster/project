@@ -86,7 +86,7 @@ public class CloudManager  {
 			
 		}catch(Exception e){
 			System.out.println("Configuration file doesn't exist ,please check it!");
-			return confList;
+			return null;
 		}
 		
 		return confList;
@@ -100,6 +100,7 @@ public class CloudManager  {
 	{		
 		StringBuffer str = new StringBuffer();
 		ArrayList<ArrayList<String>> confList = handleConf(confFile);
+		if(confList==null)return "";
 		ArrayList<Cloud> tempCL = new ArrayList<Cloud>();
 		for(ArrayList<String> conf:confList){
 			String name = conf.get(0).split("=")[1].trim();
@@ -150,8 +151,12 @@ public class CloudManager  {
 	 *Get the registered clouds list  
 	 */
 	public static TreeMap<String, Cloud> getCloudList(){
-		//Config.vmMan.listVM("vmman list -refresh");
 		
+		return cloudList;		
+	}
+	
+	
+	public static String dump(){
 		StringBuffer str = new StringBuffer();
 		String cName = String.format("%-12s", "Name");
 		String cInterface =String.format("%-20s", "Interface");
@@ -177,11 +182,9 @@ public class CloudManager  {
 		}
 
 		str.append("-------------------------------------------------------"+System.getProperty("line.separator"));
-		System.out.println(str);
-		return cloudList;		
+		
+		return str.toString();		
 	}
-	
-
 	/**
 	 * Load the given clouds in vcluster. vlcusetr would communicate with the real clouds system and get the virtual machines information.
 	 * @param An array of the given clouds' names
@@ -201,7 +204,7 @@ public class CloudManager  {
 				flag.append(cloudList.get(name[i].trim()).load()+System.getProperty("line.separator"));
 			} catch (NullPointerException e) {
 				// TODO Auto-generated catch block	
-				e.printStackTrace();
+				//e.printStackTrace();
 				flag.append(name[i]+" doesn't exist!"+System.getProperty("line.separator"));
 			}
 		}

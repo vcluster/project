@@ -1,14 +1,12 @@
 package vcluster.managers;
 
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 import java.util.TreeMap;
 
-import vcluster.Vcluster;
 import vcluster.Vcluster.uiType;
 import vcluster.elements.Cloud;
 import vcluster.elements.Vm;
-import vcluster.ui.CmdSet;
+import vcluster.ui.CmdComb;
 import vcluster.ui.Command;
 
 /**
@@ -49,14 +47,14 @@ public class VmManager extends Thread {
 	 * @see Command
 	 * 
 	 */
-	public static String createVM(CmdSet cmd) {
+	public static String createVM(CmdComb cmd) {
 		// TODO Auto-generated method stub
 		StringBuffer strBuff = new StringBuffer();
 		Cloud currCloud = CloudManager.getCurrentCloud();
 		int vms = 1;
 		ArrayList<String> cmdList = cmd.getParaset();
 
-		if(cmd.getParaset().contains("-h")){
+		if(cmd.getParaset().get(0).equalsIgnoreCase("--help")||cmd.getParaset().get(0).equalsIgnoreCase("-h")){
 			strBuff.append("[USAGE : ]"+System.getProperty("line.separator"));
 			strBuff.append("vmman"+System.getProperty("line.separator"));
 			strBuff.append("    create"+System.getProperty("line.separator"));
@@ -93,7 +91,13 @@ public class VmManager extends Thread {
 			if(cmd.getUi().equals(uiType.CMDLINE))System.out.println(strBuff);
 			return strBuff.toString();
 		}
-		vms = Integer.parseInt(cmdList.get(3));
+		try {
+			vms = Integer.parseInt(cmdList.get(3));
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			strBuff.append("Number format is not correct!"+System.getProperty("line.separator"));
+			return strBuff.toString();
+		}
 		String result = currCloud.createVM(vms,cmdList.get(5));
 		if(cmd.getUi().equals(uiType.CMDLINE))System.out.println(result);
 			return result;
@@ -105,7 +109,7 @@ public class VmManager extends Thread {
 	 * @param cmdLine, the string of command line
 	 * @see Command
 	 */
-	public static String listVM(CmdSet cmd) {
+	public static String listVM(CmdComb cmd) {
 		// TODO Auto-generated method
 		StringBuffer str = new StringBuffer();
 		String filter ="";
@@ -198,32 +202,36 @@ public class VmManager extends Thread {
 		}	
 		
 		String tName = String.format("%-10s", "CLOUD");
+		String tHost = String.format("%-10s", "Host");
 		String tID =String.format("%-5s", "ID");
 		String tStat = String.format("%-10s", "STATUS");
 		String tPrivateIp =  String.format("%-18s", "PrivateIP");
 		String tPublicIp =  String.format("%-18s", "PublicIP");
 		String tActivity =  String.format("%-10s", "Activity");
 		String tInternalID =  String.format("%-12s", "IntnlID");
-		String line =  "---------------------------------------------------------------------------------------";
+		String line =  "------------------------------------------------------------------------------------------------";
 		str.append(line+System.getProperty("line.separator"));
-		str.append(tID+tInternalID+tStat+tActivity+tPrivateIp+tPublicIp+tName+System.getProperty("line.separator"));
+		str.append(tID+tInternalID+tStat+tActivity+tPrivateIp+tPublicIp+tHost+tName+System.getProperty("line.separator"));
 		str.append(line+System.getProperty("line.separator"));
 			int runNum = 0;
 			int totalNum = 0;
 			for(Integer id : vmList.keySet()){
 				Vm vm = vmList.get(id);
+				String acti = "busy";
+				if(vm.isIdle()==0){acti = "idle";}else if(vm.isIdle()==3){acti="none";}
 				if(!cloudFilter.equals("")&&vmList.get(id).getCloudName().equals(cloudFilter)){
 					String fName = String.format("%-10s", vmList.get(id).getCloudName());
 					String fID =String.format("%-5s", id);
 					String fStat = String.format("%-10s", vmList.get(id).getState());
 					String fPrivateIp =  String.format("%-18s", vm.getPrivateIP());
 					String fPublicIp =  String.format("%-18s", vm.getPubicIP());
-					String fActivity =  String.format("%-10s", vm.isIdle());
+					String fActivity =  String.format("%-10s", acti);
 					String fInternalID =  String.format("%-12s", vm.getId());
+					String fHost = String.format("%-10s", vm.getHostname());
 					
 					
 					if(vmList.get(id).getState().equals(VMState.RUNNING))runNum++;
-					str.append(fID+fInternalID+fStat+fActivity+fPrivateIp+fPublicIp+fName+System.getProperty("line.separator"));
+					str.append(fID+fInternalID+fStat+fActivity+fPrivateIp+fPublicIp+fHost+fName+System.getProperty("line.separator"));
 					totalNum++;
 				}
 				if(!filter.equals("")&&vmList.get(id).getState().toString().equals(filter)){
@@ -232,12 +240,12 @@ public class VmManager extends Thread {
 					String fStat = String.format("%-10s", vmList.get(id).getState());
 					String fPrivateIp =  String.format("%-18s", vm.getPrivateIP());
 					String fPublicIp =  String.format("%-18s", vm.getPubicIP());
-					String fActivity =  String.format("%-10s", vm.isIdle());
+					String fActivity =  String.format("%-10s", acti);
 					String fInternalID =  String.format("%-12s", vm.getId());
-					
+					String fHost = String.format("%-10s", vm.getHostname());
 					
 					if(vmList.get(id).getState().equals(VMState.RUNNING))runNum++;
-					str.append(fID+fInternalID+fStat+fActivity+fPrivateIp+fPublicIp+fName+System.getProperty("line.separator"));
+					str.append(fID+fInternalID+fStat+fActivity+fPrivateIp+fPublicIp+fHost+fName+System.getProperty("line.separator"));
 					totalNum++;
 				}
 				if(filter.equals("")&cloudFilter.equals("")){
@@ -246,12 +254,12 @@ public class VmManager extends Thread {
 					String fStat = String.format("%-10s", vmList.get(id).getState());
 					String fPrivateIp =  String.format("%-18s", vm.getPrivateIP());
 					String fPublicIp =  String.format("%-18s", vm.getPubicIP());
-					String fActivity =  String.format("%-10s", vm.isIdle());
+					String fActivity =  String.format("%-10s", acti);
 					String fInternalID =  String.format("%-12s", vm.getId());
-					
+					String fHost = String.format("%-10s", vm.getHostname());
 					
 					if(vmList.get(id).getState().equals(VMState.RUNNING))runNum++;
-					str.append(fID+fInternalID+fStat+fActivity+fPrivateIp+fPublicIp+fName+System.getProperty("line.separator"));
+					str.append(fID+fInternalID+fStat+fActivity+fPrivateIp+fPublicIp+fHost+fName+System.getProperty("line.separator"));
 					totalNum++;
 				}
 			}
@@ -267,7 +275,7 @@ public class VmManager extends Thread {
 	 * @param cmdLine, the command line string.
 	 * @see Command
 	 */
-	public static String showVM(CmdSet cmd) {
+	public static String showVM(CmdComb cmd) {
 		// TODO Auto-generated method stub
 			
 		String vmID = "";
@@ -345,7 +353,7 @@ public class VmManager extends Thread {
 	 * @param cmdLine, the string of command line
 	 * @see Command
 	 */
-	public static String destroyVM(CmdSet cmd) {
+	public static String destroyVM(CmdComb cmd) {
 		// TODO Auto-generated method stub
 		StringBuffer str = new StringBuffer();
 		
@@ -386,9 +394,9 @@ public class VmManager extends Thread {
 
 		}
 		String cloudName = vmList.get(vID).getCloudName();
-		String inId = vmList.get(vID).getId();
+		Vm vm = vmList.get(vID);
 		Cloud cloud = CloudManager.getCloudList().get(cloudName);
-		cloud.destroyVM(inId);
+		cloud.destroyVM(vm);
 		vmList.remove(vID);
 		return str.toString();
 	}
@@ -399,7 +407,7 @@ public class VmManager extends Thread {
 	 * @param cmdLine, the string of command line
 	 * @see Command
 	 */
-	public static String suspendVM(CmdSet cmd) {
+	public static String suspendVM(CmdComb cmd) {
 		// TODO Auto-generated method stub
 		StringBuffer str = new StringBuffer();	
 		String cloudName = "";
@@ -453,7 +461,7 @@ public class VmManager extends Thread {
 	 * @param cmdLine, the string of command line.
 	 * @see Command
 	 */
-	public static String startVM(CmdSet cmd) {
+	public static String startVM(CmdComb cmd) {
 		// TODO Auto-generated method stub
 		StringBuffer str = new StringBuffer();	
 		String cloudName = "";
@@ -524,7 +532,7 @@ public class VmManager extends Thread {
 	 *Migrate a given virtual machine to a specific host by following the command line
 	 *@param cmdLine, the string of command line. 
 	 */
-	public static String migrate(CmdSet cmd) {
+	public static String migrate(CmdComb cmd) {
 		// TODO Auto-generated method stub
 		StringBuffer  str = new StringBuffer();
 		if (cmd.getParaset().size()==0) {
@@ -571,6 +579,9 @@ public class VmManager extends Thread {
 		return result;
 	}	
 
+	/**
+	 *Definition of the virtual machine's status 
+	 */
 	public enum VMState {STOP, PENDING, RUNNING, SUSPEND, PROLOG, NOT_DEFINED, FAILED }; 
 	
 	/**

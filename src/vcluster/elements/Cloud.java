@@ -11,7 +11,7 @@ import vcluster.managers.CloudManager;
 import vcluster.managers.PluginManager;
 import vcluster.managers.VmManager;
 import vcluster.plugInterfaces.CloudInterface;
-import vcluster.ui.CmdSet;
+import vcluster.ui.CmdComb;
 
 
 /**
@@ -65,10 +65,11 @@ public class Cloud{
 				//System.out.println("host");
 				for(int i = 0 ; i<hostlist.length;i++){
 					String [] hostStr = hostlist[i].split("/");
-					String hostname = hostStr[0];
-					String MaxVMNum = hostStr[1];
-					String ipmiID = hostStr[2];
-					Host host = new Host(Integer.parseInt(MaxVMNum),hostname,this.cloudName);
+					String hostId = hostStr[0];
+					String hostname = hostStr[1];
+					String MaxVMNum = hostStr[2];
+					String ipmiID = hostStr[3];
+					Host host = new Host(Integer.parseInt(MaxVMNum),hostId,hostname,this.cloudName);
 					host.setIpmiID(ipmiID);
 					//System.out.println(host.getId()+ i + "");
 					hostList.put(hostname,host);
@@ -89,7 +90,7 @@ public class Cloud{
 		if(cloudName==null||cloudType==null||cloudpluginName==null){
 			return null;
 		}
-		if(!PluginManager.isLoaded(cloudpluginName))PlugmanExecutor.load(new CmdSet("plugman load -c "+cloudpluginName));		
+		if(!PluginManager.isLoaded(cloudpluginName))PlugmanExecutor.load(new CmdComb("plugman load -c "+cloudpluginName));		
 		cp = (CloudInterface)PluginManager.pluginList.get(cloudpluginName).getInstance();
 		this.listVMs();
 		if(getVmList()==null)return null;
@@ -106,7 +107,7 @@ public class Cloud{
 		String fVMs = String.format("%-16s", vmList.size());
 		str.append(fName+fInterface+fType+fVMs);
 		//HandleXML.setCloudAttribute(cloudName,"isLoaded", "true");
-		System.out.println(str);
+		//System.out.println(str);
 		return str.toString();
 	}
 	
@@ -150,10 +151,10 @@ public class Cloud{
 	 * @param maxCount, the number of virtual machines that you want to create.
 	 * @param hostId, the host ID where you want to create vms on.
 	 */
-	public String createVM(int maxCount,String hostId) {
+	public String createVM(int maxCount,String hostName) {
 		// TODO Auto-generated method stub
 		StringBuffer str = new StringBuffer();
-		if(!hostId.equalsIgnoreCase("host1")){
+		if(!hostName.equalsIgnoreCase("host1")){
 			int i = 100;
 			for(int j =0;j<conf.size();j++){
 				if(conf.get(j).contains("template")){
@@ -161,7 +162,7 @@ public class Cloud{
 					break;
 				}
 			}
-			if(i!=100)conf.set(i, "template = templates/"+hostId+".one");
+			if(i!=100)conf.set(i, "template = templates/"+hostName+".one");
 		}
 		cp.RegisterCloud(conf);
 		ArrayList<Vm> vmlist = cp.createVM(maxCount);
@@ -171,7 +172,7 @@ public class Cloud{
 		}
 		for(Vm vm : vmlist){
 			vm.setCloudName(cloudName);
-			vm.setHostname(hostId);
+			vm.setHostname(hostName);
 			this.vmList.put(vm.getId(), vm);
 			Integer uId = VmManager.getcurrId();
 			vm.setuId(uId);
@@ -183,7 +184,7 @@ public class Cloud{
 		}else{
 			str.append(maxCount +" virture machines have been created successfully"+System.getProperty("line.separator"));
 		}
-		System.out.println(str);
+		//System.out.println(str);
 		return str.toString();
 	}
 
@@ -196,11 +197,12 @@ public class Cloud{
 		cp.RegisterCloud(conf);
 	//	HashMap<String,VMelement> vms = new HashMap<String,VMelement>();
 		ArrayList<Vm> cVmList = cp.listVMs();
+		//System.out.println(cVmList.size());
 		vmList = new TreeMap<String,Vm>();
 		//int i = 1;
 		if(cVmList==null||cVmList.size()==0)return false;
 		for(Vm vm : cVmList){
-			if(!this.cloudName.equalsIgnoreCase("Gcloud")){
+			if(this.cloudType==CloudType.PUBLIC){
 				vm.setHostname("host1");
 			}
 			vm.setCloudName(getCloudName());
@@ -215,11 +217,10 @@ public class Cloud{
 	 * Terminate the given virtual machine on the cloud.
 	 * @param id, the given virtual machine's id.
 	 */
-	public boolean destroyVM(String id) {
+	public boolean destroyVM(Vm vm) {
 		// TODO Auto-generated method stub
 		cp.RegisterCloud(conf);
-		Vm vm = vmList.get(id);
-		cp.destroyVM(id+":"+vm.getPrivateIP());
+		cp.destroyVM(vm);
 		
 		 return true;
 	}
@@ -424,7 +425,7 @@ public class Cloud{
 		String str="";
 		cp.RegisterCloud(conf);
 		if(cp.migrate(vmID,hostid))
-		str = "virtual machine "+vmID+" successfully migrated to the host "+hostid+"!";
+		str = "virtual machine "+vmID+" is being migrated to the host "+hostid+"... ...";
 		else str = "Migration failed";
 		return str;
 	}
