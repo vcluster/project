@@ -3,8 +3,10 @@ package vcluster.executors;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+import org.opennebula.client.host.Host;
+
 import vcluster.Vcluster.uiType;
-import vcluster.elements.Cloud;
+import vcluster.elements.*;
 import vcluster.managers.CloudManager;
 import vcluster.ui.CmdComb;
 /**
@@ -141,6 +143,38 @@ public class CloudmanExecutor {
 		
 		return cloud.hostoff(hostID);
 		
+	}
+
+
+	public static String dump(CmdComb cmd) {
+		// TODO Auto-generated method stub
+		StringBuffer str = new StringBuffer();
+		if(cmd.getParaset().size()==0){
+			return str.append("[ERROR : ] Expect a Cloud name!").toString();
+		}
+		Cloud c = CloudManager.getCloudList().get(cmd.getParaset().get(0));
+		if(c.getHostList().size()==0||c.getHostList()==null)return "";
+		String tId=  String.format("%-8s","ID");
+		String tName=  String.format("%-12s", "Name");
+		String tMax = String.format("%-6s", "Max");
+		String tStat =  String.format("%-6s","stat");
+		String tip = String.format("%-20s","Private IP");
+		str.append("-------------------------------------------------------"+System.getProperty("line.separator"));
+		str.append(tId+tName+tMax+tStat+tip+System.getProperty("line.separator"));
+		str.append("-------------------------------------------------------"+System.getProperty("line.separator"));
+		for(vcluster.elements.Host h : c.getHostList().values()){
+			String id = String.format("%-8s", h.getId());
+			String name = String.format("%-12s",h.getName());
+			String max = String.format("%-6s",h.getMaxVmNum()+"");
+			String stat = String.format("%-6s","ON");
+			String ip = String.format("%-20s", h.getIpmiID());
+			if(h.getPowerStat()==0)
+			stat = String.format("%-6s","OFF");
+			str.append(id+name+max+stat+ip+System.getProperty("line.separator"));
+		}
+		str.append("-------------------------------------------------------"+System.getProperty("line.separator"));
+		if(cmd.getUi()==uiType.CMDLINE)System.out.println(str);
+		return str.toString();
 	}
 
 

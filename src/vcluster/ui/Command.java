@@ -25,7 +25,8 @@ public enum Command {
 	REGISTER(CMD_GROUP.CLOUDMAN,"register,rgst"),
 	LISTCLOUD(CMD_GROUP.CLOUDMAN,"list,ls"),
 	LOADCLOUD(CMD_GROUP.CLOUDMAN,"load,ld"),
-	UNLOADCLOUD(CMD_GROUP.CLOUDMAN,"unload,unld"),	
+	UNLOADCLOUD(CMD_GROUP.CLOUDMAN,"unload,unld"),
+	DUMP(CMD_GROUP.CLOUDMAN,"show,dump,hostlist"),
 	HOSTON(CMD_GROUP.CLOUDMAN,"hoston"),
 	HOSTOFF(CMD_GROUP.CLOUDMAN,"hostoff"),
 	

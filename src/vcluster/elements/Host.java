@@ -16,7 +16,7 @@ public class Host {
 	private String id;
 	private String name;
 	private String ipmiID;
-	private int powerStat;
+	private int powerStat = 1;
 	
 	
 	

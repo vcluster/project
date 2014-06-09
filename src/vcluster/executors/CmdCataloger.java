@@ -54,6 +54,8 @@ public class CmdCataloger {
 			return CloudmanExecutor.hoston(cmd);
 		case HOSTOFF:
 			return CloudmanExecutor.hostoff(cmd);	
+		case DUMP:
+			return CloudmanExecutor.dump(cmd);
 		default:
 			return CloudmanExecutor.undefined(cmd);					
 		}		
