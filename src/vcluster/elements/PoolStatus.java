@@ -5,9 +5,13 @@ import java.util.ArrayList;
  * A class representing the pool status of the batch system.
  *
  */
-public class PoolStatus {
+public class PoolStatus extends Element{
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	/**
 	 * Constructor,initialize the pool status 	 
 	 */

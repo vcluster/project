@@ -21,7 +21,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import vcluster.elements.Vm;
-import vcluster.managers.VmManager.VMState;
+import vcluster.elements.Vm.VMState;
 
 public class ResponseDataHandler {
 	

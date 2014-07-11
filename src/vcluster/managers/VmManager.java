@@ -6,6 +6,7 @@ import java.util.TreeMap;
 import vcluster.Vcluster.uiType;
 import vcluster.elements.Cloud;
 import vcluster.elements.Vm;
+import vcluster.elements.Vm.VMState;
 import vcluster.ui.CmdComb;
 import vcluster.ui.Command;
 
@@ -53,7 +54,7 @@ public class VmManager extends Thread {
 		Cloud currCloud = CloudManager.getCurrentCloud();
 		int vms = 1;
 		ArrayList<String> cmdList = cmd.getParaset();
-
+		
 		if(cmd.getParaset().get(0).equalsIgnoreCase("--help")||cmd.getParaset().get(0).equalsIgnoreCase("-h")){
 			strBuff.append("[USAGE : ]"+System.getProperty("line.separator"));
 			strBuff.append("vmman"+System.getProperty("line.separator"));
@@ -146,9 +147,8 @@ public class VmManager extends Thread {
 								}
 							}	
 							if(flag){
-								Integer uId = new Integer(VmManager.getcurrId());
-									vm.setuId(uId);
-									temp.put(uId, vm);
+								
+									temp.put(vm.getuId(), vm);
 							}
 						}
 					}
@@ -325,7 +325,7 @@ public class VmManager extends Thread {
 		Integer id = vID;
 		
 		String fName = String.format("%-16s", vmList.get(id).getCloudName());
-		String fID =String.format("%-16s", id);
+		String fID =String.format("%-16s", vmList.get(id).getuId());
 		String fStat = String.format("%-16s", vmList.get(id).getState());
 		String fpriIP = String.format("%-16s", vmList.get(id).getPrivateIP());
 		String fpubIP =String.format("%-16s", vmList.get(id).getPubicIP());
@@ -582,7 +582,7 @@ public class VmManager extends Thread {
 	/**
 	 *Definition of the virtual machine's status 
 	 */
-	public enum VMState {STOP, PENDING, RUNNING, SUSPEND, PROLOG, NOT_DEFINED, FAILED }; 
+
 	
 	/**
 	 *The virtual machine's id, it's the global id in vcluster,  cloud independent.

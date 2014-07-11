@@ -65,6 +65,7 @@ public class UIMain {
 	    /* extract the command from the command string */
 	    CmdComb command = new CmdComb(userCmd);
 	    command.setUi(uiType.CMDLINE);
+	    command.setSourceIp("localhost");
 	    /* if quit, then forcedly quit */
 	    if (command.getCmd() == Command.QUIT) {
 	    	

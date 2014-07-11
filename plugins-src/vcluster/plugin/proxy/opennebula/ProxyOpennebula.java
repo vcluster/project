@@ -13,12 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import vcluster.elements.Element;
 import vcluster.elements.Vm;
-import vcluster.managers.VmManager.VMState;
+import vcluster.elements.Vm.VMState;
 import vcluster.plugInterfaces.CloudInterface;
 
-public class ProxyOpennebula implements CloudInterface {
+public class ProxyOpennebula  extends Element implements CloudInterface {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public static void main(String[] arg){
 		
 	    String cmdLine = "";

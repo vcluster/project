@@ -3,7 +3,11 @@ package vcluster.elements;
  * A class representing a slot of the batch system.
  *
  */
-public class Slot {
+public class Slot extends Element{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String domain;
 	private String identifier;
 	private IdType idType;

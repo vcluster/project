@@ -3,8 +3,12 @@ package vcluster.elements;
 /**
  *A class represents plug-in 
  */
-public class Plugin {
+public class Plugin extends Element{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String pluginName;
 	private String pluginStatus;
 	private String pluginType;

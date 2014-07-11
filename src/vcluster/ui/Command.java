@@ -17,6 +17,7 @@ public enum Command {
 	CHECK_P (CMD_GROUP.VCLMAN, "chkp,check_p"),
 	CHECK_Q (CMD_GROUP.VCLMAN, "chkq,check_q"),
 	SERVER_MODE(CMD_GROUP.VCLMAN,"servermode"),
+	START_WEBSERVER(CMD_GROUP.VCLMAN,"startwebserver,webserver"),
 	LOADBALANCERSTART(CMD_GROUP.VCLMAN,"loadbalancer"),
 	
 	
@@ -24,6 +25,7 @@ public enum Command {
 	/*Commands of cloudman Category*/
 	REGISTER(CMD_GROUP.CLOUDMAN,"register,rgst"),
 	LISTCLOUD(CMD_GROUP.CLOUDMAN,"list,ls"),
+	GETDATASTRUCTURE(CMD_GROUP.CLOUDMAN,"getdata,cloudlist"),
 	LOADCLOUD(CMD_GROUP.CLOUDMAN,"load,ld"),
 	UNLOADCLOUD(CMD_GROUP.CLOUDMAN,"unload,unld"),
 	DUMP(CMD_GROUP.CLOUDMAN,"show,dump,hostlist"),

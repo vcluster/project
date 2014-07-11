@@ -1,1 +1,0 @@
-##¡¡This plugin program uses proxy program to communicate with the htcondor system.

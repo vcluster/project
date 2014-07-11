@@ -1,5 +1,6 @@
 package vcluster.plugInterfaces;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import vcluster.elements.Vm;
 /**
  *An interface for cloud plug-in, all the cloud plugins implement this interface. 
  */
-public interface CloudInterface  {
+public interface CloudInterface extends Serializable {
 	/**
 	 * Connect to a cloud system.
 	 * @param Configurations, a collection of cloud connection informations.

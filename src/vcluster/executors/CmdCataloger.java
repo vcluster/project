@@ -8,6 +8,9 @@ import vcluster.managers.PluginManager;
 import vcluster.managers.VmManager;
 import vcluster.ui.CmdComb;
 import vcluster.ui.remote.CmdServer;
+import vcluster.ui.remote.WebInterface;
+import vcluster.util.HandleXML;
+import vcluster.util.Log;
 
 /**
  * @author Seo-Young Noh, Modified by Dada Huang
@@ -17,12 +20,32 @@ import vcluster.ui.remote.CmdServer;
 
 public class CmdCataloger {
 
+	private static void writeLog(CmdComb cmd){
+		if(cmd.getUi()==null)return;
+		StringBuffer str = new StringBuffer();
+		
+		String uistr = String.format("%-9s", "UIType");
+		String clientstr = String.format("%-9s", "clientIP");
+		String cmdstr = String.format("%-9s", "Command");
+		
+		
+		String uiType = String.format("%-16s", cmd.getUi());
+		String clientAddr = String.format("%-16s", cmd.getSourceIp());
+		String fcmd = String.format("%-16s", cmd.getCmdLine());
+		str.append(uistr+" : "+uiType+System.getProperty("line.separator"));
+		str.append(clientstr+" : "+clientAddr+System.getProperty("line.separator"));
+		str.append(cmdstr+" : "+fcmd+System.getProperty("line.separator"));
+		Log.writeLog(str.toString());
+	}
+	
 	/**
 	 * 
 	 *Deliver the command the different group executor according the group of the command. 
 	 */
+	 
 	public static Object execute(CmdComb cmd)
-	{
+	{		
+		writeLog(cmd);
 		switch (cmd.getCmdGroup()) {
 		case VMMAN: return executeVMMAN(cmd);
 		case CLOUDMAN: return executeCLOUDMAN(cmd);
@@ -44,7 +67,10 @@ public class CmdCataloger {
 			return CloudmanExecutor.register(cmd); 
 		case LOADCLOUD:
 			return CloudmanExecutor.load(cmd);
-		case LISTCLOUD:
+		case GETDATASTRUCTURE:	
+			HandleXML.getDataStructure();
+			return CloudManager.getCloudList();
+		case LISTCLOUD:			
 			String str = CloudManager.dump();
 			if(cmd.getUi()==uiType.CMDLINE)System.out.println(str);
 			return str;
@@ -91,7 +117,9 @@ public class CmdCataloger {
 		case SERVER_MODE:
 			CmdServer.initiate();
 			break;
-		
+		case START_WEBSERVER:
+			WebInterface.startWebServer();
+			break;
 		case CHECK_P: 			
 			PoolStatus pstat =  BatchExecutor.getPoolStatus();	
 			if(cmd.getUi().equals(uiType.CMDLINE))System.out.println(pstat.printPoolStatus());

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,6 +24,8 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import vcluster.elements.Cloud;
+import vcluster.elements.Host;
+import vcluster.elements.Vm;
 import vcluster.executors.PlugmanExecutor;
 import vcluster.managers.CloudManager;
 import vcluster.ui.CmdComb;
@@ -37,6 +40,78 @@ public class HandleXML {
 	private static File file;
 	private static Element batchPlugin;
 	
+	
+	public static Document getDataStructure(){
+		Document datastruct = null;
+		factory = DocumentBuilderFactory.newInstance();
+		try {
+			file.createNewFile();
+			builder = factory.newDocumentBuilder();
+		} catch (IOException | ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		datastruct = builder.newDocument();
+		datastruct.setXmlVersion("1.0");
+		java.text.DateFormat format1 = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar cal = Calendar.getInstance();
+		Date dt = cal.getTime();
+		String t = format1.format(dt);
+		
+		Element root = datastruct.createElement("vcluster");
+		Element cloudList = datastruct.createElement("cloudList");		
+		time = datastruct.createElement("LastModifiedTime");
+		time.setAttribute("value", t);
+		datastruct.appendChild(root);
+		root.appendChild(time);
+		root.appendChild(cloudList);
+		
+		TreeMap<String, Cloud> list = CloudManager.getCloudList();
+		if(list==null)return null;
+		for(Cloud c : list.values()){
+			Element cloud = datastruct.createElement(c.getCloudName());
+			cloud.setAttribute("Name", c.getCloudName());
+			cloud.setAttribute("Type", c.getCloudType().toString());
+			cloud.setAttribute("Plugin", c.getCloudpluginName());
+			cloud.setAttribute("isloaded", c.isLoaded()?"Loaded":"Unloaded");
+			cloud.setAttribute("Priority", Integer.toString(c.getPriority()));
+			Element hostlist = datastruct.createElement("HostList");
+			cloud.appendChild(hostlist);
+			cloudList.appendChild(cloud);	
+			if(c.getHostList()==null)continue;
+			for(Host h : c.getHostList().values()){
+				Element host = datastruct.createElement(h.getName());
+				host.setAttribute("ID", h.getId());
+				host.setAttribute("ipmiID", h.getIpmiID());
+				host.setAttribute("MaxVm", h.getMaxVmNum()+"");
+				host.setAttribute("Power", h.getPowerStat()+"");
+				Element vmlist = datastruct.createElement("VmList");
+				for(Vm vm : h.getVmList().values()){
+					Element vmE = datastruct.createElement("VM");
+					vmE.setAttribute("ID", vm.getuId()+"");
+					vmE.setAttribute("intlID", vm.getId());
+					vmE.setAttribute("Memory", vm.getMemory());
+					vmE.setAttribute("PublicIP", vm.getPubicIP());
+					vmE.setAttribute("PrivateIP", vm.getPrivateIP());
+					vmE.setAttribute("LaunchTime", vm.getTime());
+					vmE.setAttribute("ucpu", vm.getUcpu());
+					vmE.setAttribute("User", vm.getUser());
+					vmE.setAttribute("Stat", vm.getState().toString());
+					vmE.setAttribute("ActivityStat", vm.isIdle()+"");
+					vmlist.appendChild(vmE);
+				}
+				host.appendChild(vmlist);
+				hostlist.appendChild(host);				
+			}
+		
+		}
+				
+		//writeXML(datastruct);
+		return datastruct;
+		
+		
+	}
 	public static void main(String[] arg){
 		
 		//it.getElement(e, name, attr, attrName)
@@ -93,12 +168,12 @@ public class HandleXML {
 	
 	public static boolean loadBatchPlugin(String name){
 		batchPlugin.setAttribute("name", name);
-		writeXML();
+		writeXML(document);
 		return true;
 	}
 	public static boolean unloadBatchPlugin(){
 		batchPlugin.removeAttribute("name");
-		writeXML();
+		writeXML(document);
 		return true;
 	}
 	
@@ -113,14 +188,14 @@ public class HandleXML {
 		e.setAttribute("isLoaded", "false");
 		e.setAttribute("vms", "0");
 		cloudman.appendChild(e);
-		writeXML();
+		writeXML(document);
 		return true;
 	}
 	
 	public static boolean setCloudAttribute(String name,String att,String value){
 		Element e = (Element)cloudman.getElementsByTagName(name).item(0);
 		e.setAttribute(att, value);
-		writeXML();
+		writeXML(document);
 		return true;
 	}
 	
@@ -178,7 +253,7 @@ public class HandleXML {
 		
 		return true;
 	}
-	public static boolean writeXML(){
+	public static boolean writeXML(Document document){
 		java.text.DateFormat format1 = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
 		Date dt = cal.getTime();

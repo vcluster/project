@@ -1,10 +1,16 @@
 package vcluster.elements;
 
-import vcluster.managers.VmManager.VMState;
+import vcluster.managers.VmManager;
+
+
 /**
  * A class representing a virtual machine 
  */
-public class Vm {
+public class Vm extends Element{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer uId;
 	private String id;
 	private VMState state;
@@ -22,13 +28,13 @@ public class Vm {
 	/**
 	 *Constructor, initialize an instance of virtual machine as the default members' value. 
 	 */
-	public Vm() {
+	public Vm() {		
 		this.uId = new Integer(0);
 		this.id = "";
 		this.state = VMState.PENDING;
 		this.memory = "";
 		this.user = "";
-		this.hostname = "";
+		this.hostname = "host1";
 		this.time = "";
 		this.ucpu = "";
 		this.group = "";
@@ -169,6 +175,7 @@ public class Vm {
 	 *@see hostname.
 	 */
 	public void setHostname(String hostname) {
+		
 		this.hostname = hostname;
 	}
 	
@@ -282,5 +289,5 @@ public class Vm {
 		}
 		return "NOT_DEFINED";
 	}	
-
+	public enum VMState {STOP, PENDING, RUNNING, SUSPEND, PROLOG, NOT_DEFINED, FAILED }; 
 }

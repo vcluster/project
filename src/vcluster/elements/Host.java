@@ -7,7 +7,11 @@ import vcluster.managers.CloudManager;
 /**
  * A class that presents a host of cloud. 
  */
-public class Host {
+public class Host extends Element {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private TreeMap<String,Vm> vmList;
 	private String cloudName;
 	private int maxVmNum;
@@ -120,7 +124,7 @@ public class Host {
 	public TreeMap<String, Vm> getVmList() {
 		vmList = new TreeMap<String,Vm> ();
 		for(Vm vm : CloudManager.getCloudList().get(cloudName).getVmList().values()){
-			if(vm.getHostname().equalsIgnoreCase(id)){
+			if(vm.getHostname().equalsIgnoreCase(name)){
 				//System.out.println(vm.getHostname()+" : "+ id + "   mark");
 				vmList.put(vm.getId(), vm);
 			}

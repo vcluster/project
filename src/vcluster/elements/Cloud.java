@@ -18,13 +18,14 @@ import vcluster.ui.CmdComb;
  *A class representing a cloud 
  * 
  */
-public class Cloud{
+public class Cloud extends Element{
 	
 	/**
-	 *The constructor without any member initiation.
 	 * 
 	 */
+	private static final long serialVersionUID = 1L;
 	public Cloud() {
+	
 		// TODO Auto-generated constructor stub
 	}
 	/**
@@ -53,7 +54,7 @@ public class Cloud{
 				
 			}else if((aKey.equalsIgnoreCase("Interface"))){
 				setCloudpluginName(aValue);
-				cp = (CloudInterface)PluginManager.pluginList.get(cloudpluginName).getInstance();
+				
 			}else if((aKey.equalsIgnoreCase("Name"))){
 				//System.out.println("name");
 				setCloudName(aValue);
@@ -76,6 +77,11 @@ public class Cloud{
 				}
 			}
 		}
+		if(hostList==null||hostList.isEmpty()){
+			hostList = new TreeMap<String,Host> ();
+			Host h = new Host(1000,"0","host1",cloudName);
+			hostList.put(h.getName(), h);
+		}
 		isLoaded = false;
 		
 	}
@@ -91,12 +97,11 @@ public class Cloud{
 			return null;
 		}
 		if(!PluginManager.isLoaded(cloudpluginName))PlugmanExecutor.load(new CmdComb("plugman load -c "+cloudpluginName));		
-		cp = (CloudInterface)PluginManager.pluginList.get(cloudpluginName).getInstance();
 		this.listVMs();
 		if(getVmList()==null)return null;
 		for(Vm vm : getVmList().values()){
-			Integer id = new Integer(VmManager.getcurrId());
-			VmManager.getVmList().put(id, vm);
+			
+			VmManager.getVmList().put(vm.getuId(), vm);
 		}
 		
 		CloudManager.setCurrentCloud(this);		
@@ -164,6 +169,8 @@ public class Cloud{
 			}
 			if(i!=100)conf.set(i, "template = templates/"+hostName+".one");
 		}
+
+		CloudInterface cp = (CloudInterface)PluginManager.pluginList.get(cloudpluginName).getInstance();
 		cp.RegisterCloud(conf);
 		ArrayList<Vm> vmlist = cp.createVM(maxCount);
 		if(vmlist==null || vmlist.isEmpty()){
@@ -173,10 +180,9 @@ public class Cloud{
 		for(Vm vm : vmlist){
 			vm.setCloudName(cloudName);
 			vm.setHostname(hostName);
-			this.vmList.put(vm.getId(), vm);
-			Integer uId = VmManager.getcurrId();
-			vm.setuId(uId);
-			VmManager.getVmList().put(uId, vm);
+			vm.setuId(new Integer(VmManager.getcurrId()));
+			this.vmList.put(vm.getId(), vm);			
+			VmManager.getVmList().put(vm.getuId(), vm);
 			str.append(cloudName+"   "+vm.getId()+"   "+vm.getState()+System.getProperty("line.separator"));
 		}
 		if(maxCount==1){
@@ -194,6 +200,8 @@ public class Cloud{
 	 */
 	public boolean listVMs() {
 		// TODO Auto-generated method stub
+
+		CloudInterface cp = (CloudInterface)PluginManager.pluginList.get(cloudpluginName).getInstance();
 		cp.RegisterCloud(conf);
 	//	HashMap<String,VMelement> vms = new HashMap<String,VMelement>();
 		ArrayList<Vm> cVmList = cp.listVMs();
@@ -206,6 +214,10 @@ public class Cloud{
 				vm.setHostname("host1");
 			}
 			vm.setCloudName(getCloudName());
+			if(!vmList.keySet().contains(vm.getId()))
+			vm.setuId(new Integer(VmManager.getcurrId()));
+			else
+				vm.setuId(vmList.get(vm.getId()).getuId());
 			vmList.put(vm.getId(), vm);			
 		}
 		
@@ -219,9 +231,12 @@ public class Cloud{
 	 */
 	public boolean destroyVM(Vm vm) {
 		// TODO Auto-generated method stub
+
+		CloudInterface cp = (CloudInterface)PluginManager.pluginList.get(cloudpluginName).getInstance();
+
 		cp.RegisterCloud(conf);
 		cp.destroyVM(vm);
-		
+		vmList.remove(vm.getId());
 		 return true;
 	}
 
@@ -232,6 +247,9 @@ public class Cloud{
 	 */
 	public boolean startVM(String id) {
 		// TODO Auto-generated method stub
+
+		CloudInterface cp = (CloudInterface)PluginManager.pluginList.get(cloudpluginName).getInstance();
+
 		cp.RegisterCloud(conf);
 		ArrayList<Vm> vmlist = cp.startVM(id);
 		
@@ -254,6 +272,9 @@ public class Cloud{
 	
 	public boolean suspendVM(String id) {
 		// TODO Auto-generated method stub
+
+		CloudInterface cp = (CloudInterface)PluginManager.pluginList.get(cloudpluginName).getInstance();
+
 		cp.RegisterCloud(conf);
 		ArrayList<Vm> vmlist = cp.suspendVM(id);
 		if(vmlist==null || vmlist.isEmpty()){
@@ -423,6 +444,9 @@ public class Cloud{
 			return false;
 		}*/
 		String str="";
+
+		CloudInterface cp = (CloudInterface)PluginManager.pluginList.get(cloudpluginName).getInstance();
+
 		cp.RegisterCloud(conf);
 		if(cp.migrate(vmID,hostid))
 		str = "virtual machine "+vmID+" is being migrated to the host "+hostid+"... ...";
@@ -445,6 +469,9 @@ public class Cloud{
 			System.out.println("Host still has vms is running,cannot be shutted down!");
 			return false;
 		}
+
+		CloudInterface cp = (CloudInterface)PluginManager.pluginList.get(cloudpluginName).getInstance();
+
 		cp.RegisterCloud(conf);
 		cp.hostoff(host.getIpmiID());
 		host.setPowerStat(0);		
@@ -511,7 +538,6 @@ public class Cloud{
 	private List<String> conf;
 	private int currentVMs;
 	private CloudType cloudType;
-	private CloudInterface cp;
 	private TreeMap<String, Vm> vmList;
 	private boolean isLoaded;
 	private TreeMap<String,Host> hostList;

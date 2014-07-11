@@ -6,8 +6,15 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.TreeMap;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import vcluster.ui.remote.RemoteInterface;
+import vcluster.elements.*;
 /**
  *This class is a vcluster client 
  */
@@ -52,13 +59,68 @@ public class VclusterClient {
 				if(more.equalsIgnoreCase("quit")||more.equalsIgnoreCase("exit")){
 					System.exit(0);
 				}
+				if(more.equalsIgnoreCase("cloudlist")){					
+					ArrayList<Cloud> cloudList = ri.getCloudList();
+					for(Cloud c : cloudList){
+						System.out.println(c.getCloudName());
+						for(Vm vm : c.getVmList().values()){
+							System.out.println(vm.getId());
+						}
+					}
+					continue;
+				}				
+				if(more.equalsIgnoreCase("getdata")){
+					Document doc = ri.getDataStructure();
+					if(doc==null)return;
+					Element cloudlist = (Element)doc.getElementsByTagName("cloudList").item(0);
+					NodeList nl = cloudlist.getChildNodes();
+					for(int i = 0; i<nl.getLength(); i++){
+						Element cloud = (Element)nl.item(i);
+						
+						String cloudName = cloud.getAttribute("Name");
+						System.out.println(cloudName);
+						String cloudType = cloud.getAttribute("Type");
+						String cloudPlugin = cloud.getAttribute("Plugin");
+						String cloudPriority = cloud.getAttribute("Priority");
+						String cloudstat = cloud.getAttribute("isloaded");
+						Element hostlist = (Element)cloud.getElementsByTagName("HostList").item(0);
+						NodeList hostnl = hostlist.getChildNodes();
+						for(int j = 0; j<hostnl.getLength(); j++){
+							Element host = (Element)hostnl.item(j);
+							String hostName = host.getNodeName();
+							String hostID = host.getAttribute("ID");
+							String MaxVm = host.getAttribute("MaxVm");
+							String Power = host.getAttribute("Power");
+							String ipmiID = host.getAttribute("ipmiID");
+							Element vmList = (Element)host.getElementsByTagName("VmList").item(0);
+							NodeList VMnl = vmList.getChildNodes();
+							for(int k = 0 ; k < VMnl.getLength() ; k++){
+								Element vm = (Element)VMnl.item(k);
+								String vmID=vm.getAttribute("ID");
+								String intlID = vm.getAttribute("intlID");
+								String vmstat = vm.getAttribute("Stat");
+								String priIP = vm.getAttribute("PrivateIP");
+								String pubIP = vm.getAttribute("PublicIP");
+								String acti = vm.getAttribute("ActivityStat");
+								String launchTime = vm.getAttribute("LaunchTime");
+								String memory = vm.getAttribute("Memory");
+								String user = vm.getAttribute("User");
+								String ucpu = vm.getAttribute("ucpu");
+								
+								System.out.println(vmID+"  "+intlID+"  "+vmstat+"  "+cloudName+"   "+hostName);
+							}
+						}
+					}
+					continue;
+				}
 				String str = ri.getRemoteCommand(more);
+				
 				System.out.println(str);
 			}while (true);		
 			
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
 			// TODO Auto-generated catch block
-			
+			e.printStackTrace();
 			System.out.println(" Connection refused to server");
 
 		}

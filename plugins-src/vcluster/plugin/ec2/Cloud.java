@@ -1,12 +1,17 @@
 package vcluster.plugin.ec2;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.StringTokenizer;
 /**
  *A class represents a cloud, the instance of this this class involves the information that register to a ec2 interface. 
  */
-public class Cloud {
+public class Cloud implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	protected Cloud() {
 		cloudType = CloudType.NOT_DEFINED;
 		endPoint = null;

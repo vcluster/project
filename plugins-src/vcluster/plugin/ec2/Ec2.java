@@ -24,6 +24,10 @@ import com.sun.xml.bind.StringInputStream;
 public class Ec2 implements CloudInterface{
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	Cloud cloud = new Cloud();
 
 	private static String makeGETQuery(Cloud cloud, QueryInfo ci) 

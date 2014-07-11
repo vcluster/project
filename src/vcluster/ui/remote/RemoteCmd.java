@@ -6,11 +6,18 @@ import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.TreeMap;
+
+import org.w3c.dom.Document;
 
 import vcluster.Vcluster.uiType;
+import vcluster.elements.Cloud;
 import vcluster.executors.CmdCataloger;
+import vcluster.managers.CloudManager;
 import vcluster.ui.CmdComb;
 import vcluster.ui.Command;
+import vcluster.util.HandleXML;
 
 /**
  *This class involve the function that can receive the command from remote client.
@@ -72,6 +79,21 @@ public class RemoteCmd extends UnicastRemoteObject implements RemoteInterface{
 		
 		System.out.println(str);
 		return result;
+	}
+
+	@Override
+	public Document getDataStructure() throws RemoteException {
+		// TODO Auto-generated method stub
+		return HandleXML.getDataStructure();
+		
+	}
+
+	@Override
+	public ArrayList<Cloud> getCloudList() {
+		// TODO Auto-generated method stub
+		ArrayList<Cloud> cloudlist = new ArrayList<Cloud>();
+		cloudlist.addAll(CloudManager.getCloudList().values());
+		return cloudlist;
 	}
 
 }
