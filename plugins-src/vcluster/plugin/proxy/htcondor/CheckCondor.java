@@ -412,6 +412,8 @@ public class CheckCondor {
 	            String s = Integer.toString(userInput);
 	            byte[] b = s.getBytes();
 	            
+	 
+	            
 	            out.write(b, 0, b.length);
 	            out.write(cmdLine.getBytes(), 0, cmdLine.getBytes().length);
 	           // out.flush();
@@ -445,8 +447,8 @@ public class CheckCondor {
 	}
 	private Document getXmlPool(){
 		Document doc = null;
-		File f = new File("condor.xml");
-		String cmdLine2 ="condor_status -xml -attributes Name,MyAddress,Activity";
+		File f = new File("condor.xml");		
+		String cmdLine2 ="condor_status -xml -attributes Name,MyAddress,Activity,ooo";
 		ArrayList<String> arr = socketToproxy(cmdLine2);
 		try {
 			FileWriter fw = new FileWriter(f);
@@ -455,7 +457,8 @@ public class CheckCondor {
 				fw.flush();
 			}
 			fw.close();
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory factory = DocumentBuilderFactory.
+					newInstance();
             factory.setValidating(true);
 			doc = factory.newDocumentBuilder().parse(f);
 			
