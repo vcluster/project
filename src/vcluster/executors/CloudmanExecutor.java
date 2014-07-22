@@ -3,10 +3,8 @@ package vcluster.executors;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import org.opennebula.client.host.Host;
-
 import vcluster.Vcluster.uiType;
-import vcluster.elements.*;
+import vcluster.elements.Cloud;
 import vcluster.managers.CloudManager;
 import vcluster.ui.CmdComb;
 /**
@@ -91,9 +89,8 @@ public class CloudmanExecutor {
 			System.out.println("[ERROR : ] Expect a cloud name!");
 			return false;
 		}else{			
-			String [] arg = (String[])cmd.getParaset().toArray();	
-			
-			boolean result =  CloudManager.unLoadCloud(arg);
+						
+			boolean result =  CloudManager.unLoadCloud(cmd.getParaset());
 			return result;
 		}
 		

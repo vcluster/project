@@ -21,10 +21,19 @@ public class VmManager extends Thread {
 	 *@see vmList
 	 */
 	static{
-		vmList = new TreeMap<Integer, Vm>();
+		
 		id = 0;
 	}
 
+	public static Vm getVm(Integer id){
+		for(Cloud cloud:CloudManager.getCloudList().values()){
+			for(Vm vm : cloud.getVmList().values()){
+				if(vm.getuId().equals(id))
+					return vm;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Get the virtual machine's status
@@ -54,7 +63,12 @@ public class VmManager extends Thread {
 		Cloud currCloud = CloudManager.getCurrentCloud();
 		int vms = 1;
 		ArrayList<String> cmdList = cmd.getParaset();
-		
+		if(cmdList.isEmpty()){
+			cmdList.add("-c");
+			cmdList.add(currCloud.getCloudName());
+			cmdList.add("-n");
+			cmdList.add("1");
+		}
 		if(cmd.getParaset().get(0).equalsIgnoreCase("--help")||cmd.getParaset().get(0).equalsIgnoreCase("-h")){
 			strBuff.append("[USAGE : ]"+System.getProperty("line.separator"));
 			strBuff.append("vmman"+System.getProperty("line.separator"));
@@ -132,57 +146,11 @@ public class VmManager extends Thread {
 				}else{
 					cc = CloudManager.getCloudList();
 				}
-				TreeMap<Integer,Vm> temp = new TreeMap<Integer,Vm>();
 				for(Cloud cloud : cc.values()){
 					if(cloud.isLoaded()){
 						cloud.listVMs();
-						if(getVmList()==null)continue;
-						for(Vm vm : cloud.getVmList().values()){	
-							boolean flag = true;
-							for(Integer id:vmList.keySet()){
-								if(vm.getId().equals(vmList.get(id).getId())){
-									temp.put(id, vm);
-									flag = false;
-									break;
-								}
-							}	
-							if(flag){
-								
-									temp.put(vm.getuId(), vm);
-							}
-						}
 					}
-				}
-
-				for(Integer id:temp.keySet()){
-					
-					vmList.put(id, temp.get(id));
-					
-					
-				}
-				ArrayList<Integer> ids = new ArrayList<Integer>();
-				
-				for(Integer id:vmList.keySet()){
-					boolean flag = true;
-					boolean flagx = false;
-					for(Cloud cloud:CloudManager.getCloudList().values()){
-						if(cloud.isLoaded()){
-							for(Vm vm : cloud.getVmList().values()){
-								if(vm.getId().equals(vmList.get(id).getId())){
-									flag = false;
-									flagx = true;
-									
-									break;
-								}
-							}
-							if(flagx){flagx = false;break;}
-					}
-					}
-					if(flag)ids.add(id);					
-				}
-				for(Integer id:ids){
-					vmList.remove(id);
-				}
+				}			
 				
 			}else if(tmp.equalsIgnoreCase("-a")||tmp.equalsIgnoreCase("--type=available")){
 				filter="RUNNING";
@@ -215,14 +183,16 @@ public class VmManager extends Thread {
 		str.append(line+System.getProperty("line.separator"));
 			int runNum = 0;
 			int totalNum = 0;
-			for(Integer id : vmList.keySet()){
-				Vm vm = vmList.get(id);
+			for(Cloud cloud : CloudManager.getCloudList().values()){
+				String cloudName = cloud.getCloudName();
+				for(Vm vm: cloud.getVmList().values()){
+				Integer id = vm.getuId();
 				String acti = "busy";
 				if(vm.isIdle()==0){acti = "idle";}else if(vm.isIdle()==3){acti="none";}
-				if(!cloudFilter.equals("")&&vmList.get(id).getCloudName().equals(cloudFilter)){
-					String fName = String.format("%-10s", vmList.get(id).getCloudName());
+				if(!cloudFilter.equals("")&&cloudName.equals(cloudFilter)){
+					String fName = String.format("%-10s",cloudName);
 					String fID =String.format("%-5s", id);
-					String fStat = String.format("%-10s", vmList.get(id).getState());
+					String fStat = String.format("%-10s",vm.getState());
 					String fPrivateIp =  String.format("%-18s", vm.getPrivateIP());
 					String fPublicIp =  String.format("%-18s", vm.getPubicIP());
 					String fActivity =  String.format("%-10s", acti);
@@ -230,37 +200,38 @@ public class VmManager extends Thread {
 					String fHost = String.format("%-10s", vm.getHostname());
 					
 					
-					if(vmList.get(id).getState().equals(VMState.RUNNING))runNum++;
+					if(vm.getState().equals(VMState.RUNNING))runNum++;
 					str.append(fID+fInternalID+fStat+fActivity+fPrivateIp+fPublicIp+fHost+fName+System.getProperty("line.separator"));
 					totalNum++;
 				}
-				if(!filter.equals("")&&vmList.get(id).getState().toString().equals(filter)){
-					String fName = String.format("%-10s", vmList.get(id).getCloudName());
+				if(!filter.equals("")&&vm.getState().toString().equals(filter)){
+					String fName = String.format("%-10s", cloudName);
 					String fID =String.format("%-5s", id);
-					String fStat = String.format("%-10s", vmList.get(id).getState());
+					String fStat = String.format("%-10s", vm.getState());
 					String fPrivateIp =  String.format("%-18s", vm.getPrivateIP());
 					String fPublicIp =  String.format("%-18s", vm.getPubicIP());
 					String fActivity =  String.format("%-10s", acti);
 					String fInternalID =  String.format("%-12s", vm.getId());
 					String fHost = String.format("%-10s", vm.getHostname());
 					
-					if(vmList.get(id).getState().equals(VMState.RUNNING))runNum++;
+					if(vm.getState().equals(VMState.RUNNING))runNum++;
 					str.append(fID+fInternalID+fStat+fActivity+fPrivateIp+fPublicIp+fHost+fName+System.getProperty("line.separator"));
 					totalNum++;
 				}
 				if(filter.equals("")&cloudFilter.equals("")){
-					String fName = String.format("%-10s", vmList.get(id).getCloudName());
+					String fName = String.format("%-10s", cloudName);
 					String fID =String.format("%-5s", id);
-					String fStat = String.format("%-10s", vmList.get(id).getState());
+					String fStat = String.format("%-10s", vm.getState());
 					String fPrivateIp =  String.format("%-18s", vm.getPrivateIP());
 					String fPublicIp =  String.format("%-18s", vm.getPubicIP());
 					String fActivity =  String.format("%-10s", acti);
 					String fInternalID =  String.format("%-12s", vm.getId());
 					String fHost = String.format("%-10s", vm.getHostname());
 					
-					if(vmList.get(id).getState().equals(VMState.RUNNING))runNum++;
+					if(vm.getState().equals(VMState.RUNNING))runNum++;
 					str.append(fID+fInternalID+fStat+fActivity+fPrivateIp+fPublicIp+fHost+fName+System.getProperty("line.separator"));
 					totalNum++;
+				}
 				}
 			}
 			str.append(line+System.getProperty("line.separator"));
@@ -306,12 +277,13 @@ public class VmManager extends Thread {
 				System.out.println(str);
 				return str.toString();
 			}
-			if(!vmList.keySet().contains(vID)){
-				
-				str.append("[ERROR : ] VM ID doesn't exist!");
-				System.out.println(str);
-				return str.toString();
-			}
+	
+					if(getVm(vID)==null){
+						str.append("[ERROR : ] VM ID doesn't exist!");
+						System.out.println(str);
+						return str.toString();
+					}
+			
 
 		}
 		String tName = String.format("%-11s", "CLOUD");
@@ -322,16 +294,16 @@ public class VmManager extends Thread {
 		String tinID = String.format("%-11s", "internalID");
 		String tlauTime = String.format("%-11s", "launchTime");
 		String activity = String.format("%-11s", "Activity");
-		Integer id = vID;
+		Vm vm = getVm(vID);
 		
-		String fName = String.format("%-16s", vmList.get(id).getCloudName());
-		String fID =String.format("%-16s", vmList.get(id).getuId());
-		String fStat = String.format("%-16s", vmList.get(id).getState());
-		String fpriIP = String.format("%-16s", vmList.get(id).getPrivateIP());
-		String fpubIP =String.format("%-16s", vmList.get(id).getPubicIP());
-		String finID = String.format("%-16s", vmList.get(id).getId());
-		String flauTime = String.format("%-16s", vmList.get(id).getTime());
-		String factivity = String.format("%-16s", vmList.get(id).isIdle());
+		String fName = String.format("%-16s", vm.getCloudName());
+		String fID =String.format("%-16s", vm.getuId());
+		String fStat = String.format("%-16s", vm.getState());
+		String fpriIP = String.format("%-16s", vm.getPrivateIP());
+		String fpubIP =String.format("%-16s", vm.getPubicIP());
+		String finID = String.format("%-16s", vm.getId());
+		String flauTime = String.format("%-16s", vm.getTime());
+		String factivity = String.format("%-16s", vm.isIdle());
 		
 		str.append("---------------------------------------"+System.getProperty("line.separator"));
 		str.append(tID+" : "+fID+System.getProperty("line.separator"));
@@ -359,7 +331,7 @@ public class VmManager extends Thread {
 		
 		String vmID = "";
 		Integer vID;
-		
+		Vm vm;
 		if(cmd.getParaset().size()==0){
 			str.append("[USAGE : ]");
 			str.append("vmman");
@@ -386,18 +358,20 @@ public class VmManager extends Thread {
 				str.append("[ERROR : ] VM ID has to be a number!");
 				return str.toString();
 			}
-			if(!vmList.keySet().contains(vID)){
+			vm = getVm(vID);
+			
+			if(vm==null){
 				str.append("[ERROR : ] VM ID doesn't exist!");
 				System.out.println(str);
 				return str.toString();
 			}
 
 		}
-		String cloudName = vmList.get(vID).getCloudName();
-		Vm vm = vmList.get(vID);
+		
+		String cloudName = vm.getCloudName();
 		Cloud cloud = CloudManager.getCloudList().get(cloudName);
 		cloud.destroyVM(vm);
-		vmList.remove(vID);
+	
 		return str.toString();
 	}
 
@@ -412,6 +386,7 @@ public class VmManager extends Thread {
 		StringBuffer str = new StringBuffer();	
 		String cloudName = "";
 		String vmID = "";
+		Vm vm;
 		if(cmd.getParaset().size()==0){
 			str.append("[USAGE : ]"+System.getProperty("line.separator"));
 			str.append("vmman"+System.getProperty("line.separator"));
@@ -440,15 +415,16 @@ public class VmManager extends Thread {
 				System.out.println(str);
 				return str.toString();
 			}
-			if(!vmList.keySet().contains(vID)){
+			vm = getVm(vID);
+			if(vm==null){
 				str.append("[ERROR : ] VM ID doesn't exist!");
 				System.out.println(str);
 				return str.toString();
 			}
 
 		}
-		cloudName = vmList.get(vID).getCloudName();
-		String inId = vmList.get(vID).getId();
+		cloudName = vm.getCloudName();
+		String inId = vm.getId();
 		Cloud cloud = CloudManager.getCloudList().get(cloudName);
 		cloud.suspendVM(inId);
 		if(cmd.getUi().equals(uiType.CMDLINE))System.out.println(str);
@@ -466,7 +442,7 @@ public class VmManager extends Thread {
 		StringBuffer str = new StringBuffer();	
 		String cloudName = "";
 		String vmID = "";
-	
+		Vm vm;
 		if(cmd.getParaset().size()==0){
 			str.append("[USAGE : ]"+System.getProperty("line.separator"));
 			str.append("vmman"+System.getProperty("line.separator"));
@@ -495,15 +471,16 @@ public class VmManager extends Thread {
 				System.out.println(str);
 				return str.toString();
 			}
-			if(!vmList.keySet().contains(vID)){
+			vm = getVm(vID);
+			if(vm==null){
 				str.append("[ERROR : ] VM ID doesn't exist!");
 				System.out.println(str);
 				return str.toString();
 			}
 
 		}
-		cloudName = vmList.get(vID).getCloudName();
-		String inId = vmList.get(vID).getId();
+		cloudName = vm.getCloudName();
+		String inId = vm.getId();
 		Cloud cloud = CloudManager.getCloudList().get(cloudName);
 		cloud.startVM(inId);
 		
@@ -515,18 +492,10 @@ public class VmManager extends Thread {
 	 * Get the current Id of virtual machine.when a virtual machine is created, this function would be invoked.
 	 * @return id, 
 	 */
-	public static int getcurrId() {
+	public static int generateId() {
 		return id++;
 	}
 
-
-	/**
-	 * Get the virtual machines list
-	 * @return vmList, a TreeMap of virtual machine's instance, the key set is the virtual machine's id.
-	 */
-	public static TreeMap<Integer,Vm> getVmList() {
-		return vmList;
-	}
 
 	/**
 	 *Migrate a given virtual machine to a specific host by following the command line
@@ -559,6 +528,7 @@ public class VmManager extends Thread {
 		
 		
 		Integer vID;
+		Vm vm ;
 		try{
 			vID =new Integer(vmID);
 		}catch (NumberFormatException e){
@@ -566,32 +536,25 @@ public class VmManager extends Thread {
 			System.out.println(str);
 			return str.toString();
 		}
-		if(!vmList.keySet().contains(vID)){
+		vm = getVm(vID);
+		if(vm==null){
 			str.append("[ERROR : ] VM ID doesn't exist!");
 			System.out.println(str);
 			return str.toString();
 		}
 
-	String inId = vmList.get(vID).getId();
+	String inId = vm.getId();
 		
 		String result = cloud.migrate(inId, hostID);
 		if(cmd.getUi().equals(uiType.CMDLINE))System.out.println(result);
 		return result;
 	}	
 
-	/**
-	 *Definition of the virtual machine's status 
-	 */
-
 	
 	/**
 	 *The virtual machine's id, it's the global id in vcluster,  cloud independent.
 	 */
 	private static int id;
-	/**
-	 * The virtual machines's list, the key is the id of the virtual machine, the value is the instance of a virtual machine.
-	 */
-	private static TreeMap <Integer, Vm> vmList;
  
    }
 

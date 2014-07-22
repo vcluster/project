@@ -24,6 +24,18 @@ public class QStatus extends Element{
 		this.suspendedJob = suspendedJob;
 	}
 	
+	public QStatus() {
+		// TODO Auto-generated constructor stub
+		this.totalJob = 0;
+		this.completedJob = 0;
+		this.removedJob = 0;
+		this.idleJob = 0;
+		this.runningJob = 0;
+		this.heldJob = 0;
+		this.suspendedJob = 0;
+	
+	}
+
 	/**
 	 * Get the number of total jobs
 	 *@return the number of total jobs	 * 

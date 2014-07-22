@@ -3,6 +3,7 @@ package vcluster.managers;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 import vcluster.elements.Cloud;
@@ -205,6 +206,7 @@ public class CloudManager  {
 			} catch (NullPointerException e) {
 				// TODO Auto-generated catch block	
 				//e.printStackTrace();
+				e.printStackTrace();
 				flag.append(name[i]+" doesn't exist!"+System.getProperty("line.separator"));
 			}
 		}
@@ -219,21 +221,21 @@ public class CloudManager  {
 	 * the virtual machines that belongs to those clouds would be removed from data structure.
 	 * @param  An array of the given clouds' names
 	 */
-	public static boolean unLoadCloud(String[] name) {
+	public static boolean unLoadCloud(List<String> name) {
 		// TODO Auto-generated method stub
 		boolean flag = true;
-		for(int i = 0;i<name.length;i++){			
+		for(String str :name){			
 			try {
-				Cloud c = cloudList.get(name[i].trim());
+				Cloud c = cloudList.get(str.trim());
 				if(!c.getVmList().isEmpty()){
-					System.out.println(name[i]+" still have vms are running!");
+					System.out.println(str+" still have vms are running!");
 					return false;
 				}
-				CloudManager.cloudList.remove(name[i]);
+				CloudManager.cloudList.remove(str.trim());
 			} catch (NullPointerException e) {
 				// TODO Auto-generated catch block
 				
-				System.out.println(name[i]+" Cloud doesn't exist!");
+				System.out.println(str+" Cloud doesn't exist!");
 				e.printStackTrace();
 			}
 		}

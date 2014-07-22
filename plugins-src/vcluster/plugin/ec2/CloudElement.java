@@ -6,13 +6,13 @@ import java.util.StringTokenizer;
 /**
  *A class represents a cloud, the instance of this this class involves the information that register to a ec2 interface. 
  */
-public class Cloud implements Serializable {
+public class CloudElement implements Serializable {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	protected Cloud() {
+	protected CloudElement() {
 		cloudType = CloudType.NOT_DEFINED;
 		endPoint = null;
 		maxVMs = -1;
@@ -26,7 +26,7 @@ public class Cloud implements Serializable {
 	/**
 	 *Create a instance by a configuration list. 
 	 */
-	Cloud(List<String> configurations){
+	CloudElement(List<String> configurations){
 		for(String aLine : configurations){
 			
 			StringTokenizer st = new StringTokenizer(aLine, "=");

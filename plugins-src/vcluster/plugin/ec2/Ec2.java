@@ -14,7 +14,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
-import vcluster.elements.Vm;
+import vcluster.elements.*;
 import vcluster.plugInterfaces.CloudInterface;
 import vcluster.util.Util;
 
@@ -28,9 +28,10 @@ public class Ec2 implements CloudInterface{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	Cloud cloud = new Cloud();
+	CloudElement cloudElement = new CloudElement();
+	private Cloud cloud;
 
-	private static String makeGETQuery(Cloud cloud, QueryInfo ci) 
+	private static String makeGETQuery(CloudElement cloudElement, QueryInfo ci) 
 			throws UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException
 			{
 				List<String> allKeyNames = new ArrayList<String>(ci.getKeySet());
@@ -38,8 +39,8 @@ public class Ec2 implements CloudInterface{
 
 				String queryString = "";
 				
-				StringBuffer stringToSign = new StringBuffer("GET\n"+cloud.getShortEndPoint()+"\n"+"/"+"\n");
-				stringToSign.append("AWSAccessKeyId="+cloud.getAccessKey() + "&");
+				StringBuffer stringToSign = new StringBuffer("GET\n"+cloudElement.getShortEndPoint()+"\n"+"/"+"\n");
+				stringToSign.append("AWSAccessKeyId="+cloudElement.getAccessKey() + "&");
 
 				boolean first = true;
 				for (String keyName : allKeyNames) {
@@ -56,10 +57,10 @@ public class Ec2 implements CloudInterface{
 				}
 				//System.out.println("after 22222");
 				stringToSign.append(queryString);
-		        String signature = GetSignature.calculateRFC2104HMAC(new String(stringToSign), cloud.getSecretKey(), cloud.getSignatureMethod());
+		        String signature = GetSignature.calculateRFC2104HMAC(new String(stringToSign), cloudElement.getSecretKey(), cloudElement.getSignatureMethod());
 		        
 				String str = (queryString + "&Signature=" + URLEncoder.encode(signature, "UTF-8") 
-						+ "&AWSAccessKeyId="+cloud.getAccessKey());
+						+ "&AWSAccessKeyId="+cloudElement.getAccessKey());
 				//System.out.println(str);
 				return str;
 			}
@@ -120,55 +121,58 @@ public class Ec2 implements CloudInterface{
 	}
 
 	@Override
-	public boolean RegisterCloud(List<String> conf) {
+	public void getCloud(vcluster.elements.Cloud cloud) {
 		// TODO Auto-generated method stub
-		cloud = new Cloud(conf);
-		return true;
+		this.cloud = cloud;
+		
 
 	}
 
 	@Override
-	public ArrayList<Vm> createVM(int maxCount) {
+	public boolean createVM(int maxCount) {
 		
 		//System.out.println("Under devoleping.......");
 		QueryInfo qi = new QueryInfo();
 		
 		qi.putValue("Action", Command.RUN_INSTANCE.getCommand());
-		qi.putValue("ImageId", cloud.getImageName());
+		qi.putValue("ImageId", cloudElement.getImageName());
 
 		String timestamp = Util.getTimestampFromLocalTime(Calendar.getInstance().getTime());
 
 		/* fill the default values */
 		qi.putValue("MinCount", "1");
 		qi.putValue("MaxCount", Integer.toString(maxCount));
-		qi.putValue("InstanceType", cloud.getInstaceType());
+		qi.putValue("InstanceType", cloudElement.getInstaceType());
 
 		/* fill the default values */
         qi.putValue("Timestamp", timestamp);
-		qi.putValue("Version", cloud.getVersion());
+		qi.putValue("Version", cloudElement.getVersion());
 		
-		if (cloud.getKeyName() != null) 
-			qi.putValue("KeyName", cloud.getKeyName());
+		if (cloudElement.getKeyName() != null) 
+			qi.putValue("KeyName", cloudElement.getKeyName());
 		
 		
-		qi.putValue("SignatureVersion", cloud.getSignatureVersion());
-		qi.putValue("SignatureMethod", cloud.getSignatureMethod());
+		qi.putValue("SignatureVersion", cloudElement.getSignatureVersion());
+		qi.putValue("SignatureMethod", cloudElement.getSignatureMethod());
 		
 		//System.out.println("before");
 		String query = null;
 		try {
-			query = makeGETQuery(cloud, qi);
+			query = makeGETQuery(cloudElement, qi);
 			//System.out.println("before2");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		//System.out.println(cloud.getEndPoint());
 	
-		return executeQuery(Command.RUN_INSTANCE, cloud.getEndPoint(), query);		
+		for(Vm vm : executeQuery(Command.RUN_INSTANCE, cloudElement.getEndPoint(), query)){
+			cloud.addVm(vm);
+		}
+		return true;
 	}
 
 	@Override
-	public ArrayList<Vm> listVMs() {
+	public boolean sync() {
 		// TODO Auto-generated method stub
 		//System.out.println("MARK 1...................................");
 		//ArrayList<VMelement> vmList = null;
@@ -180,15 +184,15 @@ public class Ec2 implements CloudInterface{
 
 		/* fill the default values */
         qi.putValue("Timestamp", timestamp);
-		qi.putValue("Version", cloud.getVersion());
+		qi.putValue("Version", cloudElement.getVersion());
 
-		qi.putValue("SignatureVersion", cloud.getSignatureVersion());
-		qi.putValue("SignatureMethod", cloud.getSignatureMethod());
+		qi.putValue("SignatureVersion", cloudElement.getSignatureVersion());
+		qi.putValue("SignatureMethod", cloudElement.getSignatureMethod());
 
 
 		String query = null;
 		try {
-			query = makeGETQuery(cloud, qi);
+			query = makeGETQuery(cloudElement, qi);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -199,38 +203,42 @@ public class Ec2 implements CloudInterface{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	return executeQuery(Command.DESCRIBE_INSTANCE,cloud.getEndPoint(), query);
-		//return new ArrayList<Vm> ();
+		for(Vm vm : executeQuery(Command.RUN_INSTANCE, cloudElement.getEndPoint(), query)){
+			cloud.addVm(vm);
+		}
+		return true;
 	}
 
 	@Override
-	public ArrayList<Vm> destroyVM(Vm vm) {
+	public boolean destroyVM(String id) {
 		// TODO Auto-generated method stub
 
 		QueryInfo qi = new QueryInfo();
 		String timestamp = Util.getTimestampFromLocalTime(Calendar.getInstance().getTime());
 		qi.putValue("Action", "TerminateInstances");
-		qi.putValue("InstanceId.1", vm.getId());
+		qi.putValue("InstanceId.1", id);
 
 		/* fill the default values */
-		qi.putValue("Version", cloud.getVersion());
-		qi.putValue("SignatureVersion", cloud.getSignatureVersion());
-		qi.putValue("SignatureMethod", cloud.getSignatureMethod());
+		qi.putValue("Version", cloudElement.getVersion());
+		qi.putValue("SignatureVersion", cloudElement.getSignatureVersion());
+		qi.putValue("SignatureMethod", cloudElement.getSignatureMethod());
         qi.putValue("Timestamp", timestamp);
 		
 		String query = null;
 		try {
-			query = makeGETQuery(cloud, qi);
+			query = makeGETQuery(cloudElement, qi);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-        return 	executeQuery(Command.TERMINATE_INSTANCE, cloud.getEndPoint(), query);
+        executeQuery(Command.TERMINATE_INSTANCE, cloudElement.getEndPoint(), query);
+        cloud.getVmList().remove(id);
+        return true;
 
 	}
 
 	@Override
-	public ArrayList<Vm> startVM(String id) {
+	public boolean startVM(String id) {
 		// TODO Auto-generated method stub
 		QueryInfo qi = new QueryInfo();
 
@@ -238,25 +246,26 @@ public class Ec2 implements CloudInterface{
 		qi.putValue("InstanceId.1", id);
 
 		/* fill the default values */
-		qi.putValue("SignatureVersion", cloud.getSignatureVersion());
-		qi.putValue("SignatureMethod", cloud.getSignatureMethod());
+		qi.putValue("SignatureVersion", cloudElement.getSignatureVersion());
+		qi.putValue("SignatureMethod", cloudElement.getSignatureMethod());
 
 		String timestamp = Util.getTimestampFromLocalTime(Calendar.getInstance().getTime());
 		qi.putValue("Timestamp", timestamp);
-		qi.putValue("Version", cloud.getVersion());
+		qi.putValue("Version", cloudElement.getVersion());
 		String query = null;
 		try {
-			query = makeGETQuery(cloud, qi);
+			query = makeGETQuery(cloudElement, qi);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-    	return executeQuery(Command.TERMINATE_INSTANCE, cloud.getEndPoint(), query);
+    	executeQuery(Command.TERMINATE_INSTANCE, cloudElement.getEndPoint(), query);
+    	return true;
 	
 	}
 
 	@Override
-	public ArrayList<Vm> suspendVM(String id) {
+	public boolean suspendVM(String id) {
 		// TODO Auto-generated method stub
 		QueryInfo qi = new QueryInfo();
 
@@ -264,19 +273,20 @@ public class Ec2 implements CloudInterface{
 		qi.putValue("InstanceId.1", id);
 
 		/* fill the default values */
-		qi.putValue("SignatureVersion", cloud.getSignatureVersion());
-		qi.putValue("SignatureMethod", cloud.getSignatureMethod());
+		qi.putValue("SignatureVersion", cloudElement.getSignatureVersion());
+		qi.putValue("SignatureMethod", cloudElement.getSignatureMethod());
 		String timestamp = Util.getTimestampFromLocalTime(Calendar.getInstance().getTime());
 		qi.putValue("Timestamp", timestamp);
-		qi.putValue("Version", cloud.getVersion());
+		qi.putValue("Version", cloudElement.getVersion());
 		
 		String query = null;
 		try {
-			query = makeGETQuery(cloud, qi);
+			query = makeGETQuery(cloudElement, qi);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-    	return executeQuery(Command.TERMINATE_INSTANCE, cloud.getEndPoint(), query);    	
+    	executeQuery(Command.TERMINATE_INSTANCE, cloudElement.getEndPoint(), query);   
+    	return true;
 	}
 
 
@@ -299,5 +309,7 @@ public class Ec2 implements CloudInterface{
 		// TODO Auto-generated method stub
 		return false;
 	}	
+	
+
 	
 }

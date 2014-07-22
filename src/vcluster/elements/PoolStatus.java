@@ -33,6 +33,13 @@ public class PoolStatus extends Element{
  */
 	public PoolStatus() {
 		// TODO Auto-generated constructor stub
+		this.totalSlot = 0;
+		this.ownerSlot = 0;
+		this.claimedSlot = 0;
+		this.unClaimedSlot = 0;
+		this.matchedSlot = 0;
+		this.preemptingSlot = 0;
+		this.backfillSlot = 0;
 	}
 
 	/**

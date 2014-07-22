@@ -1,8 +1,5 @@
 package vcluster.elements;
 
-import vcluster.managers.VmManager;
-
-
 /**
  * A class representing a virtual machine 
  */
@@ -29,7 +26,7 @@ public class Vm extends Element{
 	 *Constructor, initialize an instance of virtual machine as the default members' value. 
 	 */
 	public Vm() {		
-		this.uId = new Integer(0);
+		this.uId = null;
 		this.id = "";
 		this.state = VMState.PENDING;
 		this.memory = "";
@@ -289,5 +286,15 @@ public class Vm extends Element{
 		}
 		return "NOT_DEFINED";
 	}	
+	public VMState toState(String str){
+		if(str.equalsIgnoreCase("prolog"))return VMState.PROLOG;
+		else if(str.equalsIgnoreCase("running"))return VMState.RUNNING;
+		else if(str.equalsIgnoreCase("suspend"))return VMState.SUSPEND;
+		else if(str.equalsIgnoreCase("pending"))return VMState.PENDING;
+		else if(str.equalsIgnoreCase("stop"))return VMState.STOP;
+		else if(str.equalsIgnoreCase("failed"))return VMState.FAILED;		
+		
+		return VMState.NOT_DEFINED;
+	}
 	public enum VMState {STOP, PENDING, RUNNING, SUSPEND, PROLOG, NOT_DEFINED, FAILED }; 
 }
