@@ -12,7 +12,8 @@ public class Slot extends Element{
 	private String identifier;
 	private IdType idType;
 	private int activity;
-	
+	private String vmid;
+	private String privateIP;
 
 	/**
 	 *Get the domain of the slot, identify where(or which cloud) is the slot from. 
@@ -85,6 +86,22 @@ public class Slot extends Element{
 		this.activity = activity;
 	}
 	
+	public String getVmid() {
+		return vmid;
+	}
+
+	public void setVmid(String vmid) {
+		this.vmid = vmid;
+	}
+
+	public String getPrivateIP() {
+		return privateIP;
+	}
+
+	public void setPrivateIP(String privateIP) {
+		this.privateIP = privateIP;
+	}
+
 	/**
 	 *An enum to define the identifier types of a slot. 
 	 *Five types is defined, which are "PRIVATEIP, PUBLICIP, VMID, VMHOSTNAME,NOTDEFINED ".

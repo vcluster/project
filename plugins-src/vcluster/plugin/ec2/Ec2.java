@@ -28,9 +28,10 @@ public class Ec2 implements CloudInterface{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	CloudElement cloudElement = new CloudElement();
-	private Cloud cloud;
+	CloudElement cloudElement ;
+	private Cloud cloud ;
 
+	
 	private static String makeGETQuery(CloudElement cloudElement, QueryInfo ci) 
 			throws UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException
 			{
@@ -124,7 +125,7 @@ public class Ec2 implements CloudInterface{
 	public void getCloud(vcluster.elements.Cloud cloud) {
 		// TODO Auto-generated method stub
 		this.cloud = cloud;
-		
+		cloudElement = new CloudElement(cloud.getConf());
 
 	}
 
@@ -196,14 +197,8 @@ public class Ec2 implements CloudInterface{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		//System.out.println(query);
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		for(Vm vm : executeQuery(Command.RUN_INSTANCE, cloudElement.getEndPoint(), query)){
+
+		for(Vm vm : executeQuery(Command.DESCRIBE_INSTANCE, cloudElement.getEndPoint(), query)){
 			cloud.addVm(vm);
 		}
 		return true;
@@ -259,7 +254,7 @@ public class Ec2 implements CloudInterface{
 			e.printStackTrace();
 		}
 
-    	executeQuery(Command.TERMINATE_INSTANCE, cloudElement.getEndPoint(), query);
+    	executeQuery(Command.START_INSTANCE, cloudElement.getEndPoint(), query);
     	return true;
 	
 	}
@@ -285,7 +280,7 @@ public class Ec2 implements CloudInterface{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-    	executeQuery(Command.TERMINATE_INSTANCE, cloudElement.getEndPoint(), query);   
+    	executeQuery(Command.STOP_INSTANCE, cloudElement.getEndPoint(), query);   
     	return true;
 	}
 

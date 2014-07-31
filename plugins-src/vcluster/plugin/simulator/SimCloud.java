@@ -1,5 +1,7 @@
 package vcluster.plugin.simulator;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -66,7 +68,8 @@ public class SimCloud implements CloudInterface {
 	public boolean sync() {
 		// TODO Auto-generated method stub
 		String cmdLine = cloudName+":simvm list";
-		
+		ArrayList<String> idlist = new ArrayList<String> ();
+		ArrayList<String> rmlist = new ArrayList<String> ();
 		for(String str :Client.executeRemote(cmdLine)){
 			String [] paras = str.split(",");
 			Vm vm = new Vm();
@@ -74,9 +77,19 @@ public class SimCloud implements CloudInterface {
 			vm.setHostname(paras[1].trim());
 			vm.setPrivateIP(paras[2].trim());
 			vm.setState(vm.toState(paras[3].trim()));
-			vm.setTime(paras[4].trim());	
+			vm.setTime(paras[4].trim());
+			idlist.add(vm.getId());
 			cloud.addVm(vm);
 			
+		}
+		Iterator<String> it = cloud.getVmList().keySet().iterator();
+		
+		while(it.hasNext()){
+			String id = it.next();
+			if(!idlist.contains(id))rmlist.add(id);
+		}
+		for(String id:rmlist){
+			cloud.getVmList().remove(id);
 		}
 		return true;
 	}

@@ -549,7 +549,24 @@ public class VmManager extends Thread {
 		if(cmd.getUi().equals(uiType.CMDLINE))System.out.println(result);
 		return result;
 	}	
-
+	
+	public Vm getVm(String uid){
+		for(Cloud cloud : CloudManager.getCloudList().values()){
+			for(Vm vm :cloud.getVmList().values()){
+				if(vm.getuId().toString().equalsIgnoreCase(uid))
+					return vm;
+			}
+		}
+		return null;
+	}
+	
+	public ArrayList<Vm> getVmList(){
+		ArrayList<Vm> vmlist = new ArrayList<Vm>();
+		for(Cloud cloud : CloudManager.getCloudList().values()){
+			vmlist.addAll(cloud.getVmList().values());
+		}
+		return vmlist;
+	}
 	
 	/**
 	 *The virtual machine's id, it's the global id in vcluster,  cloud independent.

@@ -55,6 +55,9 @@ public class Cloud extends Element{
 			}else if((aKey.equalsIgnoreCase("Interface"))){
 				setCloudpluginName(aValue);
 				
+			}else if((aKey.equalsIgnoreCase("priority"))){
+				setPriority(Integer.parseInt(aValue));
+				
 			}else if((aKey.equalsIgnoreCase("Name"))){
 				//System.out.println("name");
 				setCloudName(aValue);
@@ -184,7 +187,8 @@ public class Cloud extends Element{
 		cp.getCloud(this);
 		cp.sync();	
 		
-		BatchExecutor.mapingActivityToVm();
+		BatchExecutor.getPoolStatus();
+		//BatchExecutor.mapingActivityToVm();
 		return true;
 	}
 		

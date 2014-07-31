@@ -7,6 +7,7 @@ import vcluster.elements.PoolStatus;
 import vcluster.elements.QStatus;
 import vcluster.elements.Slot;
 import vcluster.elements.Slot.IdType;
+import vcluster.managers.CloudManager;
 import vcluster.plugInterfaces.BatchInterface;
 
 public class Sbsplugin implements BatchInterface{
@@ -33,7 +34,14 @@ public class Sbsplugin implements BatchInterface{
 			s.setDomain(domain);
 			s.setActivity(stat.equals("Busy")?1:0);
 			s.setIdentifier(id);
+			s.setPrivateIP(addr);
 			s.setIdType(IdType.VMID);
+			s.setVmid(id);
+			try {
+				CloudManager.getCloudList().get(domain).getVmList().get(id).setIsIdle(s.getActivity());
+			} catch (Exception e) {
+				
+			}
 			slotList.add(s);
 			if(s.getActivity()==0)idle++;
 		}

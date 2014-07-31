@@ -2,6 +2,10 @@ package vcluster;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+
+import com.sbs.batch.Sbs;
+
+import vcluser.client.MyFrame;
 /**
  *This class initiate the parameters of vcluster. 
  */
@@ -46,6 +50,15 @@ public class Vcluster {
 		}catch(Exception e){
 			System.out.println("Configuration file doesn't exist ,please check it!");			
 		}
+		
+		Thread t = new Thread(new Runnable(){  
+			public void run(){  
+				MyFrame.startFrame();
+				
+			}});  
+			t.start(); 
+		
+		
 	}
 	
 }

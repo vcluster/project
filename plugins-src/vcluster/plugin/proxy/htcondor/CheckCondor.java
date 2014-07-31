@@ -17,6 +17,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.cloud.elements.Vm;
+
 import vcluster.Vcluster;
 import vcluster.elements.PoolStatus;
 import vcluster.elements.QStatus;
@@ -46,9 +48,7 @@ public class CheckCondor {
 		this.slots = new ArrayList<Slot> ();
 		this.addr = Vcluster.CONDOR_IPADDR;
 		this.port = Vcluster.PORTNUM;
-		//setQ();
-		//setPool();
-		//System.out.println("condor instance has generated!");
+
 	}
 
 
@@ -92,6 +92,20 @@ public class CheckCondor {
 		}
 	}
 
+	private String getVmid(String domain,String priIP){
+		String vmid = "";
+		try {
+			for(vcluster.elements.Vm vm:CloudManager.getCloudList().get(domain).getVmList().values()){
+				if(vm.getPrivateIP().equals(priIP))
+					vmid = vm.getId();
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			
+		}
+		return vmid;
+	}
+	
 	private String getDomain(String domainStr){
 		String domain="";
 		for(String cn : CloudManager.getCloudList().keySet()){
@@ -291,6 +305,14 @@ public class CheckCondor {
 				}				
 			}
 			s.setIdType(Slot.IdType.PRIVATEIP);
+			String vmid = getVmid(s.getDomain(),s.getIdentifier());
+			s.setVmid(vmid);
+			try {
+				CloudManager.getCloudList().get(s.getDomain()).getVmList().get(vmid).setIsIdle(s.getActivity());
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				
+			}
 			slots.add(s);
 		}
 		

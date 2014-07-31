@@ -266,6 +266,7 @@ public class Vm extends Element{
 	 */
 	public void setIsIdle(int isIdle) {
 		this.isIdle = isIdle;
+		this.state = VMState.RUNNING;
 	}
 
 	

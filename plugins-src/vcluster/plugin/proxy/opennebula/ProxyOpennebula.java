@@ -1,15 +1,13 @@
 package vcluster.plugin.proxy.opennebula;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -142,6 +140,7 @@ public class ProxyOpennebula  extends Element implements CloudInterface {
 		String cmdLine="onevm create "+template +" -m "+maxCount;	
 		System.out.println(cmdLine);
 		String hostName = template.replace(".one", "");
+		
 		ArrayList<String> feedBack = socketToproxy(cmdLine);
 		if(feedBack!=null&&!feedBack.isEmpty()&&feedBack.get(0).contains("ID:")){
 			for(int i = 0;i<feedBack.size();i++){
@@ -192,10 +191,14 @@ public class ProxyOpennebula  extends Element implements CloudInterface {
 		String cmdLine="onevm list";
 		ArrayList<String> feedBack = socketToproxy(cmdLine);
 		boolean flag = true;
+		ArrayList<String> idlist = new ArrayList<String> ();
+		
+		ArrayList<String> rmlist=new ArrayList<String> ();
 		while(flag){
 		if(feedBack!=null&&!feedBack.isEmpty()&&feedBack.get(0).contains("ID")){
 			for(int i = 1;i<feedBack.size();i++){
 				//System.out.println(feedBack.get(i));
+				
 				String [] vmEle = feedBack.get(i).split("\\s+");
 				if(vmEle.length<9){
 					continue;
@@ -221,11 +224,12 @@ public class ProxyOpennebula  extends Element implements CloudInterface {
 					if(vm.getState()==VMState.STOP){vm.setHostname("");}else{
 						vm.setHostname(vmEle[7]);
 					}
+					idlist.add(vm.getId());
 				}catch(Exception e){
 					e.printStackTrace();
 					continue;
 				}
-
+				
 				cloud.addVm(vm);
 				
 			}
@@ -244,6 +248,17 @@ public class ProxyOpennebula  extends Element implements CloudInterface {
 			flag = false;
 			return false;
 		}
+		}
+		
+		Iterator<String> it = cloud.getVmList().keySet().iterator();
+		
+		
+		while(it.hasNext()){
+			String id = it.next();
+			if(!idlist.contains(id))rmlist.add(id);
+		}
+		for(String id:rmlist){
+			cloud.getVmList().remove(id);
 		}
 		return true;
 	}
